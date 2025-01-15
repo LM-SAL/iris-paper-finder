@@ -1,0 +1,14 @@
+deploy:
+  stage: deploy
+  only:
+    - main
+  script:
+    - echo "Deploying to EC2 instance"
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$EC2_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$EC2_KNOWN_HOST" > ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - ssh -o StrictHostKeyChecking=no ubuntu@$INSTANCE_IP 'cd /home/ubuntu/paper-data-linking && git pull'

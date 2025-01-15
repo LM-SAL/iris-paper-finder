@@ -1,0 +1,110 @@
+name: "Wind Spacecraft Observatory Classifier"
+classifier:
+  name: "WIND"
+  query: "Does this paper use data from the WIND spacecraft ( or Wind spacecraft ) or its instruments (3DP, EPACT, KONUS, MFI, SMS, SWE, TGRS, WAVES)?"
+  system_message: | 
+    You are a helpful assistant, and you produce Markdown outputs.
+    
+    Important Information:
+    ----------------------
+    When analyzing references to the "Wind Spacecraft Observatory," remember the following primary instruments and their details:
+
+    - 3DP: 3-Dimensional Plasma Analyzer
+    - EPACT: Energetic Particles: Acceleration, Composition, and Transport
+    - KONUS: High-Energy Solar Particle Spectrometer
+    - MFI: Magnetic Field Investigation
+    - SMS: Solar Wind Experiment
+    - SWE: Solar Wind Experiment
+    - TGRS: Transient Gamma-Ray Spectrometer
+    - WAVES: Radio and Plasma Wave Investigation
+
+    It's crucial to identify direct and indirect references to these instruments, as well as any related data or analyses tied to them.
+  human_message: | # be sure to keep this pipe as it preserves newlines in text below.
+    Based on the excerpts provided, please answer the following questions:
+
+    A. Does this paper directly use data from the WIND mission and its primary catalogues?  
+    B. Does this paper make quantitative predictions of results from the WIND mission?  
+    C. Does this paper describe the WIND mission, its instruments, operations, software, or calibrations?
+
+    For your reference, here is a list of WIND instruments: 3DP, EPACT, KONUS, MFI, SMS, SWE, TGRS, WAVES. Be sure to respond with these (and only these) instruments.
+
+    For each question, provide causal (not associative) reasoning with references to the provided excerpts (being sure to mention any WIND instruments used). If the answer to ANY of these questions is yes, the paper is considered a WIND paper. If the excerpts seem to be from a review of others' WIND-related work, the determination is UNCERTAIN. Finally, conclude whether the overall paper can be classified as a WIND paper, and end with: 
+
+    ```
+    Classification: <YES, NO, or UNCERTAIN>
+    WIND Instruments Used: ["EXAMPLE_INSTRUMENT1", "EXAMPLE_INSTRUMENT2", ...] # make sure these are primary instruments, not sub-components
+    ```
+  answer_divider: "Classification:" # should match the json format provided in human message
+  json_divider: "WIND Instruments Used:" # should match the json format provided in human message
+  answer_key: "WIND"
+  json_key: "instruments"
+  label_metadata_map:
+
+  filter_threshold: 80
+  filter_terms:
+      - "WIND"
+      - "Wind"
+      - "3DP"
+      - "EPACT"
+      - "KONUS"
+      - "Konus"
+      - "Konus-W"
+      - "Konus-Wind"
+      - "MFI"
+      - "SMS"
+      - "SWE"
+      - "TGRS"
+      - "WAVES"
+      - "Wind Spacecraft Observatory"
+      - "3-Dimensional Plasma Analyzer"
+      - "Energetic Particles: Acceleration, Composition, and Transport"
+      - "High-Energy Solar Particle Spectrometer"
+      - "Magnetic Field Investigation"
+      - "Solar Wind Experiment"
+      - "Transient Gamma-Ray Spectrometer"
+      - "Radio and Plasma Wave Investigation"
+      - "Solar wind"
+      - "Magnetosphere"
+      - "Geomagnetic"
+      - "Interplanetary magnetic field"
+      - "Solar energetic particles"
+      - "Coronal mass ejection"
+      - "Heliosphere"
+      - "Geomagnetic storms"
+      - "Space weather"
+      - "Global Geospace Science program"
+      - "NASA's WIND"
+      - "Space physics"
+      - "Plasma waves"
+      - "Ion composition"
+      - "Cosmic rays"
+      - "Gamma-ray bursts"
+      - "Earth's magnetic field"
+      - "Solar activity"
+      - "Interstellar medium"
+      - "Astrophysical plasmas"
+      - "Solar cycle"
+      - "Magnetospheric substorms"
+      - "Magnetotail"
+      - "Bow shock"
+      - "Magnetic reconnection"
+      - "Solar flares"
+      - "Heliospheric current sheet"
+      - "Ionosphere"
+      - "Van Allen radiation belts"
+      - "Solar coronal holes"
+      - "Solar wind pressure"
+      - "Geomagnetically induced currents"
+      - "Radio wave propagation"
+      - "Solar radio bursts"
+      - "Magnetosheath"
+      - "Plasmasphere"
+      - "Auroral phenomena"
+
+model_kwargs:
+  model_name: "gpt-4"
+  temperature: 0
+
+embedder_kwargs:
+  where:
+    passed_wind_heuristic: 1

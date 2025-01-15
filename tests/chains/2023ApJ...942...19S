@@ -1,0 +1,1142 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ar
+X
+
+iv
+:2
+
+21
+2.
+
+04
+01
+
+3v
+1 
+
+ [
+as
+
+tr
+o-
+
+ph
+.S
+
+R
+] 
+
+ 8
+ D
+
+ec
+ 2
+
+02
+2
+
+Draft version December 9, 2022
+
+Typeset using LATEX twocolumn style in AASTeX63
+
+On the Nature of the Three-part Structure of Solar Coronal Mass Ejections
+
+Hongqiang Song,1, 2 Jie Zhang,3 Leping Li,2 Zihao Yang,4 Lidong Xia,1 Ruisheng Zheng,1 and Yao Chen5, 1
+
+1Shandong Provincial Key Laboratory of Optical Astronomy and Solar-Terrestrial Environment, and Institute of Space Sciences,
+
+Shandong University, Weihai, Shandong 264209, China
+2CAS Key Laboratory of Solar Activity, National Astronomical Observatories, Chinese Academy of Sciences, Beijing, 100101, China
+
+3Department of Physics and Astronomy, George Mason University, Fairfax, VA 22030, USA
+4School of Earth and Space Sciences, Peking University, Beijing 100871, China
+
+5Institute of Frontier and Interdisciplinary Science, Shandong University, Qingdao, Shandong 266237, China
+
+(Received September 9, 2022; Revised ***, ****; Accepted ***, ****)
+
+Submitted to ApJ
+
+ABSTRACT
+
+Coronal mass ejections (CMEs) result from eruptions of magnetic flux ropes (MFRs) and can possess
+a three-part structure in white-light coronagraphs, including a bright front, dark cavity and bright core.
+
+In the traditional opinion, the bright front forms due to the plasma pileup along the MFR border,
+
+the cavity represents the cross section of the MFR, and the bright core corresponds to the erupted
+
+prominence. However, this explanation on the nature of the three-part structure is being challenged.
+
+In this paper, we report an intriguing event occurred on 2014 June 14 that was recorded by multiple
+space- and ground-based instruments seamlessly, clearly showing that the CME front originates from
+
+the plasma pileup along the magnetic arcades overlying the MFR, and the core corresponds to a hot-
+
+channel MFR. Thus the dark cavity is not an MFR, instead it is a low-density zone between the CME
+
+front and a trailing MFR. These observations are consistent with a new explanation on the CME
+structure. If the new explanation is correct, most (if not all) CMEs should exhibit the three-part
+
+appearance in their early eruption stage. To examine this prediction, we make a survey study of all
+
+CMEs in 2011 and find that all limb events have the three-part feature in the low corona, regardless of
+
+their appearances in the high corona. Our studies suggest that the three-part structure is the intrinsic
+
+structure of CMEs, which has fundamental importance for understanding CMEs.
+
+Keywords: Solar coronal mass ejections − Solar filament eruptions − magnetic reconnection
+
+1. INTRODUCTION
+
+Since the very first observation of solar coronal mass
+
+ejections (CMEs) on 1971 December 14 (Tousey 1973),
+
+great progress has been made in various aspects of
+
+CMEs, including their initiation mechanisms, acceler-
+ation processes, propagations and evolutions, as well
+
+as their space weather effects (Forbes et al. 2006; Chen
+
+2011; Manchester et al. 2017; Wyper et al. 2017). Gen-
+
+erally, solar physics community has reached the con-
+sensus that CMEs result from eruptions of magnetic
+
+flux ropes (MFRs), which can be trigged and acceler-
+
+Corresponding author: Hongqiang Song
+
+hqsong@sdu.edu.cn
+
+ated by ideal magnetohydrodynamic instabilities and re-
+
+sistive magnetic reconnections (Song et al. 2013, 2015,
+
+2018; Cheng et al. 2020), while some issues remain elu-
+
+sive due to their complexity and limited observations.
+Researchers had thought that it is straightforward to
+
+understand the morphological structures of CMEs in the
+
+white-light coronagraph, as the brightness of K-corona
+
+originates from Thomson scattering of free electrons
+
+and depends on the electron density around the plane of
+
+sky near the Sun (Hayes et al. 2001). The bright front,
+
+dark cavity, and bright core have been explained as the
+
+pileup of ambient plasma, MFR, and prominence, re-
+
+spectively.
+However, direct observations of CME front forma-
+
+tion remain rare, and many CMEs with the three-
+
+part structure are unrelated with prominence eruptions
+
+http://arxiv.org/abs/2212.04013v1
+mailto: hqsong@sdu.edu.cn
+
+
+2
+
+(Howard et al. 2017). Recent studies employing dual-
+
+viewpoint observations proposed a unified explanation
+
+on the nature of the three parts of CMEs (Song et al.
+
+2019a,b, 2022). The explanation is tightly correlated
+with the MFRs and overlying magnetic arcades, which
+
+play key roles for CME initiation (Amari et al. 2018;
+
+Jiang et al. 2021). MFRs are in the equilibrium be-
+
+tween upward lifting and downward pulling Lorentz
+
+forces prior to eruption. The lifting force is provided
+by the azimuthal current inside the MFR and its image
+
+current below the photosphere, and the pulling force is
+
+produced by the overlying arcades with potential field
+
+(Chen et al. 2006). When MFRs start to rise, the over-
+lying arcades are stretched, piling up the surrounding
+
+plasmas and forming the CME front (Forbes 2000; Chen
+
+2009). The MFR is observed as the CME core, and
+
+the zone between the MFR and front corresponds to
+
+the dark cavity (Song et al. 2019a,b, 2022). The MFR
+can expand and occupy the cavity space, in the mean-
+
+time, the cavity magnetic field can be transformed into
+
+the outer shell of MFR through magnetic reconnections
+
+in the current sheet underneath CMEs (Lin & Forbes
+2000). Thus the relative volume of dark cavity will de-
+
+crease gradually and disappear eventually (Song et al.
+
+2017).
+
+The above new explanation answers why CMEs can
+
+exhibit the three-part structure without prominences
+and how they lose the dark cavity feature, but lacks
+
+complete evidence. Besides, it also suggests that each
+
+CME should possess the three-part feature in the early
+
+eruption stage, i.e., the three-part structure is the in-
+trinsic structure of CMEs. Here, we provide strong ev-
+
+idence for the explanation through an intriguing CME
+
+that was recorded by multiple space- and ground-based
+
+instruments, including the Atmospheric Imaging As-
+
+sembly (AIA) (Lemen et al. 2012) on board the So-
+lar Dynamics Observatory (SDO) (Pesnell et al. 2012),
+
+the Extreme Ultraviolet Imager (EUVI) (Howard et al.
+
+2008) on board the Solar Terrestrial Relations Obser-
+
+vatory (STEREO) (Kaiser 2005), the Large Angle and
+Spectrometric Coronagraph (LASCO) (Brueckner et al.
+
+1995) on board the Solar and Heliospheric Observatory
+
+(SOHO) (Domingo et al. 1995), as well as the coro-
+
+nal solar magnetism observatory K-coronagraph (K-
+
+Cor) and Coronal Multichannel Polarimeter (CoMP)
+(Tomczyk et al. 2008) at the Mauna Loa Solar Obser-
+
+vatory (MLSO). SDO, SOHO and MLSO observe the
+
+Sun from the Earth perspective, while STEREO from
+
+different directions. A preliminary survey study is also
+conducted to examine the prediction of our explanation.
+
+2. INSTRUMENTS
+
+The AIA onboard the SDO takes images of the Sun
+
+with an FOV of 1.3 R⊙ through seven EUV channels,
+
+including 131 Å (Fe XXI, ∼10 MK), 94 Å (Fe XVIII,
+
+∼6.4 MK), 335 Å (Fe XVI, ∼2.5 MK), 211 Å (Fe XIV,
+∼2.0 MK), 193 Å (Fe XII, ∼1.6 MK), 171 Å (Fe IX,
+
+∼0.6 MK), and 304 Å (He II, ∼0.05 MK). These AIA
+
+images have a spatial resolution of 1.2′′ and a temporal
+
+cadence of 12 s. The 131 Å, 171 Å, 304 Å, and 193 Å
+
+images are used here and they are processed to level 1.5
+through standard codes in the solar software. The solar
+
+software package is available online1.
+
+The K-Cor records the coronal polarization bright-
+
+ness (pB) formed by Thomson scattering of photospheric
+light from free electrons. It covers an FOV of 1.05–3 R⊙
+
+in the passband of 7200–7500 Å with 5.5′′ pixel size and
+
+a nominal cadence of 15 s. The CoMP can perform
+
+the spectropolarimetric observations at infrared wave-
+
+lengths (10747 and 10798 Å). Its FOV is 1.05–1.35 R⊙
+
+with a 4.35′′ pixel size. The Doppler-velocity map is
+
+obtained through an analytical Gaussian fitting to the
+
+three-point intensity profile at each pixel (Tian et al.
+
+2013). The flare X-ray data are from the Geostationary
+Operational Environment Satellite (GOES) that pro-
+
+vides the integrated full-disk soft X-ray emission from
+
+the Sun.
+
+3. OBSERVATIONS AND RESULTS
+
+The solar eruption of interest occurred on 2014 June
+
+14 when STEREO-A (B) was ∼161◦ (164◦) west (east)
+of the Earth as shown in Figure 1. The eruption origi-
+
+nated from NOAA Active Region 12094 located at the
+
+heliographic coordinates ∼S13W74 when observed from
+
+the STEREO-B perspective as displayed in the EUVI
+
+195 Å image (top-left panel). Note that the white-
+dashed line denotes the solar limb observed from the
+
+Earth direction. It is an exact limb event (∼S13E90)
+
+from the Earth as confirmed by the AIA 193 Å image
+
+(bottom-left panel). The eruption produced an M1.4
+class soft X-ray flare on GOES scale (top-right panel)
+
+and a CME with a linear speed of 732 km s−1 in the
+
+field of view (FOV) of LASCO (Coordinated data analy-
+
+sis workshops, CDAW2). The red-dashed line delineates
+
+the CME front, and this CME does not exhibit the typ-
+ical three-part structure in the C2 image (bottom-right
+
+panel).
+
+The initial eruption process is recorded well by the
+
+AIA, CoMP, and K-Cor as shown in Figure 2. The
+top-left panel presents the 171 Å image at 19:23:59 UT,
+
+displaying several bunches of coronal loops prior to the
+
+1 http://www.lmsal.com/solarsoft/
+2 https://cdaw.gsfc.nasa.gov
+
+
+
+3
+
+eruption. We pay our attention on the central loops as
+
+pointed with two arrows, which have clear correlation
+
+with the formation of CME front. The CoMP Doppler-
+
+velocity image is also presented in this panel, with its
+FOV delineated by the white rectangle. The coronal
+
+loops started to rise from ∼19:25 UT onward, and the
+
+snapshot at 19:27:59 UT is presented in the top-middle
+
+panel. The leading front of the loops is delineated with
+
+purple-dotted line. The CME is associated with obvi-
+ous Doppler blue shift as displayed in the CoMP image.
+
+Please note that the Doppler shift values do not repre-
+
+sent the line-of-sight component of the CME propaga-
+
+tion speed, and their changes should be largely associ-
+ated with the coronal response to the lateral expansion
+
+and mass eruptions of CMEs (Tian et al. 2013). Top-
+
+right panel displays the K-Cor base-difference image at
+
+19:27:58 UT (with 19:23:10 UT as the base), when only
+
+the CME front can be observed. The purple-dotted line
+in the top-middle panel is overlaid on the K-Cor image,
+
+corresponding to the inner edge of the CME front. The
+
+outer edge is delineated with blue-dotted line that is also
+
+overlaid on the 171 Å image in the top-middle panel,
+which locates higher than the coronal loops. These ob-
+
+servations clearly show that the CME front originates
+
+from the pileup of plasmas surrounding the rising loops,
+
+rather than the MFR that appears later.
+
+The bottom-left panel presents the AIA 131 Å image
+at 19:27:56 UT, also with the blue and purple dotted
+
+lines overlaid. The hot-channel MFR starts to appear
+
+from ∼19:28:20 UT onward, and becomes very obvious
+
+at 19:33:32 UT as delineated with red-dotted line in
+the bottom-middle panel. The accompanying animation
+
+(the left part in each frame) displays the eruption pro-
+
+cess with the composite observations of AIA 131 Å, 171
+
+Å, and 193 Å. The K-Cor image at the same time is dis-
+
+played in the bottom-right panel with the red-dotted line
+overlaid, which unambiguously demonstrates that the
+
+hot-channel MFR is observed as the CME core at this
+
+time. The CME front is also identifiable as marked with
+
+blue-dotted line. Therefore, this CME exhibits the typi-
+cal three-part morphological structure in the early erup-
+
+tion stage. Its dark cavity disappeared gradually when
+
+propagating outward, which can be examined continu-
+
+ously through the accompanying animation (the right
+
+part in each frame). That is why the CME does not
+have the typical three-part feature in the C2 image as
+
+shown in Figure 1.
+
+Our observations provide clear connections between
+
+the CME front formation and the coronal loop rising,
+direct correspondence between the CME core and hot-
+
+channel MFR, as well as the disappearance of CME cav-
+
+ity through combining observations of both low and high
+
+corona. This supports that the CME cavity is a low-
+
+density zone between the MFR and overlying coronal
+
+loops in the early eruption stage. Our new explanation
+
+successfully answers why CMEs can possess the three-
+part structure no matter whether prominences are in-
+
+volved or not. Both situations can be described with a
+
+schematic drawing as shown in Figure 3, where the top
+
+and bottom panels display the cases associated without
+
+and with a prominence, respectively.
+The top-left panel shows the configuration prior to
+
+eruption when an MFR (filled with blue) is in equi-
+
+librium between upward lifting and downward pulling
+
+Lorentz forces. The thick line represents the outer most
+coronal loops with potential field and the thin lines rep-
+
+resent the sheared magnetic field of the low-density zone,
+
+as well as the twisted MFR. The loops start to rise after
+
+eruption onset, and the surrounding plasmas are piled
+
+up, forming the CME front as denoted with brown in
+the other top panels. The low-density zone exists in the
+
+early eruption stage, thus the CME can be recorded with
+
+the classical three-part feature in the white-light images,
+
+as presented in the top-middle panel. As mentioned, the
+field lines surrounding the MFR can be transformed into
+
+the outer part of the MFR through magnetic reconnec-
+
+tions in the current sheet (depicted with the vertical dot-
+
+ted line) connecting the MFR and flare loops, thus the
+
+MFR grows and expands during the eruption. The MFR
+can occupy the low-density zone eventually as shown in
+
+the top-right panel, resulting in the disappearance of
+
+dark cavity (Song et al. 2017).
+
+The bottom two panels display the corresponding situ-
+ations with a prominence (an ellipse filled with red) sup-
+
+ported by the MFR. In this case, both the prominence
+
+and MFR can be recorded as the CME cores in the early
+
+eruption stage. The prominence could appear as a sharp
+
+core, while the MFR, a fuzzy core, due to their density
+characteristics (Song et al. 2019a). Similarly, the MFR
+
+rises and stretches its overlying loops, forming the CME
+
+front, and the original low-density zone can disappear
+
+due to the MFR growth and expansion. In the mean-
+time, the prominence material can drain back to the so-
+
+lar surface (Ouyang et al. 2017) and/or its density can
+
+decrease obviously due to expansion during propagation
+
+outward. These lead to the disappearances of the dark
+
+cavity and sharp core, i.e., the CME loses the three-part
+feature eventually as pointed with the red arrow. The
+
+light red represents a prominence with relatively lower
+
+densities. However, the prominence can also maintain
+
+obviously higher densities compared to the MFR due to
+few draining back of its plasma and/or less expansion.
+
+In this case, the CME could keep the three-part feature
+
+in the high corona after the original low-density zone is
+
+
+
+4
+
+transformed into the MFR shell. This situation is illus-
+
+trated in the panel pointed with the green arrow. The
+
+deep red represents a prominence with relatively higher
+
+densities. At this time, the prominence and MFR are
+observed as the bright core and dark cavity, respectively,
+
+i.e., the three-part feature can be explained with the tra-
+
+ditional opinion. Therefore, our explanation can answer
+
+why prominence-related CMEs do or do not exhibit the
+
+three-part structure in the high corona.
+According to the above explanation, we believe that
+
+probably all CMEs should exhibit the three-part feature
+
+in the low corona, except for the stealth CMEs that do
+
+not have the distinct low coronal signatures (Ma et al.
+2010) and narrow CMEs that might be just jet-like
+
+structure. Usually it is difficult to distinguish the three
+
+parts for disk events due to the projection effect, then
+
+we expect that all limb CMEs possess the three-part ap-
+
+pearance in the low corona. To examine this prediction,
+we conduct a survey study based on CMEs recorded
+
+by LASCO in 2011. In total 1990 CMEs are identified
+
+manually in this year (CDAW), while most events are
+
+poor or very poor ones and unsuitable for the morpho-
+logical analysis. After removing these events we inspect
+
+the remaining 535 CMEs and find 98 (18.3%) of them
+
+exhibiting the typical three-part feature in C2 images,
+
+a similar fraction to previous study by Vourlidas et al.
+
+(2013). The 437 non-three-part CMEs include 118 nar-
+row events with angular width no more than 40◦ and
+
+319 normal events. After inspecting the normal events
+
+one by one, we find 28 of them were located at the so-
+
+lar limb unambiguously. All of these events possess the
+three-part feature in the composite images of AIA 304
+
+Å or 131 Å and 171 Å (or 193 Å) when they are as-
+
+sociated with eruptions of prominences or hot channels
+
+(Zhang et al. 2012). The event No., CME first appear-
+
+ance time in the C2 image (CDAW), source region (AR
+for active region and QS for quiet-Sun region), as well
+
+as the ejecta (P for prominence and HC for hot channel)
+
+are listed sequentially in Table 1 for the 28 events.
+
+In Table 1, 19 events are associated with prominence
+eruptions, including 13 (6) events from active (quiet-
+
+Sun) regions, and 9 events result from hot channel erup-
+
+tions, which all originate from active regions. As the
+
+event displayed in Figures 1 and 2 is associated with a
+
+hot channel eruption, here we select a prominence erup-
+tion (Event 7) from Table 1 as the representative event
+
+and present it in Figure 4. The prominence eruption
+
+occurred on March 27, and generated a CME without
+
+typical three-part structure in LASCO image as pre-
+sented in the left panel. The CME front is delineated
+
+with the red-dashed line. The right panel displays the
+
+composite image of two passbands, which exhibits the
+
+Table 1. The information of 28 limb CMEs without typical
+three-part structure in the C2 images but with the three-part
+feature in the EUV images
+
+.
+
+No. First in C2 Source Ejecta
+
+01 Jan 28 01:25 UT AR P
+
+02 Feb 11 22:12 UT AR P
+
+03 Feb 16 23:11 UT AR HC
+
+04 Mar 04 05:36 UT AR P
+
+05 Mar 07 20:00 UT AR P
+
+06 Mar 08 04:12 UT AR HC
+
+07 Mar 27 05:36 UT AR P
+
+08 Apr 07 12:00 UT AR HC
+
+09 Apr 09 18:00 UT AR HC
+
+10 May 03 16:51 UT QS P
+
+11 May 09 20:57 UT AR HC
+
+12 May 11 02:48 UT QS P
+
+13 May 18 18:24 UT AR P
+
+14 May 29 21:24 UT AR HC
+
+15 Jun 05 16:59 UT QS P
+
+16 Jun 07 06:49 UT AR P
+
+17 Jun 12 14:48 UT AR P
+
+18 Jul 09 06:12 UT AR P
+
+19 Jul 09 16:36 UT AR P
+
+20 Jul 10 12:00 UT QS P
+
+21 Aug 06 10:24 UT QS P
+
+22 Aug 17 02:48 UT AR P
+
+23 Sep 22 10:48 UT AR HC
+
+24 Oct 18 08:12 UT AR P
+
+25 Nov 07 04:12 UT AR HC
+
+26 Dec 04 20:12 UT AR P
+
+27 Dec 08 09:24 UT QS P
+
+28 Dec 30 20:57 UT AR HC
+
+three-part feature with 304 Å and 193 Å showing the
+CME core (prominence) and front, respectively. Note
+
+that the base-difference image is used for 193 Å to show
+
+the front clearly. The accompanying animation, created
+
+with the JHelioviewer software (Müller et al. 2017), dis-
+
+plays the whole eruption process from 04:35 to 05:35 UT
+with composite observations of AIA 304 Å and 193 Å.
+
+4. SUMMARY AND DISCUSSION
+
+We report an intriguing solar eruption occurred on
+
+2014 June 14 that was recorded by multiple space- and
+
+ground-based instruments seamlessly. Our observations
+
+clearly demonstrate that the pileup of plasmas surround-
+ing the coronal loops results in the formation of CME
+
+front, and unambiguously present the correspondence
+
+between the hot-channel MFR and CME core in white-
+
+light images. Naturally, the low-density zone between
+
+
+
+5
+
+the coronal loops and hot channel is observed as the
+
+dark cavity of the CME. These perfectly answer the na-
+
+ture of three-part structure of CMEs, and suggest that
+
+this structure is their intrinsic structure and each nor-
+mal CME should has the three-part feature. Our survey
+
+study shows that each limb CME (except for stealth
+
+CMEs and narrow ones) has the three-part feature in
+
+the early eruption stage, agreeing with our prediction.
+
+The growth and expansion of hot-channel MFR reduce
+the relative volume of the low-density zone (Song et al.
+
+2017). This explains the disappearance of dark cavity
+
+and answers why not all CMEs possess the three-part
+
+feature in the high corona.
+It is necessary to discuss why a low-density zone ex-
+
+ists between the CME front and MFR. A reverse cur-
+
+rent model has been reported to explain the CME cavity
+
+formation (Haw et al. 2018), which proposed that the
+
+cavity forms because the rising electric current in the
+MFR induces an oppositely directed electric current in
+
+the background plasma. The magnetic force between
+
+the two electric currents propels the background plasma
+
+away from the MFR, creating the low-density zone, i.e.,
+the CME dark cavity. This model is supported by lab-
+
+oratory experiments, three-dimensional numerical sim-
+
+ulations, and an analytic model (Haw et al. 2018). Ac-
+
+cording to this model, the CME cavity could disappear
+
+due to the decrease of electric current intensity along
+with time. More detailed observations on the disappear-
+
+ance process of the dark cavity are necessary to clarify
+
+its nature.
+
+China successfully launched the Advanced Space-
+
+based Solar Observatory (ASO-S) (Gan et al. 2019) on
+
+2022 October 9. The ASO-S, nicknamed Kuafu-1, is
+
+equipped with three payloads: the Full-disk vector Mag-
+netoGraph (FMG) (Deng et al. 2019), the Lyman-α So-
+
+lar Telescope (LST) (Feng et al. 2019), and the Hard
+
+X-ray Imager (HXI) (Su et al. 2019). The LST con-
+
+sists of three instruments: the Solar Disk Imager (SDI),
+
+Solar Corona Imager (SCI) and White-light Solar Tele-
+scope (WST), which cover an FOV of 0–2.5 R⊙ and
+
+can seamlessly observe CMEs in their early eruption
+
+stage through both white-light and Lyman-α passbands.
+
+ASO-S provides us an excellent opportunity to continue
+the study of three-part structure of CMEs in solar cycle
+
+25.
+
+ACKNOWLEDGMENTS
+
+We are grateful to the anonymous referee for the com-
+
+ments and suggestions that helped to improve the orig-
+
+inal manuscript significantly. We thank Profs. Pengfei
+Chen and Xin Cheng at Nanjing University for their
+
+helpful discussions. This work is supported by the NSFC
+
+grants U2031109, 11790303 (11790300), and 12073042.
+
+H.Q.S is also supported by the CAS grants XDA-
+17040507 and the open research program of the CAS
+
+Key Laboratory of Solar Activity KLSA202107. Data
+
+from observations are courtesy of SDO, MLSO, SOHO,
+
+STEREO, and GOES.
+
+REFERENCES
+
+Amari, T., Canou, A., Aly, J.-J., Delyon, F., & Alauzet, F.
+
+2018, Nature, 554, 211, doi: 10.1038/nature24671
+
+Brueckner, G. E., Howard, R. A., Koomen, M. J., et al.
+
+1995, SoPh, 162, 357, doi: 10.1007/BF00733434
+
+Chen, P. F. 2009, ApJL, 698, L112,
+
+doi: 10.1088/0004-637X/698/2/L112
+
+—. 2011, Living Reviews in Solar Physics, 8, 1,
+
+doi: 10.12942/lrsp-2011-1
+
+Chen, Y., Li, G. Q., & Hu, Y. Q. 2006, ApJ, 649, 1093,
+
+doi: 10.1086/506600
+
+Cheng, X., Zhang, J., Kliem, B., et al. 2020, ApJ, 894, 85,
+
+doi: 10.3847/1538-4357/ab886a
+
+Deng, Y.-Y., Zhang, H.-Y., Yang, J.-F., et al. 2019,
+
+Research in Astronomy and Astrophysics, 19, 157,
+
+doi: 10.1088/1674-4527/19/11/157
+
+Domingo, V., Fleck, B., & Poland, A. I. 1995, SoPh, 162, 1,
+
+doi: 10.1007/BF00733425
+
+Feng, L., Li, H., Chen, B., et al. 2019, Research in
+
+Astronomy and Astrophysics, 19, 162,
+
+doi: 10.1088/1674-4527/19/11/162
+
+Forbes, T. G. 2000, J. Geophys. Res., 105, 23153,
+
+doi: 10.1029/2000JA000005
+
+Forbes, T. G., Linker, J. A., Chen, J., et al. 2006, SSRv,
+
+123, 251, doi: 10.1007/s11214-006-9019-8
+
+Gan, W.-Q., Zhu, C., Deng, Y.-Y., et al. 2019, Research in
+
+Astronomy and Astrophysics, 19, 156,
+
+doi: 10.1088/1674-4527/19/11/156
+
+Haw, M. A., Wongwaitayakornkul, P., Li, H., & Bellan,
+
+P. M. 2018, ApJL, 862, L15,
+
+doi: 10.3847/2041-8213/aad33c
+
+Hayes, A. P., Vourlidas, A., & Howard, R. A. 2001, ApJ,
+
+548, 1081, doi: 10.1086/319029
+
+Howard, R. A., Moses, J. D., Vourlidas, A., et al. 2008,
+
+SSRv, 136, 67, doi: 10.1007/s11214-008-9341-4
+
+http://doi.org/10.1038/nature24671
+http://doi.org/10.1007/BF00733434
+http://doi.org/10.1088/0004-637X/698/2/L112
+http://doi.org/10.12942/lrsp-2011-1
+http://doi.org/10.1086/506600
+http://doi.org/10.3847/1538-4357/ab886a
+http://doi.org/10.1088/1674-4527/19/11/157
+http://doi.org/10.1007/BF00733425
+http://doi.org/10.1088/1674-4527/19/11/162
+http://doi.org/10.1029/2000JA000005
+http://doi.org/10.1007/s11214-006-9019-8
+http://doi.org/10.1088/1674-4527/19/11/156
+http://doi.org/10.3847/2041-8213/aad33c
+http://doi.org/10.1086/319029
+http://doi.org/10.1007/s11214-008-9341-4
+
+
+6
+
+Howard, T. A., DeForest, C. E., Schneck, U. G., & Alden,
+
+C. R. 2017, ApJ, 834, 86,
+
+doi: 10.3847/1538-4357/834/1/86
+
+Jiang, C., Feng, X., Liu, R., et al. 2021, Nature Astronomy,
+
+5, 1126, doi: 10.1038/s41550-021-01414-z
+
+Kaiser, M. L. 2005, Advances in Space Research, 36, 1483,
+
+doi: 10.1016/j.asr.2004.12.066
+
+Lemen, J. R., Title, A. M., Akin, D. J., et al. 2012, SoPh,
+
+275, 17, doi: 10.1007/s11207-011-9776-8
+
+Lin, J., & Forbes, T. G. 2000, J. Geophys. Res., 105, 2375,
+
+doi: 10.1029/1999JA900477
+
+Ma, S., Attrill, G. D. R., Golub, L., & Lin, J. 2010, ApJ,
+
+722, 289, doi: 10.1088/0004-637X/722/1/289
+
+Manchester, W., Kilpua, E. K. J., Liu, Y. D., et al. 2017,
+
+SSRv, 212, 1159, doi: 10.1007/s11214-017-0394-0
+
+Müller, D., Nicula, B., Felix, S., et al. 2017, A&A, 606,
+
+A10, doi: 10.1051/0004-6361/201730893
+
+Ouyang, Y., Zhou, Y. H., Chen, P. F., & Fang, C. 2017,
+
+ApJ, 835, 94, doi: 10.3847/1538-4357/835/1/94
+
+Pesnell, W. D., Thompson, B. J., & Chamberlin, P. C.
+
+2012, SoPh, 275, 3, doi: 10.1007/s11207-011-9841-3
+
+Song, H., Li, L., & Chen, Y. 2022, ApJ, 933, 68,
+
+doi: 10.3847/1538-4357/ac7239
+
+Song, H. Q., Chen, Y., Qiu, J., et al. 2018, ApJL, 857, L21,
+
+doi: 10.3847/2041-8213/aabcc3
+
+Song, H. Q., Chen, Y., Ye, D. D., et al. 2013, ApJ, 773,
+
+129, doi: 10.1088/0004-637X/773/2/129
+
+Song, H. Q., Chen, Y., Zhang, J., et al. 2015, ApJL, 804,
+
+L38, doi: 10.1088/2041-8205/804/2/L38
+
+Song, H. Q., Zhang, J., Cheng, X., et al. 2019a, ApJ, 883,
+
+43, doi: 10.3847/1538-4357/ab304c
+
+Song, H. Q., Zhang, J., Li, L. P., et al. 2019b, ApJ, 887,
+
+124, doi: 10.3847/1538-4357/ab50b6
+
+Song, H. Q., Cheng, X., Chen, Y., et al. 2017, ApJ, 848, 21,
+
+doi: 10.3847/1538-4357/aa8d1a
+
+Su, Y., Liu, W., Li, Y.-P., et al. 2019, Research in
+
+Astronomy and Astrophysics, 19, 163,
+
+doi: 10.1088/1674-4527/19/11/163
+
+Tian, H., Tomczyk, S., McIntosh, S. W., et al. 2013, SoPh,
+
+288, 637, doi: 10.1007/s11207-013-0317-5
+
+Tomczyk, S., Card, G. L., Darnell, T., et al. 2008, SoPh,
+
+247, 411, doi: 10.1007/s11207-007-9103-6
+
+Tousey, R. 1973, in Space Research Conference, Vol. 2,
+
+713–730
+
+Vourlidas, A., Lynch, B. J., Howard, R. A., & Li, Y. 2013,
+
+SoPh, 284, 179, doi: 10.1007/s11207-012-0084-8
+
+Wyper, P. F., Antiochos, S. K., & DeVore, C. R. 2017,
+
+Nature, 544, 452, doi: 10.1038/nature22050
+
+Zhang, J., Cheng, X., & Ding, M.-D. 2012, Nature
+
+Communications, 3, 747, doi: 10.1038/ncomms1753
+
+http://doi.org/10.3847/1538-4357/834/1/86
+http://doi.org/10.1038/s41550-021-01414-z
+http://doi.org/10.1016/j.asr.2004.12.066
+http://doi.org/10.1007/s11207-011-9776-8
+http://doi.org/10.1029/1999JA900477
+http://doi.org/10.1088/0004-637X/722/1/289
+http://doi.org/10.1007/s11214-017-0394-0
+http://doi.org/10.1051/0004-6361/201730893
+http://doi.org/10.3847/1538-4357/835/1/94
+http://doi.org/10.1007/s11207-011-9841-3
+http://doi.org/10.3847/1538-4357/ac7239
+http://doi.org/10.3847/2041-8213/aabcc3
+http://doi.org/10.1088/0004-637X/773/2/129
+http://doi.org/10.1088/2041-8205/804/2/L38
+http://doi.org/10.3847/1538-4357/ab304c
+http://doi.org/10.3847/1538-4357/ab50b6
+http://doi.org/10.3847/1538-4357/aa8d1a
+http://doi.org/10.1088/1674-4527/19/11/163
+http://doi.org/10.1007/s11207-013-0317-5
+http://doi.org/10.1007/s11207-007-9103-6
+http://doi.org/10.1007/s11207-012-0084-8
+http://doi.org/10.1038/nature22050
+http://doi.org/10.1038/ncomms1753
+
+
+7
+
+Sun
+
+Earth
+
+A
+B
+
+18:30 20:00 19:30 20:00 20:30
+Start Time (2014-06-14 18:30:00 UT)
+
+C
+
+M
+
+Figure 1. Positions of the Earth (SDO and SOHO) and STEREO in the ecliptic plane on 2014 June 14 and their observations.
+(Top Left) EUVI-B 195 Å image, showing the source location of solar eruption. (Bottom Left) AIA 193 Å image, confirming a
+limb event from the Earth perspective. (Top right) GOES soft X-ray 1-8 Å flux, displaying an M1.4 class flare. (Bottom right)
+LASCO C2 image, presenting a CME without the typical three-part structure.
+
+
+
+8
+
+Doppler Velocity (km/s)
+
+-10 -6 -3 0 3 6 10
+
+Figure 2. Observations of the CME prior to and during eruption. (Top left) AIA 171 Å image showing the coronal loops
+prior to eruption at 19:23:39 UT, with the inner panel displaying the simultaneous CoMP observation of Doppler-velocity. (Top
+middle) AIA 171 Å image showing the rising loops during eruption at 19:27:59 UT, also along with the CoMP Doppler-velocity
+image. (Top right) Base-difference image of K-Cor at 19:27:58 UT, displaying the spatial relations of CME front and coronal
+loops in top-middle panel. (Bottom left) AIA 131 Å image at 19:27:56 UT. (Bottom middle) AIA 131 Å image at 19:33:32 UT
+with red-dotted line delineating the hot-channel MFR. (Bottom right) Base-difference image of K-Cor at 19:33:32 UT, showing
+the typical three-part structure of the CME. The left part of each frame of the animation displays the complete eruption process
+from 19:22 to 19:39 UT with the composite observations of AIA 131 Å, 171 Å, and 193 Å, while the right part of each frame
+presents the evolution process of the CME from 19:23 to 19:47 UT through the base-difference images of K-Cor. The duration
+of the animation is 8 s.
+
+
+
+9
+
+Figure 3. A 2-dimensional schematic sketch for the intrinsic structure of CMEs. The top panels display the case without a
+prominence. (Left) The MFR (circle filled with blue) is in equilibrium prior to eruption. (Middle) The MFR , corresponding
+to the CME core, rises and stretches the overlying coronal loops, and the background plasmas are piled up surrounding the
+loops, corresponding to the CME front (brown). The vertical dotted line represents the current sheet. (Right) The low-density
+zone is occupied by MFR expansion and magnetic reconnections in the current sheet, leading to the disappearance of the CME
+cavity. The bottom panels display the case with a prominence as represented by the ellipse filled with red. (Left) The MFR
+and prominence are in equilibrium prior to eruption. (Middle) The MFR and prominence, corresponding to the CME core, rise
+and stretch the overlying coronal loops, and the background plasmas are piled up surrounding the loops, corresponding to the
+CME front. The vertical dotted line represents the current sheet. (Right) The low-density zone is occupied by MFR expansion
+and magnetic reconnections in the current sheet. In some cases as pointed with the red arrow, the prominence density decreases
+obviously due to the expansion and material draining back to solar surface, thus the CME loses the three-part feature in the
+high corona. In other cases as pointed with the green arrow, the prominence keeps relatively higher density, and the CME could
+still exhibit the three-part feature with the prominence and MFR being observed as the bright core and dark cavity, respectively.
+
+
+
+10
+
+Figure 4. A representative event selected from Table 1 (Event 7 occurred on 2011 March 27). (Left) The LASCO C2 image,
+showing a CME without typical three-part structure in the white-light image. (Right) The composite image of AIA 304 Å and
+193 Å, displaying the three-part feature in the EUV passbands. The animation displays the complete eruption process from
+04:35 to 05:35 UT with the composite observations of AIA 304 Å and 193 Å. The duration of the animation is 3 s, which is
+created with the JHelioviewer software (Müller et al. 2017).
+
+
+	1 Introduction
+	2 Instruments
+	3 Observations and Results
+	4 Summary and Discussion
+

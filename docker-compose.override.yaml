@@ -1,0 +1,13 @@
+# docker-compose.override.yml
+version: '3.9'
+
+services:
+  redis:
+    ports:
+      - "6379:6379"
+
+  celery:
+    command: celery -A app.celery_app worker --loglevel=debug
+
+  web:
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

@@ -1,0 +1,121 @@
+:root {
+  --brand-rose: rgba(216, 1, 60, 0.05);
+  --brand-teal: rgba(0, 128, 128, 0.7);
+  --brand-gray: rgba(128, 128, 128, 0.7);
+  --brand-navy: rgba(25, 30, 40, 0.9);
+}
+
+body {
+  background-color: var(--brand-rose);
+  font-family: 'Georgia', serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Futura', sans-serif;
+}
+
+h1.display-4 {
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.text-muted {
+  color: var(--brand-gray) !important;
+}
+
+footer {
+  padding: 10px;
+  text-align: center;
+  background-color: var(--brand-gray);
+  color: white;
+}
+
+#pdf-container, #analysis-container, #json-container, #text-container {
+  padding: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  height: 100vh;
+}
+
+#pdf-container {
+  display: none;
+}
+
+#analysis-container {
+  background-color: rgb(226, 227, 229);
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+#json-container {
+  background-color: rgb(243, 231, 235);
+}
+
+input[type="file"],
+button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--brand-teal);
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: var(--brand-gray);
+}
+
+#loading-indicator {
+  visibility: hidden;
+  width: 20px;
+  height: 20px;
+}
+
+.spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: conic-gradient(var(--brand-gray) 25%, transparent 25% 100%);
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.has-tooltip {
+    border-bottom: 1px dotted #888;
+    cursor: help; /* changes the cursor to a question mark on hover */
+}
+
+.title-bg {
+    background-color: var(--brand-teal);  /* Dark background */
+    color: #fff;  /* White text color for the title */
+    padding: 20px 0;  /* Some padding for top and bottom */
+    width: 100vw;  /* This makes it span the full viewport width */
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.title-bg a {
+    color: #fff;
+}
+
+.title-bg a:hover {
+    color: #ddd;
+}
+
+#d3-container {
+    background-color: white;
+}
+
+
+
+
+

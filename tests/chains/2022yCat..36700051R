@@ -1,0 +1,2436 @@
+Astronomy & Astrophysics manuscript no. main
+©ESO 2022
+November 22, 2022
+Solar energetic electron events measured by MESSENGER and
+Solar Orbiter
+Peak intensity and energy spectrum radial dependences: statistical analysis
+L. Rodríguez-García1, R. Gómez-Herrero1, N. Dresing2, D. Lario3, I. Zouganelis4, L. A. Balmaceda3, 5,
+A. Kouloumvakos6, A. Fedeli2, F. Espinosa Lara1, I. Cernuda1, G. C. Ho6, R. F. Wimmer-Schweingruber7, and
+J. Rodríguez-Pacheco1
+1 Universidad de Alcalá, Space Research Group, Alcalá de Henares, Madrid, Spain
+e-mail: l.rodriguezgarcia@edu.uah.es
+2 Department of Physics and Astronomy, University of Turku, FI-20014 Turku, Finland
+3 Heliophysics Science Division, NASA Goddard Space Flight Center, Greenbelt, MD, USA
+4 European Space Astronomy Center, European Space Agency, Villanueva de la Cañada, Madrid, Spain
+5 George Mason University, Fairfax, VA, USA
+6 The Johns Hopkins University Applied Physics Laboratory, Laurel, MD, USA
+7 Institut fuer Experimentelle und Angewandte Physik, University of Kiel, Kiel, Germany
+Received July 20, 2022; accepted November19, 2022
+ABSTRACT
+Context. We present a list of 61 solar energetic electron (SEE) events measured by the MESSENGER mission and the radial depen-
+dences of some parameters associated to these SEE events. The analysis comprises the period from 2010 to 2015, when MESSENGER
+heliocentric distance varied between 0.31 and 0.47 au. We also show the radial dependencies for a shorter list of 12 SEE events mea-
+sured in February and March 2022 by spacecraft near 1 au and by Solar Orbiter around its ﬁrst close perihelion at 0.32 au.
+Aims. To study the radial dependences of the electron peak intensity and the energy spectrum of the electron intensity at the time of
+the SEE event peak intensity taking advantage of multi-spacecraft measurements.
+Methods. We compiled the list of SEE events measured by MESSENGER and Solar Orbiter using hourly averages to ﬁnd the prompt
+component of the near-relativistic (∼70-110 keV) electron peak intensities, and calculate the peak-intensity energy spectra. We also
+obtained the peak intensities and energy spectra for the same events as measured by STEREO-A, -B, ACE or Wind spacecraft
+when one of these spacecraft was in close nominal magnetic connection with MESSENGER or Solar Orbiter to derive the radial
+dependencies of these SEE parameters.
+Results. (1) Due to the elevated background intensity level of the particle instrument on board MESSENGER, the SEE events
+measured by this mission are necessarily large and intense; most of them accompanied by a CME-driven shock, being widespread in
+heliolongitude, and displaying relativistic (∼1 MeV) electron intensity enhancements. For this SEE sample we found: (2) The SEE
+peak intensity shows a radial dependence that can be expressed as Rα, where the median value of the α index is αMed=-3.3±1.4 for
+a subsample of 28 events where the nominal magnetic footpoints of the near 0.3 au and 1 au spacecraft were close in heliographic
+longitude. (3) The mean spectral index δ of a subset of 42 events where the energy spectrum could be analysed is <δ>=-1.9 ± 0.3,
+which is harder than the value found in previous studies using data from spacecraft near 1 au. SEE events observed by Solar Orbiter
+also display harder energy spectra than prior studies using near 1 au data.
+Conclusions. There is a wide variability in the radial dependence of the electron peak intensities, but on average and within un-
+certainties, the ∝ R-3 dependence found in previous observational and modelling studies is conﬁrmed. The electron spectral index
+found in the energy range around ∼200 keV (δ200) of the backward-scattered population near 0.3 au measured by MESSENGER is
+respectively harder by a median factor of ∼20% and ∼10% when comparing to the near 1 au anti-sunward propagating beam and the
+backward-scattered population.
+Key words. Sun: particle emission– Sun: coronal mass ejections (CMEs) –Sun: ﬂares – Sun: corona – Sun: heliosphere
+1. Introduction
+Solar energetic electron (SEE) events are sporadic enhancements
+of electron intensities associated with solar transient activity.
+At ∼1 au, these intensity enhancements are usually observed at
+near-relativistic energies (≳ 30 keV) and occasionally also at rel-
+ativistic energies (≳ 0.3 MeV). The mechanisms proposed to ex-
+plain the origin of solar near-relativistic electron events include
+acceleration during the processes associated with solar ﬂares
+(Kahler 2007), magnetic restructuring in the aftermath of coro-
+nal mass ejections (CMEs; e.g. Maia & Pick 2004; Klein et al.
+2005), and/or acceleration at shocks driven by fast CMEs (Sim-
+nett et al. 2002).
+The passage of interplanetary (IP) shocks at ∼1 au is infre-
+quently accompanied by increases in electron intensities (Tsuru-
+tani & Lin 1985; Lario et al. 2003; Dresing et al. 2016). There-
+fore, the peak intensity in SEE events is usually observed during
+the prompt component of the event shortly after its onset. In gen-
+eral, the properties of the SEE events, including the peak inten-
+sity measured early in the event, depend on both the processes
+Article number, page 1 of 20
+arXiv:2211.11054v1  [astro-ph.SR]  20 Nov 2022
+A&A proofs: manuscript no. main
+that accelerate the electrons near the Sun and the time history
+of the injection of electrons into the IP medium, but also on the
+transport of these particles from their source up to the spacecraft
+(e.g. Agueda et al. 2009, and references therein).
+The observation of SEE events by spacecraft located at he-
+liocentric distances less than 1 au (i.e., closer to the acceleration
+site) is crucial to understand how solar electrons are injected into
+IP space. The electron energy spectrum measured near the Sun
+might resemble the injected spectrum at the ﬂare site or in the
+CME-shock environment if it is not modiﬁed by transport ef-
+fects. However, transport simulations, which include pitch-angle
+scattering, show that when injecting particles with a spectrum re-
+sembling a single power-law at the Sun, an observer at 0.3 au still
+observes a single power-law, while at 1 au a broken power-law
+has formed (Strauss et al. 2020). This is in agreement with the
+broken power-law spectrum usually found in studies using near
+1 au observations (e.g. Dresing et al. 2020), where the change
+in the spectral shape might be related to stronger IP scattering
+undergone by higher energy particles (≳ 100 keV).
+The multi-spacecraft observation of SEE events at diﬀerent
+heliocentric distances is essential to determine the eﬀects of the
+particle transport in the properties of the events. In principle, the
+particle intensities observed by two spacecraft at diﬀerent helio-
+radii but magnetically connected to the same solar source region
+depend on (1) how particles are injected onto the IP magnetic
+ﬁeld line that connects both spacecraft and (2) how energetic
+particles are transported from the source region towards the ob-
+servers (Lario et al. 2013a). However, the magnetic connection
+between two spacecraft cannot always be guaranteed, and the ra-
+dial dependence of SEE intensities may be diﬀerent in each indi-
+vidual event. Therefore, statistical analyses over a large number
+of events are pertinent to characterize the SEE properties, their
+underlying distributions, possible associations among them and
+other dependencies, such as for example the radial dependence
+of the SEE peak intensity or energy spectral index.
+In this paper we perform a statistical study of some of
+the SEE parameters using multi-spacecraft observations of SEE
+events. In particular, we use energetic electron measurements
+from 2010 February to 2015 April at diﬀerent helioradii obtained
+by the MErcury Surface Space ENvironment GEochemistry and
+Ranging (MESSENGER; Solomon et al. 2007) mission near 0.3
+au, the twin spacecraft of the Solar TErrestrial RElations Ob-
+servatory (STEREO; Kaiser et al. 2008), the Advanced Compo-
+sition Explorer (ACE; Stone et al. 1998) and the Wind spacecraft
+(Szabo 2015) near 1 au. Combination of these data sets is impor-
+tant because measurements of the radial dependence of electron
+events are rare, normally due to the scarcity of measurements
+of SEE events at helioradii < 1 au. Thus, these observations al-
+low us to study some parameters of the SEE events near the Sun
+and analyse how the IP transport might aﬀect them. In particular,
+we use MESSENGER and the corresponding spacecraft near 1
+au when in close magnetic connection to obtain a radial depen-
+dence of the SEE peak intensities and energy spectra of the peak
+intensity measured in the prompt component of electron events.
+The goals of this study are three. (1) To present all SEE
+events measured by the MESSENGER mission suitable for anal-
+ysis (Sect. 3). (2) To determine the radial dependence of the elec-
+tron peak intensities in the inner heliosphere (Sect. 4). (3) To per-
+form a statistical study of the electron energy spectrum measured
+at the peak of the event by MESSENGER (Sect. 5.1); and to
+study the radial dependence of the energy spectral indices in the
+SEE events measured by MESSENGER (Sect. 5.2). The analysis
+and conclusions from this study are relevant and timely, and can
+be further developed by ongoing new missions in the inner he-
+liosphere, such as Solar Orbiter (Müller et al. 2020; Zouganelis
+et al. 2020), Parker Solar Probe (PSP; Fox et al. 2016) or Bepi-
+Colombo (Benkhoﬀ et al. 2010). As a preamble, we include in
+Sect. 6 SEE events measured by Solar Orbiter near its ﬁrst close
+perihelion. During February and most part of March 2022, Solar
+Orbiter was consistently magnetically connected with STEREO-
+A along nominal Parker spiral magnetic ﬁeld lines, so the radial
+dependence of SEE event properties along the magnetic ﬁeld can
+be studied. The rest of the paper is structured as follows. Section
+7 summarizes and discusses the main ﬁndings of the study, and
+Sect. 8 outlines our main conclusions. The instrumentation used
+in this study is introduced in Sect. 2.
+2. Instrumentation
+The statistical study of SEE events from diﬀerent heliocentric
+distances requires the analysis of observations from a wide range
+of instrumentation on board diﬀerent spacecraft. We used data
+from MESSENGER, Solar Orbiter, STEREO, ACE, Wind, the
+SOlar and Heliographic Observatory (SOHO; Domingo et al.
+1995), the Solar Dynamics Observatory (SDO; Pesnell et al.
+2012), and the Geostationary Operational Environmental Satel-
+lites (GOES; García 1994).
+Remote-sensing observations of CMEs and related solar ac-
+tivity phenomena on the Sun’s surface were provided by the
+Atmospheric Imaging Assembly (AIA; Lemen et al. 2012) on
+board SDO, the C2 and C3 coronagraphs of the Large An-
+gle and Spectrometric COronagraph (LASCO; Brueckner et al.
+1995) instrument on board SOHO, and the Sun Earth Connec-
+tion Coronal and Heliospheric Investigation (SECCHI; Howard
+et al. 2008) instrument suite on board STEREO. In particular,
+we used the COR1 and COR2 coronagraphs and the Extreme
+Ultraviolet Imager (EUVI; Wuelser et al. 2004), part of SEC-
+CHI suite. Radio observations were provided by the S/WAVES
+(Bougeret et al. 2008) investigation on board STEREO and the
+WAVES (Bougeret et al. 1995) experiment on board Wind, and
+we also consulted the summary plots provided by the Observa-
+toire de Paris-Meudon1. Data from the X-Ray telescopes of the
+GOES satellites were also used2.
+In situ energetic particle observations were provided by
+the Energetic Particle Spectrometer (EPS), part of the Ener-
+getic Particle and Plasma Spectrometer (EPPS; Andrews et al.
+2007), on board MESSENGER; the Electron Proton Telescope
+(EPT) instrument, part of the Energetic Particle Detector (EPD;
+Rodríguez-Pacheco et al. 2020), on board Solar Orbiter; the So-
+lar Electron and Proton Telescope (SEPT; Müller-Mellin et al.
+2008) on board STEREO (part of the IMPACT instrument suite,
+Luhmann et al. 2008); the Electron Proton and Alpha Moni-
+tor (EPAM; Gold et al. 1998) on board ACE; and the Three-
+Dimensional Plasma (3DP) and Energetic Particle Investigation
+(Lin et al. 1995) on board Wind. Several catalogues were con-
+sulted, such as the IP counterpart of CME (hereafter ICME)
+catalogue at Mercury from the University of New Hampshire3
+(Winslow et al. 2015), the CDAW SOHO LASCO CME cata-
+logue4 (Yashiro et al. 2004), the IP shocks catalogue maintained
+by the University of Helsinki5 (Kilpua et al. 2015), and the ﬂare
+1 http://secchirh.obspm.fr/
+2 https://satdat.ngdc.noaa.gov/sem/goes/data/avg/
+3 http://c-swepa.sr.unh.edu/icmecatalogatmercury.html
+4 https://cdaw.gsfc.nasa.gov/CME_list/
+5 http://www.ipshocks.fi/
+Article number, page 2 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Fig. 1. MESSENGER/EPS data set used for the study. (a) Hourly averages of 71-112 keV electron intensities measured by MESSENGER/EPS.
+The time interval covers from 2010 February 7 to 2015 May 1, where SEE events appear as vertical spikes. The vertical dashed line indicates
+the time when MESSENGER was injected in the orbit of Mercury. (b) Heliocentric distance of the MESSENGER mission during the time
+of analysis. (c) Daily and monthly (smooth line) averages of the sunspot number given by the American Relative Sunspot Number (https:
+//www.ngdc.noaa.gov/stp/space-weather/solar-data/solar-indices/sunspot-numbers/american/lists/).
+list available by the Spectrometer Telescope for Imaging X-rays
+(STIX on board Solar Orbiter; Krucker et al. 2020) data center6.
+3. SEE events measured by MESSENGER
+In this section we present the SEE events observed by the MES-
+SENGER mission from 2010 February 7 to 2015 April 30 and
+describe the data source and the criteria for selecting the events.
+3.1. Data source and SEE event selection criteria
+We analysed the MESSENGER/EPS data from 2010 February 7
+to 2015 April 30. MESSENGER was initially en route to Mer-
+cury on 2004 August 3 and ﬁnally inserted into an orbit about the
+innermost planet on 2011 March 18, until the end of the mission
+on 2015 April 30. Thus, during the time of analysis, coinciding
+with the rising, maximum, and declining phase of solar cycle 24,
+the MESSENGER radial distance varied from 0.31 to 0.47 au.
+The EPS instrument measured electrons from ∼25 keV
+to ∼1 MeV. The electron energies chosen here for the SEE
+events identiﬁcation and statistical analysis are 71-112 keV.
+These energies are similar to the 75-105 keV energy band
+covered by STEREO/SEPT, and the 53-103 keV channel in
+ACE/EPAM/DE, both used in the analysis of the radial depen-
+dence presented in Sect. 4. In addition, the 71-112 keV energy
+range or similar has been also used in former studies (e.g. Lario
+et al. 2013a,b; Xie et al. 2019), which facilitates the compari-
+son with previous results. In the case of the analysis of spectra,
+a portion of the remaining electron energy channels was used,
+as explained in Sect. 5.1. The EPS instrument was mounted on
+the far-side of the spacecraft with a ﬁeld of view divided into
+six sectors pointing in the antisunward direction, so it mostly de-
+tected particles moving sunward. Usually, solar energetic parti-
+cle (SEP) events present a higher particle ﬂux and earlier onset in
+the sunward-pointing telescope that is aligned with the IP mag-
+netic ﬁeld (e.g. Gómez-Herrero et al. 2021). Therefore, MES-
+SENGER observations presumably provide a lower limit to the
+6 https://datacenter.stix.i4ds.net/view/flares/list
+actual peak intensities of the SEP events. In this study, we used
+data only from sector S02, which is looking above the spacecraft
+X–Y plane covering 22◦ of the ﬁeld of view, due to the better
+signal-to-noise ratio obtained in this sector (Ho et al. 2011b).
+Figure 1a shows the 71-112 keV electron intensities mea-
+sured by sector S02 of MESSENGER/EPS from 2010 February
+7 to 2015 April 30, where the vertical dashed line indicates the
+time when MESSENGER was inserted into an orbit about Mer-
+cury. Figure 1b shows the variation of the heliocentric distance
+of MESSENGER during the time of the study, varying from 0.31
+to 0.47 au. Figure 1c presents the daily averages of the sunspot
+number together with its monthly averages (thick black line).
+In Fig. 1a, we used hourly averages of the particle intensities
+to improve the statistics of the data, as in prior studies using
+MESSENGER data (e.g. Lario et al. 2013a). In this compressed
+time scale, SEE events appear as vertical spikes. The occasional
+transient bursts of energetic electrons observed in the Mercury’s
+magnetosphere (Ho et al. 2011a) were excluded in this study.
+The electronics of the EPS instrument were designed to be able
+to activate either a large or small pixel for electron detectors,
+providing a 20-to-1 dynamic range adjustment to maximize the
+electron detection geometric factor (Andrews et al. 2007). Be-
+cause of this adjustment, the instrument background intensity
+was temporarily reduced in August 2011, as can be seen in Fig.
+1a, but it was returned to its original value afterwards. Figures 1a
+and 1c show that this background level might also be aﬀected by
+the presence of galactic cosmic rays, showing a gradual decrease
+as the solar activity increased.
+The criteria used to select the SEE events are as follows. (1)
+The event has to show a clear increase over the background level
+identiﬁed by eye in the 71-112 keV electron channel and (2) a
+single solar origin should be identiﬁed with a distinctive site of
+the parent solar activity. Regarding the ﬁrst requirement, and due
+to the elevated background level of the EPS instrument, the se-
+lected events show intensities that are normally above ∼104 (cm2
+sr s MeV)-1. An exception to this is the period of 2011 August,
+when EPS geometric factor was modiﬁed allowing for a transi-
+tory detection of less intense events, as discussed above.
+Article number, page 3 of 20
+A&A proofs: manuscript no. main
+Table 1. Solar energetic electron events measured by the MESSENGER mission.
+Solar event
+SEE event
+Lists
+#
+Date
+T-III
+Flare
+CA
+R
+Imax_MESS (bg)
+δ
+Imax_near_1au[I’corr.](bg)
+s/c: CA diﬀ.
+onset
+loc [class]
+MESS
+MESS
+71 to 112 keV e
+MESS
+75 to 105 keV e
+(UT ± 5 min)
+(deg)
+(deg)
+(au)
+(cm2 sr s MeV)-1
+(-)
+(cm2 sr s MeV)-1
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+(8)
+(9)
+(10)
+(11)
+*1+
+2010/08/14
+10:00^
+N17W052 [C4.4]
+-67
+0.31
+2.5×104 (1.6×104)
+-
+7.5×101 [1.2×102] (4.0×101)
+STA: -20◦
+a, b, c, f, g
+*2++
+2010/08/18
+05:35
+N17W101 [C4.5]
+-39
+0.31
+3.7×104 (1.5×104)
+-
+3.2×103 [3.1×103] (3.2×101)
+STA: +1◦
+a, b, c, g
+*3
+2011/03/07
+19:55^
+N30W048 [M3.7]
+168
+0.34
+7.5×104 (1.6×104)
+-1.78±0.13⋄
+-
+-
+b, c, d, e, g
+*4++
+2011/06/04
+06:50
+N16W144 [-]
+-12
+0.33
+3.1×104 (9.0×103)
+-2.26±1.14
+7.5×103 [6.8×103] (7.9×101)
+STA: +3◦
+a, b, g
+*5++
+2011/06/04
+21:50^
+N16W153 [-]
+-5
+0.33
+4.9×107 (2.0×104)
+-1.94±0.21⋄
+6.3×105 [5.9×105] (3.0×104)
+STA: +5◦
+a, b, g
+*6+
+2011/08/02
+06:25^
+N15W015 [M1.4]
+19
+0.46
+1.5×103 (2.5×102)
+-
+1.0×102 [4.6×102] (2.3×101)
+STB: +24◦
+a, b
+*7+
+2011/08/04
+03:50
+N19W036 [M9.3]
+37
+0.46
+1.6×103(5.0×102)
+-
+2.3×102 [7.5×102] (3.3×101)
+STB: +27◦
+a, b, c, d, e, f, g
+*8++
+2011/09/22
+10:40
+N09E089 [X1.4]
+90
+0.36
+8.1×104 (1.4×104)
+-1.97 ±0.36⋄
+4.5×103 [6.4×103] (9.4×102)
+STA: +18◦
+a, b, c, d, e, f, g
+*9
+2011/10/04
+12:30^
+N26E153 [-]
+-14
+0.42
+2.9×105 (1.0×104)
+-1.88±0.17⋄
+-
+-
+a, b, c, e, g
+10
+2011/10/14
+11:00^
+N10E140 [-]
+-36
+0.47
+2.3×104 (1.2×104)
+-
+-
+-
+a, b
+*11
+2011/11/03
+22:15
+N09E154 [-]
+-74
+0.44
+1.4×105 (9.0×103)
+-1.69±0.10⋄
+-
+-
+a, b, c, d, e, f, g
+12+
+2011/11/09
+13:10
+N24E035 [M1.1]
+34
+0.42
+3.6×104 (1.0×104)
+-1.96±0.28⋄
+9.1×102 [9.7×101] (9.2×101)
+STB: -32◦
+a, b, g
+*13++
+2011/11/17
+20:15^
+N18E120 [-]
+-71
+0.38
+5.8×104 (7.1×103)
+-1.94±0.26⋄
+7.9×102 [1.0×103] (2.7×102)
+STB: -11◦
+a, g
+*14+
+2012/01/02
+14:30
+N08W104 [C2.4]
+-34
+0.43
+2.1×104 (8.1×103)
+-
+6.4×102 [1.7×103] (3.7×102)
+STA: -29◦
+b, g
+*15++
+2012/01/23
+03:40
+N28W021 [M8.7]
+-157
+0.46
+3.4×104 (8.7×103)
+-1.78±0.36⋄
+1.8×104 [1.6×104] (7.8×101)
+STA: +11◦
+b, c, d, e, f, g
+*16++
+2012/01/27
+18:15
+N27W078 [X1.7]
+-108
+0.46
+8.7×104 (8.5×103)
+-1.70±0.19⋄
+1.6×104 [1.1×104] (1.0×104)
+STA: +19◦
+a, b, c, d, e, f, g
+*17++
+2012/03/04
+11:05
+N19E061 [M2.0]
+-8
+0.31
+8.4×104 (8.9×103)
+-2.41±1.29⋄
+5.5×104 [5.3×104] (6.2×102)
+STB: +1◦
+b, c, f, g
+*18++
+2012/03/05
+03:35
+N17E052 [X1.1]
+-2
+0.31
+1.5×106 (4.1×104)
+-1.98±0.20⋄
+7.3×104 [7.5×104] (2.7×104)
+STB: +4◦
+b, d, e, g
+*19++
+2012/03/07
+00:20
+N17E027 [X5.4]
+13
+0.31
+2.2×107 (1.9×104)
+-2.02±0.26⋄
+2.1×104 [6.0×104] (3.7×103)
+STB: +14◦
+b, c, d, e, g
+*20+
+2012/05/17
+01:30
+N11W076 [M5.1]
+-76
+0.35
+8.7×104 (2.0×104)
+-
+3.6×102 [5.8×102] (1.1×101)
+STA: -22◦
+b, d, e, f, g
+*21+
+2012/05/26
+20:40
+N15W121 [-]
+-75
+0.31
+1.9×104 (4.0×103)
+-1.70±0.53
+1.3×104 [7.2×103] (2.3×101)
+STA: +21◦
+b, c, f, g
+*22+
+2012/05/27
+05:10^
+S10E054 [C3.1]
+108
+0.31
+1.3×105 (2.4×104)
+-2.56±0.96⋄
+1.2×105 [1.7×105] (8.7×103)
+STA: +23◦
+-
+*23
+2012/07/12
+15:45^
+S15W001 [X1.4]
+4
+0.46
+1.1×106 (5.5×103)
+-1.95±0.27⋄
+-
+-
+b, d, f
+24
+2012/07/17
+14:00^
+S20W065 [C9.9]
+59
+0.46
+1.6×104 (2.8×103)
+-
+-
+-
+b, f, g
+25
+2012/07/19
+05:20
+S13W088 [M7.7]
+79
+0.46
+2.6×104 (7.1×103)
+-
+-
+-
+b, g
+*26
+2012/07/23
+02:10^
+S17W132 [-]
+116
+0.45
+5.8×104 (9.5×103)
+-1.90±0.18⋄
+-
+-
+b, d, e, g
+27
+2012/07/28
+21:05
+S25E055 [M6.1]
+-76
+0.44
+5.4×104 (4.7×103)
+-2.11±0.42⋄
+-
+-
+-
+(Continued on next page.)
+Article number, page 4 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Table 1. (Continued.)
+Solar event
+SEE event
+Lists
+#
+Date
+T-III
+Flare
+CA
+R
+Imax_MESS (bg)
+δ
+Imax_near_1au[I’corr.](bg)
+s/c: CA diﬀ.
+onset
+loc [class]
+MESS
+MESS
+71 to 112 keV e
+MESS
+75 to 105 keV e
+(UT ± 5 min)
+(deg)
+(deg)
+(au)
+(cm2 sr s MeV)-1
+(-)
+(cm2 sr s MeV)-1
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+(8)
+(9)
+(10)
+(11)
+*28
+2012/09/20
+14:55
+S15E155 [-]
+-29
+0.42
+2.0×106 (2.5×104)
+-1.91±0.21⋄
+-
+-
+b, d, e, g
+*29+
+2012/10/14
+00:35
+N13E137 [-]
+-58
+0.46
+1.9×105 (4.0×103)
+-1.93±0.15⋄
+6.9×101 [1.3×102] (4.0×101)
+STB: -25◦
+b, g
+30++
+NS2013/03/16
+05:45
+S15W045 [C2.8]
+-14
+0.43
+2.7×105 (5.0×104)
+-1.92±0.45⋄
+Previous event bg.
+ACE:-3◦
+-
+*31
+2013/04/11
+07:00
+N09E012 [M6.5]
+-122
+0.46
+2.2×104 (2.7×103)
+-
+-
+-
+b, d, f
+32
+2013/04/24
+21:40
+N10W175 [-]
+38
+0.40
+3.3×106 (7.6×103)
+-2.22±0.16⋄
+-
+-
+b, d
+*33++
+2013/05/13
+15:55
+N11E085 [X2.8]
+67
+0.31
+2.4×104 (6.3×103)
+-1.80±0.59
+4.1×102 [6.0×102] (9.2×101)
+STA: +13◦
+b, g
+*34
+2013/06/21
+02:50^
+S16E073 [M2.9]
+-67
+0.46
+5.5×105 (4.7×103)
+-1.82±0.30⋄
+-
+-
+b, f, g
+35+
+NS2013/08/19
+01:20^
+N10W162 [-]
+-13
+0.32
+4.0×104 (1.5×104)
+-
+No maximum
+STA: -29◦
+-
+*36+
+2013/08/19
+22:30
+N08W178 [M3.3§]
+-1
+0.32
+2.9×107 (1.0×104)
+-1.99±0.25⋄
+4.1×104 [8.6×104] (9.6×102)
+STA: -24◦
+b, d, f
+*37+
+2013/10/11
+07:10
+N21E103 [M1.5]
+-56
+0.43
+1.4×105 (4.6×103)
+-1.92±0.08⋄
+5.9×103 [2.1×103] (4.4×101)
+STB: +28◦
+b, d, e, g
+*38
+2013/10/25
+08:00
+S10E073 [X1.7]
+-62
+0.36
+2.2×105 (1.3×104)
+-1.85±0.16⋄
+-
+-
+b,d, e
+*39
+2013/10/25
+15:00
+S06E069 [X2.1]
+-59
+0.36
+2.8×105 (5.4×104)
+-1.89±0.18⋄
+-
+-
+b, g, f
+*40
+2013/10/28
+15:10
+S08E028 [M4.4]
+-29
+0.34
+8.1×105 (2.1×104)
+-1.97±0.06⋄
+-
+-
+b, d, e
+*41
+2013/11/19
+10:25
+S15W069 [X1.0]
+-41
+0.34
+6.2×104 (5.4×104)
+-1.93±0.31⋄
+-
+-
+b
+*42
+NS2013/11/30
+05:10^
+N13W150[-]
+2
+0.40
+1.5×104 (4.9×103)
+-
+-
+-
+b
+*43
+2013/11/30
+15:00^
+S15E146 [-]
+65
+0.40
+1.6×104 (8.2×103)
+-
+-
+-
+b
+*44++
+2013/12/26
+03:05
+S09E166 [-]
+-9
+0.46
+1.1×106 (4.2×103)
+-2.02±0.38⋄
+1.6×104 [2.0×104] (2.4×101)
+STA: -6◦
+b, d, f, g
+*45++
+2014/01/07
+18:05
+S15W011 [X1.2]
+145
+0.43
+3.2×104 (6.1×103)
+-
+Several events mixed
+STA: +16◦
+d, e, f, g
+*46++
+NS2014/01/28
+00:30^
+S10E081 [C7.6]
+-8
+0.32
+5.9×103 (8.1×102)
+-
+Ion contamination
+STB: +17◦
+-
+47++
+NS2014/01/28
+05:25^
+S14E088 [C9.3]
+-16
+0.32
+2.2×104 (2.7×103)
+-2.02±1.02⋄
+Ion contamination
+STB:+18◦
+-
+48
+2014/01/30
+16:05
+S13E058 [M6.6]
+2
+0.31
+7.4×104 (7.1×103)
+-1.82±0.33⋄
+-
+-
+g
+49+
+2014/02/20
+07:50
+S15W073 [M3.0]
+34
+0.37
+1.3×104 (1.5×103)
+-
+1.3×104 [2.6×103] (6.7×102)&
+ACE: -22◦
+g
+*50++
+2014/02/25
+00:45
+S12E082 [X4.9]
+-137
+0.40
+5.5×104 (1.2×103)
+-1.91±0.47⋄
+6.7×103 [7.2×103] (1.2×102)&
+ACE: -6◦
+d, e, f, g
+*51+
+2014/03/13
+21:40^
+N15W140 [-]
+81
+0.46
+2.3×104 (3.8×103)
+-1.55±0.31
+2.6×102 [5.3×102] (1.4×102)&
+ACE: +35◦
+-
+52+
+2014/08/08
+16:15
+S10W160 [-]
+-41
+0.33
+7.3×104 (6.2×103)
+-1.82±0.21⋄
+1.0×102 [2.1×102] (4.6×101)
+STA: -23◦
+g
+*53++
+2014/09/01
+11:00
+N14E127 [-]
+-44
+0.45
+2.9×107 (3.4×103)
+-1.81±0.03⋄
+4.5×105 [2.5×105] (1.4×102)
+STB: +15◦
+d, e, g
+54+
+2014/09/05
+06:50
+S14E069 [C6.8]
+6
+0.46
+8.6×104 (3.9×104)
+-2.06±0.65
+No SEE
+STB: +23◦
+-
+(Continued on next page.)
+Article number, page 5 of 20
+A&A proofs: manuscript no. main
+Table 1. (Continued.)
+Solar event
+SEE event
+Lists
+#
+Date
+T-III
+Flare
+CA
+R
+Imax_MESS (bg)
+δ
+Imax_near_1au[I’corr.](bg)
+s/c: CA diﬀ.
+onset
+loc [class]
+MESS
+MESS
+71 to 112 keV e
+MESS
+75 to 105 keV e
+(UT ± 5 min)
+(deg)
+(deg)
+(au)
+(cm2 sr s MeV)-1
+(-)
+(cm2 sr s MeV)-1
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+(8)
+(9)
+(10)
+(11)
+55+
+2014/09/08
+23:55
+N12E029 [M4.5]
+39
+0.47
+2.6×104 (5.4×103)
+-
+No SEE
+STB: +30◦
+g
+*56+
+2014/09/10
+17:30
+N14E002 [X1.6]
+64
+0.47
+5.6×104 (1.0×104)
+-1.77±0.16⋄
+9.3×102 [2.2×103] (3.1×102)
+STB: +32◦
+d, g
+*57
+2014/09/24
+20:45
+N13E179 [-]
+-139
+0.44
+5.3×104 (4.7×103)
+-2.19±0.13⋄
+-
+-
+d, g
+58++
+2014/12/13
+14:05^
+S20W143 [-]
+-75
+0.46
+7.8×106 (3.4×103)
+-1.92±0.26⋄
+No data
+STA: -13◦
+d, g
+59+
+2015/02/21
+09:30^
+S40W075 [B4.8]
+-19
+0.44
+3.8×104 (3.9×103)
+-
+1.2×103 [2.7×103] (1.8×102)&
+ACE:+33◦
+-
+60
+2015/03/24
+08:30^
+S01W121 [-]
+-31
+0.43
+1.2×106 (1.3×104)
+-1.94±0.24⋄
+-
+-
+-
+*61
+2015/04/14
+09:15^
+S15W100 [B9]
+-119
+0.32
+1.5×104 (4.5×103)
+-
+-
+-
+-
+Notes. Columns 1 and 2: Event number and date. Column 3: Type III radio burst onset time. Column 4: Flare location in Stonyhurst coordinates and ﬂare class based on GOES
+Soft X-ray (SXR) peak ﬂux. Column 5: Longitudinal separation between the ﬂare location and the footpoint of the magnetic ﬁeld line connecting to MESSENGER, based on
+a 400 km s −1 Parker spiral (positive connection angle (CA) denotes a ﬂare source located at the western side of the spacecraft magnetic footpoint). Column 6: MESSENGER
+radial distance from the Sun. Column 7: 71 -112 keV electron peak intensity measured by MESSENGER. The pre-event background level is shown in parenthesis. Column 8:
+Spectral index of peak intensities based on 71 keV to 1 MeV energies. Column 9: 75 to 105 keV electron peak intensity measured by near 1 au spacecraft (STA: STEREO-A;
+STB: STEREO-B), followed in square brackets by the Corrected peak intensity of a hypothetical 1 au observer with exactly the same CA as MESSENGER. The pre-event
+background level is given in parenthesis. Column 10: Name of the 1 au spacecraft and the CA diﬀerence (CAnear 1au-CAMESS). Column 11: References for the catalogues and
+studies consulted, as speciﬁed in Table 2. * in Col. 1: Widespread SEP event: MESSENGER |CA| or the absolute value of the CA diﬀerence with near 1 au spacecraft is ≥80◦.
+++ in Col. 1: The absolute value of the diﬀerence between MESSENGER and near 1 au spacecraft CA is: |CA diﬀerence| < 20◦. + in Col. 1: The absolute value of the diﬀerence
+between MESSENGER and near 1 au spacecraft CA is: 20◦ ≤ |CA diﬀerence| ≤ 35◦. NS in Col. 2: No CME-driven shock associated to the SEE event. ^ in Col. 3: Type III radio
+burst onset time is uncertain due to occultation or multiple radio emission at the same time of the onset of the event. § in Col. 4: The GOES intensity level is deduced from the
+STEREO/EUVI light curve as explained in Rodríguez-García et al. (2021). ⋄ in Col. 8: Presence of 1 MeV electrons. & in Col. 9: ACE/EPAM/DE 53-103 keV electron intensity
+divided by an inter-calibration factor of 1.3.
+Article number, page 6 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Fig. 2. MESSENGER solar energetic electron peak intensities versus
+connection angle (CA). The vertical dashed lines indicate the connec-
+tion angles CA=-80◦ (left) and CA=+45◦ (right).
+The peak intensity in the prompt component of the event, namely
+the maximum intensity reached shortly (usually ≲6 hours) after its on-
+set, is chosen as the maximum intensity. Although electron intensity
+enhancements associated with the passage of IP shocks are rare (Lario
+et al. 2003; Dresing et al. 2016), by selecting the prompt component of
+the SEE events, we minimize the possible eﬀect that traveling IP shocks
+might have on the continuous injection of particles. Therefore, the peak
+intensity of the SEE event is observed when the respective sources of
+particles are still close to the Sun. Events showing multiple intensity en-
+hancements are only considered if the ﬁrst intensity increase reaches a
+maximum before the second event commences and it can be associated
+with a single parent solar event.
+3.2. MESSENGER SEE event list
+Table 1 shows the list of the 61 SEE events selected in this study.
+Columns 1-3 identify each SEE event with a number (1), the solar event
+date (2), and the time of the type III radio burst onset (3), which is de-
+termined using the plots available at the Observatoire de Paris-Meudon
+website1. We use the symbol (^) to indicate when the type III burst on-
+set time is uncertain due to occultation or multiple radio emission at the
+same time of the onset of the event. Column (4) provides the location
+of the solar ﬂare either identiﬁed in this study using extreme ultravi-
+olet (EUV) data from STEREO/EUVI and SDO/AIA, or consulted in
+the diﬀerent catalogues and studies, as listed in Col. 11 and referenced
+in Table 2. The ﬂare class indicated in square brackets is based on the
+1-8 Å channel measurements of the X-Ray telescopes on board GOES.
+To be consistent with previous statistical studies (e.g. Richardson et al.
+2014) we used the ﬂare location as the site of the putative source of
+electrons.
+Column 5 in Table 1 shows the MESSENGER connection angle
+(CA), which is the longitudinal separation between the ﬂare site lo-
+cation and the footpoint of the magnetic ﬁeld line connecting to the
+spacecraft, based on a nominal Parker spiral, as discussed below. Posi-
+tive CA denotes a ﬂare source located at the western side of the space-
+craft’s magnetic footpoint. The magnetic footpoint for MESSENGER
+was estimated assuming a Parker spiral with a constant speed of 400 km
+s-1 using the Solar-MACH tool available online7 (Gieseler et al. 2022;
+Gieseler et al. 2022), as MESSENGER lacks solar wind measurements.
+The heliocentric distance of the MESSENGER spacecraft at the time of
+the event is given in Col. 6, which varies between 0.31 au and 0.47 au
+7 https://doi.org/10.5281/zenodo.7100482
+during the time interval considered in this study. Column 7 summarizes
+the 71-112 keV electron peak intensities corresponding to the prompt
+component of the event as discussed above. The pre-event background
+level is given in parenthesis. We observed a SEE event on 2012 March
+9, but the spacecraft entered in safe mode a few minutes after the onset,
+so no peak intensity was measured and it was not included in the ta-
+ble. In order to keep the self-consistency of the analysis, events number
+6 and 7 measured in August 2011 during the period of increased geo-
+metric factor of the MESSENGER/EPS instrument were not included
+in the study. A detailed description of Cols. 8-10 are given in the fol-
+lowing sections. Col. 11 summarizes the references of catalogues and
+studies that were consulted during the compilation of the list, as detailed
+in Table 2.
+We found a CME (CME-driven shock) related to the SEE event
+in 57 (56) events. We indicate with NS next to the event date in Col.
+2 of Table 1 when no CME-driven shock was associated to the SEE
+event. For these associations we previewed the available conoragraphic
+data near the ﬂare and SEP onset times and registered the related events
+(e.g. Ontiveros & Vourlidas 2009). In almost all the cases, the CMEs
+and CME-driven shock waves were very prominent and clearly related
+to the ﬂare eruption. In a second study, we will analyse the relations
+between the electron peak intensities and the properties of the associ-
+ated parent solar activity (ﬂare, CME, CME-driven shock) for the SEE
+events measured by MESSENGER.
+We consider an event to be widespread when either the MESSEN-
+GER |CA| is more than 80◦ or the longitudinal separation between MES-
+SENGER and another spacecraft near 1 au that detected the event was
+more than 80◦ (Dresing et al. 2014). We indicate these events with
+(*) next to the event number in Col. 1 of Table 1. A total of 44 SEE
+events were widespread. However, the number of widespread events
+could be larger since, apart from not sampling all the heliolongitudes
+with the existing constellation of spacecraft, there were events with a
+high prior-event-related background, or with no data available for some
+of the spacecraft, so no increase could be measured. Relativistic (∼1
+MeV) electron intensity enhancements were observed in 37 events, as
+indicated with an (⋄) in Col. 11 of the list. Thus, the majority of the
+events detected by MESSENGER are accompanied by a CME and a
+CME-driven shock, with a high peak intensity level and the presence of
+∼1 MeV electrons, which are observed by widely separated spacecraft.
+This type of SEE events is expected due to the high background level
+of MESSENGER/EPS that prevents the instrument from measuring less
+intense events (e.g. ﬁgure 1 in Lario et al. 2013a).
+Figure 2 shows the 71-112 keV electron peak intensities as a func-
+tion of the CA. The events with the largest intensities are observed be-
+tween -80◦ ≲CA≲45◦, including the well-connected events at CA∼0◦,
+with a trend toward negative CA values. Poorly connected events at lon-
+gitudes CA≲-80◦ or CA≳45◦ tend to have intensities below ∼105 (cm2sr
+s MeV)−1. The highest SEE intensities observed by the MESSENGER
+mission, showing peaks above 107 (cm2 sr s MeV)-1, are SEE events #5
+(2011/06/04) and #19 (2012/03/07), discussed in detail by Lario et al.
+(2013b); event #36 (2013/08/19), studied in detail by Rodríguez-García
+et al. (2021); and event #53 (2014/09/01).
+4. Radial dependence of the peak intensity in SEE
+events measured by MESSENGER
+In this section we present the selection of SEE events measured by
+MESSENGER and analyse the radial dependence of the electron peak
+intensities.
+4.1. Data source and SEE event selection criteria
+Observational studies dealing with the radial dependence of SEE inten-
+sities are diﬃcult because both radial and longitudinal eﬀects occur to-
+gether and cannot be easily disentangled in the data analysis (McGuire
+et al. 1983; Lario et al. 2006). In order to separate the longitudinal and
+radial eﬀects, we selected the SEE events measured by MESSENGER
+that were also observed by a spacecraft near 1 au when the nominal
+Article number, page 7 of 20
+A&A proofs: manuscript no. main
+Table 2. References for SEP events catalogues and studies.
+Ref.#
+Paper/list
+Reference
+a
+Longitudinal and radial dependence of solar energetic particle intensities:
+Lario et al. (2013a)
+STEREO, ACE, SOHO, GOES, and MESSENGER observations
+b
+> 25 MeV proton events observed by the High Energy Telescopes on the STEREO A and B
+Richardson et al. (2014)
+spacecraft and/or at Earth during the ﬁrst ∼ seven years of the STEREO mission
+c
+Solar ﬂares, coronal mass ejections and solar energetic particle events characteristics
+Papaioannou et al. (2016)
+d
+Catalogue of >55 MeV wide-longitude solar proton events observed by SOHO
+Paassilta et al. (2018)
+ACE, and the STEREOs at ∼ 1 au during 2009-2016
+e
+Connecting the properties of coronal shock waves with those of solar energetic particles
+Kouloumvakos et al. (2019)
+f
+Statistical study on multispacecraft widespread solar energetic particle events during solar cycle 24
+Xie et al. (2019)
+g
+Statistical analysis of the relation between coronal mass ejections and solar energetic particles
+Kihara et al. (2020)
+Fig. 3. Radial dependence of the quasi-relativistic electron intensities in SEE events measured by MESSENGER. (a) The lines connect the SEE
+events for which the longitudinal separation of the nominal footpoints of MESSENGER and the respective observation point near 1 au were ≤ 35◦.
+The orange, red, blue and green crosses indicate the peak intensities observed by MESSENGER, STEREO-A, STEREO-B, and ACE, respectively.
+The dashed lines indicate a R-3 radial dependence. The legend on the right indicate the α index if a radial dependence ∝ Rα is assumed for each
+of the SEE events listed. The numbers next to each α index are corrections based on the small longitudinal eﬀect (details given in the text). The
+purple color indicates the subset of events where the separation of the nominal footpoints of MESSENGER and the respective spacecraft near 1 au
+were < 20◦. (b) Same as in (a) but including an inter-spacecraft calibration factor of 1.3 on the STEREO measurements (details given in the text).
+magnetic connections of both spacecraft were close in longitude, as de-
+tailed below. In order to estimate the magnetic connections we assumed
+a Parker spiral ﬁeld conﬁguration with a solar wind speed of 400 km s−1
+(e.g. Lario et al. 2013b; Joyce et al. 2020). We limited the study to events
+with an estimated longitudinal separation of the nominal footpoints be-
+tween MESSENGER and near 1 au spacecraft of ≤ 35◦. This number
+is the same as the maximum diﬀerence chosen by former radial depen-
+dence studies (e.g. McGuire et al. 1983). This criterion is fulﬁlled in
+38 events out of 61 SEE events observed by MESSENGER, as marked
+with (+) or (++) in Col. 1 of Table 1. The SEE events marked with
+(++) are restricted to a separation of < 20◦, as used in Lario et al. (2006,
+2013a), that was present in a total of 19 events. The speciﬁc magnetic
+connection diﬀerence for each event is indicated in Col. 10 of Table 1.
+It is possible, however, that the telescopes on board diﬀerent space-
+craft detect a diﬀerent range of pitch angles, even when they are in close
+magnetic connection and the telescopes are mounted to scan similar por-
+tions of the sky. To minimize this eﬀect when there is a poor observa-
+tional coverage of the pitch-angle distribution or the latter is not known,
+the use of omnidirectional intensities at the diﬀerent spacecraft is more
+appropriate for the radial dependence analysis. In the case of MESSEN-
+GER, only antisunward observations are available. For the study of the
+radial dependence, we decided to use telescopes on board the space-
+craft near 1 au that point mostly in the sunward direction, or along the
+nominal Parker spiral direction, and to evaluate the eﬀect of the diﬀer-
+ent viewing directions on the radial dependence of the electron peak
+intensities (discussed in Sect. 7).
+Article number, page 8 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Fig. 4. Histograms of the indices α for a radial dependence ∝ Rα of the quasi-relativistic electron intensities in SEE events measured by MES-
+SENGER. (a) Gray (purple) color indicates the α indices for those SEP events for which the longitudinal separation of the nominal footpoints of
+MESSENGER and the respective spacecraft observing near 1 au were ≤ 35◦ (< 20◦). (b) Same as in (a) but including a correction for the diﬀerent
+connection angle. (c), (d) The same as in (a) and (b) but including a calibration factor of 1.3 on STEREO measurements. The legend shows both
+the mean and standard deviation and the median and median absolute deviation. Details given in the text.
+Table 3. Summary of α indices presented in Figs. 4 and 11 for a radial dependence of the peak intensities ∝ Rα
+.
+MESSENGER
+Solar Orbiter
+Ref.
+Corrections & Subsample
+αMed±MAD
+<α>±SD
+αMed ±MAD
+<α>±SD
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(a)
+No corrections & ≤35◦ (<20◦)
+-4.0±1.7 (-2.7±1.4)
+-3.7±2.2 (-3.1±1.7)
+-2.5±1.0 (-2.9±1.3)
+-2.4±2.3 (-2.5±2.4)
+(b)
+Corrected intensity & ≤35◦(<20◦)
+-3.5±1.4 (-2.7±1.2)
+-3.6±2.0 (-3.0±1.6)
+-1.5±1.4 (-1.6±1.5)
+-1.3±2.6 (-1.4±2.8)
+(c)
+Inter-cal. factor & ≤35◦(<20◦)
+-3.7±1.7 (-2.5±1.3)
+-3.4±2.2 (-2.8±1.6)
+-1.6±0.5 (-1.9±1.2)
+-1.5±2.3 (-1.6±2.5)
+(d)
+Corr. int. & inter-cal. & ≤35◦(<20◦)
+-3.3±1.4 (-2.4±1.2)
+-3.3±2.0 (-2.8±1.6)
+-0.8±1.5 (-0.8±1.5)
+-0.5±2.9 (-0.5±3.1)
+Notes. Column (1): panel reference in Figs. 4 and 11. Column (2): corrections included in the measured intensities for the considered subsample,
+namely for the events where the longitudinal separation of the nominal footpoints of MESSENGER or Solar Orbiter and the respective spacecraft
+observing near 1 au were ≤ 35◦ (< 20◦). Column (3)-(4): respectively, median and median absolute deviation (MAD) and mean and standard
+deviation (SD) values for the subsample ≤35◦(<20◦). Column (5)-(6): same as (3)-(4) but for Solar Orbiter.
+Thus, for near 1 au SEE observations, we used data from the
+STEREO/SEPT Sun-telescope, pointing sunward 45◦ west from the
+Sun-spacecraft line; and the ACE/EPAM/Deﬂected Electron (DE) sen-
+sor, part of the Low-Energy Magnetic Spectrometer (LEMS30) tele-
+scope, oriented at 30◦ from the spin axis of ACE that points mostly
+towards the Sun. SEPT measures electrons from ∼45 keV to 425 keV
+and the DE detector of the EPAM instrument measures electrons from
+∼35 keV to 315 keV. To compare with the 71-112 keV electron channel
+of MESSENGER, we used the added channels 75-105 keV for SEPT
+and the channel 53 to 103 keV for ACE.
+To ﬁnd the electron peak intensities near 1 au, we used the same
+criteria explained in Sect. 3.1 regarding the prompt component of the
+peak intensity. As indicated in Col. 9 of Table 1, events number 30,
+35, 45, 46, 47, 54, 55 and 58 were either aﬀected by ion contamination
+(in the case of STEREO/SEPT), no data were available, or a maximum
+peak intensity could not be identiﬁed. This was related to either irregular
+time-intensity proﬁles, a new SEP injection occurring before a peak in-
+tensity could be detected, or the event showing a gradual or continuous
+increase. We also excluded events number 6 and 7, as explained in Sect.
+3.2. Therefore, we ﬁnally selected 28 events for the radial dependence
+study, 14 of which present a longitudinal separation of the nominal foot-
+points of MESSENGER and the respective observing point near 1 au of
+< 20◦.
+Article number, page 9 of 20
+A&A proofs: manuscript no. main
+4.2. Radial dependence of the electron peak intensities
+The electron peak intensities measured near 1 au by STEREO or ACE
+spacecraft are listed in Col. 9 of Table 1. The units for both the
+peak intensity and the pre-event background intensity (in parenthesis)
+are particles (cm2 sr s MeV)-1. The connection angle diﬀerence be-
+tween the respective spacecraft and MESSENGER (CAnear 1au-CAMESS)
+is given in Col. 10. Since no SEP data were obtained when MESSEN-
+GER was close to Earth before being switched oﬀ to start the cruise
+phase to Mercury, no intercalibration was possible between MESSEN-
+GER/EPS intensities and intensities from near-Earth spacecraft. There-
+fore, in order to compare intensities measured by either STEREO/SEPT
+or ACE/EPAM/DE with those from MESSENGER/EPS we adopted the
+following approach. First, we directly compared MESSENGER/EPS
+with STEREO/SEPT data without using any scaling correcting factor,
+but dividing ACE data by the inter-spacecraft calibration factor of 1.3
+with STEREO (estimated in Fig. 2 in Lario et al. 2013a), as noted in Col.
+9 of Table 1 with (&). However, in the decay phase of several events,
+similar electron intensities have been measured between MESSENGER
+and ACE spacecraft (Lario et al. 2011), suggesting the presence of a
+reservoir eﬀect in which comparable intensities are typically measured
+between distant spacecraft (McKibben 1972; Lario 2010; Roelof et al.
+1992). Based on this, we also included the results when multiplying
+the STEREO data by an inter-spacecraft calibration factor of 1.3, but
+without applying any correction to ACE data. As discussed below, the
+intercalibration factor has little inﬂuence on the results, due to the strong
+dependence of the intensity decrease with the radial distance.
+It is possible that the small longitudinal separation between the
+footpoints of the nominal magnetic ﬁeld lines connecting to MESSEN-
+GER and to near 1 au spacecraft could have an eﬀect on the measured
+radial dependence of the peak intensities. In order to evaluate this longi-
+tudinal eﬀect, we estimated the peak intensity of a hypothetical observer
+located near 1 au at the same nominal connection angle as MESSEN-
+GER, using the longitudinal dependence relation given in equation 3 in
+Xie et al. (2019). This formula predicts the 62-105 keV electron inten-
+sity observed by a spacecraft near 1 au based on the connection angle to
+the solar source. For that purpose, we calculated the intensity value for
+CA=0, I0, as:
+I0 = I/exp(−CA2/2σ2), where σ =
+�7.1 + 0.26CA,
+if CA ≥ 0
+12.9 − 0.28CA,
+if CA < 0,
+(1)
+where I is the peak intensity near 1 au given in Col. 9 of Table 1, and
+CA is the connection angle (in degrees) of the spacecraft observing near
+1 au, deduced from Cols. 5 and 10. Knowing I0, from Eq. 1 we can es-
+timate the ‘corrected’ intensity as I’=I0*exp(-CA’2/2σ’2) using the CA’
+of MESSENGER. For the sake of brevity, we refer to this intensity cor-
+rected by the small diﬀerence in the connection angle between near 1 au
+spacecraft and MESSENGER as the ‘Corrected intensity’ in the rest of
+the paper. The Corrected intensity is given in squared brackets in Col. 9
+of Table 1. Then, we used this corrected value to evaluate the pure radial
+dependence in electron peak intensity between MESSENGER and near
+1 au spacecraft for exactly the same nominal CA. We note that the ratio
+between the measured and Corrected intensities ranged from I/I’=∼0.2
+in event #6 to I/I’=∼9.4 in event #12.
+Figure 3 shows the distribution of peak intensities as a function of
+the heliocentric distance. The gray (purple) lines connect the peak inten-
+sities in the prompt component of the events for which the separation of
+the nominal footpoints of MESSENGER and the respective spacecraft
+observing near 1 au were ≤ 35◦ (< 20◦). The indices α, if a radial depen-
+dence Rα is assumed for the maximum intensities, are listed on the right
+of each plot. The positive and negative numbers next to each α index
+are the values to add or subtract to the index to correct for the longitu-
+dinal eﬀect. We note that the correction is either positive or negative in
+each event, if the connectivity to the ﬂare location of the hypothetical
+observer near 1au is improved or worsened with respect to the actual
+observation, respectively. The black dashed lines indicate a R-3 radial
+dependence, which is an upper limit obtained by the observational and
+modeling studies described in detail in section 3 of Lario et al. (2013a).
+Whereas in Fig. 3a we used directly MESSENGER and STEREO data
+but applying a dividing intercalibration factor of 1.3 to ACE data, Fig.
+3b shows the same peak intensity radial dependences but using directly
+MESSENGER and ACE data and applying a multiplying factor of 1.3
+on STEREO data, as explained above.
+Figure 4 shows the histogram of the alpha indices for the radial de-
+pendence Rα presented in Fig. 3. Figure 4a (b) shows the result based
+on no inter-spacecraft calibration factor between MESSENGER and
+STEREO for the peak (Corrected) intensity. Figure 4c (d) shows the
+result based on multiplying STEREO data by an intercalibration factor
+of 1.3 for the peak (Corrected) intensity. ACE data are always inter-
+calibrated with STEREO data as discussed above.
+The legend in Fig. 4 shows the mean and the standard deviation
+(SD) and the median and the median absolute deviation (MAD; Feigel-
+son & Babu 2012) of the α index. Based on 28 SEE events, without
+including the corrections due to the intercalibration factor or to the
+longitudinal eﬀect the median value of the α index is αMed=-4.0±1.7.
+The corrections in the median α index due to the intercalibration factor
+and longitudinal eﬀect are ∼8% (αMed=-3.7±1.7) and ∼12% (αMed=-
+3.5±1.4), respectively. When correcting both eﬀects, the median value
+is αMed=-3.3±1.4. In the case of the reduced sample with |CA diﬀerence|
+< 20◦ (14 SEE events), the median of the α index is αMed=-2.7±1.4. In
+this subsample, there is no inﬂuence due to the longitudinal eﬀect on
+the median value (αMed=-2.7±1.2), although the median absolute devi-
+ation is lower when correcting for this eﬀect. The correction due to the
+intercalibration factor is similar to that of the whole sample (∼8%), with
+a median α index αMed=-2.5±1.3. When considering both corrections,
+the median α index is αMed=-2.4±1.2. A summary of the α indices for
+the diﬀerent corrections and subsamples is presented in Cols. (3)-(4) of
+Table 3.
+5. Peak-intensity energy spectra and their radial
+dependence in SEE events measured by
+MESSENGER
+In this section we present the selection of SEE events measured by
+MESSENGER where the energy spectra could be determined. We also
+show the spectra obtained from near 1 au spacecraft when in close nom-
+inal magnetic connection with MESSENGER and study the radial de-
+pendence of the electron energy spectrum measured at the peak of the
+event.
+5.1. MESSENGER peak spectra
+We analysed the spectra of the SEE events measured by the MESSEN-
+GER mission listed in Table 1. The EPS instrument measured electrons
+from ∼20 to ∼1000 keV in 10 energy channels, mainly in the anti-Sun
+direction. The ﬁrst four bins could not be used due to instrumental ef-
+fects, so the energies used in this analysis are from ∼71 keV to ∼1 MeV
+divided into six energy bins. For each one of the events, we took the
+time-of-maximum (TOM) based on the 71-112 keV channel using one-
+hour averages to increase the statistics (Col. 7 in Table 1), and read the
+intensity at this time for the rest of the energy channels. We subtracted
+the pre-event background for each energy channel, which includes back-
+ground increase caused by preceding events. We did not separate or
+discard events depending on their rise times, intensities, delays or cor-
+relations to solar ﬂares, CMEs or type III radio bursts.
+The criteria used for the spectral ﬁtting are as follows. (1) The
+spectrum should include at least four energy bins. (2) An energy bin is
+eliminated if it shows similar or higher intensities than its lower energy
+neighbour (e.g. due to ion contamination), which would correspond to
+a power-law with a positive slope. (3) The relative uncertainty of the
+electron peak intensity with the background subtracted should be be-
+low 50%. Following these criteria, we had to discard 19 events from the
+original list of 61 SEE events.
+For all the remaining 42 events, we ﬁtted the spectrum allowing for
+either a broken or a single power-law shape (e.g. Dresing et al. 2020;
+Strauss et al. 2020), but we found that a single power-law was appropri-
+ate to ﬁt the whole sample of 42 events. Thus, no energy transition was
+found for the selected events. Figure 5a shows a representative peak-
+intensity energy spectrum, with a ﬁt resembling a single power-law. The
+Article number, page 10 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Fig. 5. MESSENGER solar energetic electron event peak spectra. (a) Event representative of the peak-intensity energy spectrum, showing a single
+power-law. The spectral index and its uncertainty are given in the legend. (b) Histogram of the spectral indices for the whole sample of events.
+Mean and standard deviation and median and median absolute deviation values are given in the legend. The purple color indicates the events with
+a CME-driven shock present.
+Fig. 6. Comparison between MESSENGER and near 1 au forward spectra. (a) Event representative of the STEREO peak-intensity energy spectrum
+showing a broken power-law. The legend shows the values of the ﬁt parameters: the spectral index below (δ1) and above (δ2) the spectral transition;
+Eb (vertical dashed line). (b) Spectral indices near 1 au against the spectral indices at MESSENGER. The dashed line indicates equal indices. (c)
+SEE spectral indices diﬀerence (δ200MESS-δ200near_1au_forw) against the spectral index calculated with MESSENGER measurements (δ200MESS).
+resulting spectral index and its uncertainty is given in the legend, where
+the uncertainty is calculated for a conﬁdence interval of 95%. We note
+that the reduced number and large width of the energy channels might
+be behind the single power-law ﬁtting, but the visual impression of the
+spectrum is consistent with a transition near 300 keV.
+Figure 5b shows the histogram of the spectral indices for the 42 SEE
+events, where the mean and median values coincide <δ>=δMed= -1.9 ±
+0.3. The purple subsample corresponds to the events with the presence
+of a CME-driven shock (40 out of 42 events), as observed by the EUV
+and white-light images from STEREO and SOHO points of view. This
+subsample presents the same mean and median values for the spectral
+index as the whole sample.
+As discussed above for the representative example, the absence of
+a broken power-law could be due to several factors, such as the large
+width and small number of the energy bins provided by MESSEN-
+GER/EPS, and the adoption of energy bins only above ∼70 keV for the
+ﬁtting. Due to this instrumental limitation in ﬁnding potential spectral
+transitions, we also ﬁtted the sample using only the three highest energy
+bins that observed the increase in intensity over the background level
+(∼200 keV to ∼1 MeV). We note that these spectral indices have higher
+uncertainties due to the low number of energy bins used for the ﬁtting.
+However, we observed that these ﬁttings were consistently softer than
+those using all bins available. This could be related to the potential ex-
+istence of spectral transitions, which can not be ﬁtted by the model due
+to insuﬃcient energy resolution. We note that the limitations discussed
+above to calculate the energy spectra, regarding the anti-Sun pointing
+of MESSENGER, or the number and width of the energy bins, are not
+present in new ongoing missions, such as Solar Orbiter, which allows
+the exploration of spectral transitions near 0.3 au, as discussed in Sect.
+6.4.
+5.2. Spectra comparison: from 0.3 au to 1 au
+In this section we present the comparison of the energy spectra mea-
+sured by MESSENGER and by spacecraft near 1 au. We limited the
+study to events with a longitudinal separation of the nominal foot-
+points of MESSENGER and the respective observations near 1 au of
+≤ 35◦ (marked with + and ++ in Table 1, as discussed in Sect. 4.1).
+Article number, page 11 of 20
+A&A proofs: manuscript no. main
+Fig. 7. Comparison between backward and forward spectra. (a) Spectral indices near 1 au: backward spectra against forward spectra. (b) and (c)
+The same as in Figs. 6b and 6c but for the backward spectra.
+This subsample includes 18 (2) events measured by STEREO/SEPT
+(Wind/3DP). Because of the anti-Sun pointing of the MESSEN-
+GER/EPS instrument, we adopted the following approach. We compare
+the spectral indices of MESSENGER with the forward spectra mea-
+sured near 1 au in Sect. 5.2.1 and with the backward spectra measured
+near 1 au in Sect. 5.2.2 to evaluate the radial dependence of the spectral
+indices in both conﬁgurations. We refer as forward (backward) spec-
+tra as the energy spectra calculated using the ﬂux of particles mainly
+coming from the Sun (anti-Sun) direction.
+Thus, we used the forward and backward spectra obtained from
+near 1 au spacecraft, where the process followed to determine the spec-
+tra of STEREO is similar as that used by Strauss et al. (2020). In
+this case we used hourly averages to compare with MESSENGER/EPS
+measurements. The electron STEREO/SEPT bins contaminated by ions
+were removed from the study if the estimated ion contamination was
+higher than 40%. In the case of Wind/3DP, the instrument measures en-
+ergetic electrons from 26 keV to 522 keV binned in eight diﬀerent pitch
+angles. We selected the pitch angle covering the ﬂux of particles mainly
+coming from the Sun or anti-Sun direction according to the magnetic
+ﬁeld polarity and removed the ﬁrst noisy channel to obtain the spectrum.
+To be consistent, we also used hourly averages. Ion contamination did
+not aﬀect the peak of the SEE events measured by Wind presented in
+this sample. In the case of the particles coming mainly from the anti-Sun
+direction, there were two events where the increase was not measured
+above the background level of Wind/3DP instrument that were therefore
+excluded of the study. Thus, we only included the 18 events measured
+by STEREO in the backward spectra analysis. To be able to compare the
+single power-law indices from MESSENGER with the broken power-
+law indices from near 1 au spacecraft, we chose the δ200 index for the
+three spacecraft, namely MESSENGER, STEREO and Wind. The term
+δ200 was introduced by Dresing et al. (2020), where δ200 corresponds
+to the spectral indices found in the energy range around 200 keV (equa-
+tion 4 by Strauss et al. 2020). Then, in the case of single-power-law
+events δ and δ200 have equal values.
+5.2.1. Backward spectra near 0.3 au versus forward spectra
+near 1 au
+Figure 6b shows the forward spectral index near 1 au against the spec-
+tral index at MESSENGER. We note that MESSENGER spectral index
+variation is smaller than that of the spectra obtained from 1 au mea-
+surements, whereas the error bars are similar at both locations. Almost
+all of the points (19 out of 20) lie below the unity line. We note that
+the spectral indices are negative numbers and being below the unity
+line means that the spectral indices at MESSENGER are larger (closer
+to -1) than those near 1 au. The median and MAD values for the ra-
+tio δ200MESS/δ200near_1au_forw are 0.8±0.1. This means that, on average,
+the MESSENGER backward spectra are ∼20% harder than the forward
+spectra near 1 au.
+Figure 6c presents the diﬀerence of these indices, showing that
+near 1 au and above 200 keV the spectra are softer than near 0.3
+au, namely the spectral index diﬀerence between MESSENGER and
+STEREO or Wind (δ200MESS-δ200near_1au_forw) is always positive within
+the error bars. The softening in the spectra might be related to IP scatter-
+ing processes. As an example, Fig. 6a shows the peak spectra obtained
+from STEREO/SEPT measurements for the event on 2013 August 19 to
+be compared with the peak spectra obtained from MESSENGER/EPS
+measurements shown in Fig. 5a. This event was studied in detail by
+Rodríguez-García et al. (2021) who interpret the observations in terms
+of strong scattering present between the locations of MESSENGER
+and STEREO-A which may be the cause of the spectral softening. The
+spectral index of δ200=-2.0±0.2 at MESSENGER, softens to δ200=-
+2.59±0.07 near 1 au.
+5.2.2. Backward spectra near 0.3 au versus backward
+spectra near 1 au
+Figure 7b shows the backward spectral index near 1 au against the spec-
+tral index at MESSENGER. Similarly to Fig. 6b, The majority of the
+points (15 out of 18) lie below the unity line. The median and MAD
+values for the ratio δ200MESS/δ200near_1au_back are 0.9±0.1. This means
+that, on average, the MESSENGER backward spectra is ∼10% harder
+than the backward spectra near 1 au.
+Figure 7c presents the diﬀerence of these indices as a function
+of the spectral index at MESSENGER, showing that near 1 au and
+above 200 keV the backward spectra is also softer than near 0.3
+au, namely the spectral index diﬀerence between MESSENGER and
+STEREO (δ200MESS-δ200near_1au_back) is always positive within the er-
+ror bars. Fig. 7a shows that in most of the events (13 out of 18) the
+spectra near 1 au are harder for the backward-scattered population than
+for the anti-sunward propagating beam, which is in agreement with
+the results by Strauss et al. (2020). The ratio of the spectral index
+δ200forward/δ200backward using data from STEREO is 1.1±0.1. It means
+that near 1 au the forward spectra is ∼10% softer than the backward
+spectra.
+6. SEE events measured by Solar Orbiter near its
+ﬁrst close perihelion passage
+In this section we analyse 12 SEE events measured by Solar Orbiter
+from 2022 February 1 to March 22, when the spacecraft was close to its
+ﬁrst perihelion passage, in particular reaching a distance of 0.32 au on
+2022 March 26. During the time of analysis, coinciding with the rising
+phase of solar cycle 25, Solar Orbiter’s radial distance varied from 0.34
+to 0.83 au.
+Article number, page 12 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Fig. 8. Hourly averages of 73-111 keV electron omnidirectional intensities measured by EPD/EPT on board Solar Orbiter (top panel). The time
+interval covers from 2022 February 1 to 2022 March 22 when Solar Orbiter heliocentric distance varied between 0.34 and 0.83 au (bottom panel).
+The numbers 1 to 12 indicate the SEE events included in the study (details given in the text).
+Fig. 9. Conﬁguration of spacecraft in the heliosphere on 2022 February
+3 (left) and March 21 (right), close to the Solar Orbiter ﬁrst perihelion
+passage. Numbered symbols indicate the observers’ locations and the
+spiral lines the corresponding magnetic ﬁeld lines connecting them to
+the Sun using a speed of 400 km s-1. Radial distance and angular in-
+formation given in au and Carrington longitude, respectively. Source:
+Solar-MACH (https://solar-mach.github.io/).
+Left (right) panel of Fig. 9 shows the locations in the heliosphere
+of Solar Orbiter, STEREO, and near Earth spacecraft at the beginning
+(end) of the period of analysis. Thus, the site of the nominal magnetic
+connection of Solar Orbiter on the Sun was very close to those of near
+1 au spacecraft such as STEREO-A, ACE and Wind. This conﬁguration
+of spacecraft gives us the opportunity of studying the radial dependen-
+cies of the electron peak intensities and spectral indices, and comparing
+them with the results obtained from the analysis using MESSENGER
+data.
+6.1. Solar Orbiter data source and SEE event selection
+criteria
+The EPT instrument on board Solar Orbiter measures electrons with
+energies from ∼30 keV to ∼470 keV divided into 34 energy bins. The
+electron bins used here for the identiﬁcation of the SEE events cover
+the energy range between 73 and 111 keV. These energies are similar
+to the 71-112 keV energy channel used in the case of MESSENGER.
+The EPT instrument consists of two double-ended telescopes, where
+EPT-1 is pointing sunward and anti-sunward along the nominal Parker
+spiral, and EPT-2 is pointing northward and southward with some in-
+clination (as shown in the ﬁgure 4 by Rodríguez-Pacheco et al. 2020).
+In this study we used the average of the intensity measured by the four
+telescopes, namely omnidirectional intensities. The reason for using the
+omnidirectional averaging is to compare with the STEREO-A measure-
+ments, where the nominal pointing directions of the STEP telescopes
+changed in 2015, as discussed in Sect. 6.3.
+The top panel of Fig. 8 shows the 73-111 keV electron omnidirec-
+tional intensities measured by EPD/EPT on board Solar Orbiter from
+2022 February 1 to March 22, where the SEE events appear as vertical
+increases. We used hourly averages of the particle intensities to be con-
+sistent with the analysis done using MESSENGER data. The periods
+aﬀected by ion contamination are indicated with ‘ic’ in the ﬁgure. The
+bottom panel shows the variation of the heliocentric distance of Solar
+Orbiter during the time of study. The criteria used to select the SEE
+events are similar to those in Sect. 3.1. In this case, we only selected
+the events measured by Solar Orbiter which were also clearly identiﬁed
+by eye above the background level in STEREO-A or ACE measure-
+ments. We note that Solar Orbiter is able to measure electron intensities
+well below ∼104 (cm2 sr s MeV)-1 due to the lower background level
+of the EPD/EPT instrument in comparison with the MESSENGER/EPS
+instrument in the energy range studied here, as shown in Fig. 1a.
+6.2. Solar Orbiter SEE event list
+Table 4 shows the list of the 12 SEE events selected here. These events
+are indicated with numbers 1 to 12 in Fig. 8. There were several SEE
+events measured by Solar Orbiter during the period of analysis that were
+not included in the list following the criteria discussed in Sects. 3.1 and
+6.1. Three of these events are indicated with a diamond in Fig. 8. There
+were several injections around the time of the event at the beginning of
+the day 2022/02/13 and we could not identify a unique and clear solar
+source. The two small increases measured by Solar Orbiter in the middle
+of the day 2022/03/09 and the beginning of the day 2022/03/10 were not
+included as the electron increase measured at STEREO-A were within
+its background level for both events.
+Article number, page 13 of 20
+A&A proofs: manuscript no. main
+Table 4. Solar energetic electron events measured by Solar Orbiter near its ﬁrst close perihelion.
+Solar event
+SEE event (based on omnidirectional data)
+#
+Date
+T-III
+Flare
+CA
+R
+Imax_SolO (bg)
+δ70
+δ200
+Imax_near_1au[I’corr.](bg)
+s/c: CA diﬀ.
+onset
+loc [class]
+73 to 111 keV e
+SolO
+SolO
+75 to 105 keV e
+(UT ± 5 min)
+(deg)
+(deg)
+(au)
+(cm2 sr s MeV)-1
+(-)
+(-)
+(cm2 sr s MeV)-1
+(1)
+(2)
+(3)
+(4)
+(5)
+(6)
+(7)
+(8)
+(9)
+(10)
+(11)
+1++
+NS2022/02/03
+05:55
+N16W052 [B9.9]
+21
+0.83
+8.9×101 (5.4×101)
+-
+-
+5.3×101 [8.7×101] (3.0×101)
+STA: +7◦
+2++
+NS2022/02/03
+20:40
+N16W059 [C1.4]
+28
+0.83
+2.4×102 (5.0×101)
+-3.06±0.19
+-
+3.2×102 [4.9×102] (2.1×101)
+STA: +7◦
+3++
+NS2022/02/08
+21:35
+S20W045 [C5.2]
+15
+0.79
+5.1×101 (2.9×101)
+-3.60±0.50
+-
+2.5×101 [3.7×101] (1.2×101)
+STA: +5◦
+4++
+NS2022/02/10
+02:45
+S17W056 [B9.3]
+27
+0.78
+4.1×101 (2.2×101)
+-
+1.0×101 [1.3×101] (6.2×100)
+STA: +4◦
+*5++
+2022/02/15
+21:55
+N33E134a [-]
+-161
+0.72
+2.0×103 (2.4×101)
+-1.84±0.25
+-2.09±0.07
+Several events mixed
+STA: +2◦
+6++
+NS2022/03/02
+17:45
+N16E030 [M2.0]
+-57
+0.56
+1.0×102 (2.6×101)
+-
+-
+1.0×102 [9.4×101] (1.2×101)
+STA: +2◦
+7++
+NS2022/03/05
+23:55
+S15W028 [C1.4]
+-1
+0.51
+3.9×102 (4.3×101)
+-5.26 ±0.21
+-
+2.5×101 [2.7×101] (9.5×100)
+STA: +4◦
+*8++
+NS2022/03/07
+15:00
+S50E090 [C1.1]
+-121
+0.49
+1.0×102 (2.7×101)
+-3.45±0.21
+-
+1.8×101[1.6×101](9.4×100)
+STA: +6◦
+9++
+2022/03/10
+19:10
+N25W020 [C2.5b]
+-15
+0.45
+1.1×103 (3.4×101)
+-2.58±0.58
+-3.89±0.77
+Several events mixed
+STA: +10◦
+10++
+2022/03/14
+17:20
+S25W090 [B8.5]
+47
+0.41
+4.1×102 (4.4×101)
+-1.73±0.12
+-1.73±0.12
+Several events mixed
+STA : +17◦
+11+
+NS2022/03/18
+22:15
+N20W041 [B2.9]
+-15
+0.36
+2.5×102 (4.3×101)
+-2.53±0.60
+-
+5.1×101 [8.8×101] (1.8×101)
+STA: +30◦
+*12++
+2022/03/21
+05:40
+S35W146a [-]
+81
+0.34
+3.7×103 (2.8×101)
+-1.77±0.49
+-2.96±1.22
+5.7×102 [6.3×102] (8.5×100)
+ACE& : +4◦
+Columns 1 and 2: Event number and date. Column 3: Type III radio burst onset time. Column 4: Flare location in Stonyhurst coordinates and ﬂare class based on GOES Soft
+X-ray (SXR) peak ﬂux. Column 5: Longitudinal separation between the ﬂare location and the footpoint of the magnetic ﬁeld line connecting to Solar Orbiter, based on a 400
+km s −1 Parker spiral (positive connection angle (CA) denotes a ﬂare source located at the western side of the spacecraft magnetic footpoint). Column 6: Solar Orbiter radial
+distance from the Sun. Column 7: 73-111 keV electron peak intensity measured by Solar Orbiter (SolO). The pre-event background level is shown in parenthesis. Columns 8 and
+9: Respectively, Solar Orbiter spectral indices found in the energy range around 70 keV and 200 keV, based on peak electron intensities. Column 10: 75 to 105 keV electron peak
+intensity measured by near 1 au spacecraft (STA: STEREO-A; STB: STEREO-B), followed in square brackets by the Corrected peak intensity of a hypothetical 1 au observer with
+exactly the same CA as Solar Orbiter. The pre-event background level is given in parenthesis. Column 11: Name of the 1 au spacecraft and the CA diﬀerence (CAnear 1au-CASolO). *
+in Col. 1: Widespread SEP event: Solar Orbiter |CA| or the absolute value of the CA diﬀerence with near 1 au spacecraft is ≥80◦. ++ in Col. 1: The absolute value of the diﬀerence
+between the CA of Solar Orbiter and near 1 au spacecraft is < 20◦. + in Col. 1: The absolute value of the diﬀerence between the CA of Solar Orbiter and near 1 au spacecraft is:
+20◦ ≤ |CA diﬀerence| ≤ 35◦. NS in Col. 2: No CME-driven shock associated to the SEE event. a in Col. 4: Flare location based on longitude and latitude of the 3D CME apex (not
+shown). b in Col. 4: Gradual increase of the X-Ray ﬂux, with a peak at 21:00 UT. & in Col. 10: ACE EPAM DE 53-103 keV electron intensity divided by an inter-calibration factor
+of 1.3.
+Article number, page 14 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+The description of Cols. 1-7 in Table 4 are the same as in Table 1,
+but related to Solar Orbiter measurements. Columns 8-11 are described
+in the following sections. We note that the sample of events included
+in the Solar Orbiter list is smaller than the list of MESSENGER SEE
+events, mainly due to the shorter period of analysis in the Solar Orbiter
+sample. The speciﬁc (ascending) phase of the solar cycle analysed here,
+and the much lower background level of the EPD/EPT instrument on
+board Solar Orbiter are also some factors related to the diﬀerence be-
+tween the two samples.
+In the Solar Orbiter list we mainly ﬁnd small events (9 out of 12),
+with peak 73-111 keV electron intensities that vary from ∼101 to ∼103
+(cm2 sr s MeV)-1, as shown in Fig. 8 and listed in Col. 7 of the table.
+Most of the SEE events measured by Solar Orbiter are related to small
+jets and brightening, as observed with EUV imaging, related to B- and
+C- class ﬂares, based on GOES X-ray 1-8 Å channel, as indicated in
+Col. 4. Three events (5, 9 and 12) presented peak intensities above ∼103
+(cm2 sr s MeV)-1. The event #9 is related to a gradual and long dura-
+tion increase in the X-ray ﬂux given by GOES and to a moderate CME
+speed. It also presents a good nominal connection to the source region
+(CA ∼ -15◦). The two most intense events of the period (#5 and #12) are
+associated with fast CMEs and CME-driven shocks. The electron inten-
+sities are still moderate in both events probably because the nominal
+magnetic connection between Solar Orbiter and the source region was
+poor (|CA| ≳75◦). For these two events, the ﬂare location was estimated
+based on the longitude and latitude of the CME apex given by the 3D re-
+construction (not shown here), as the respective solar sources were not
+visible from Earth or STEREO-A point of view. This is indicated with
+(a) in Col. 4 of Table 4. These two SEP events, 2022 February 15 (event
+#5) and 2022 March 21 (event #12), are widespread events (indicated
+with * in Col. 1), and were observed by several spacecraft widely sep-
+arated in heliolongitude and at diﬀerent radial distances from the Sun.
+In total, three events in the list can be classiﬁed as widespread events,
+but, as explained in Sect. 3.2, the number of widespread events could be
+larger.
+6.3. Radial dependence of the peak intensity in SEE events
+measured by Solar Orbiter
+In this section we analyse the radial dependence of the electron peak
+intensity of the SEE events listed in Table 4. During February 2022,
+Solar Orbiter was consistently in nominal magnetic connection with
+STEREO-A (left panel of Fig. 9). During March 2022, this good nomi-
+nal magnetic connectivity slowly shifted from STEREO-A at the begin-
+ning of the month to ACE and Wind spacecraft at the end of the period
+of study (right panel of Fig. 9). Thus, in 11 of the 12 SEE events listed
+here the longitudinal separation of the nominal footpoints of Solar Or-
+biter and the respective observations near 1 au is < 20◦, as indicated
+with ++ in Col. 1 of Table 4. The speciﬁc connection angle diﬀerence
+between the respective spacecraft near 1 au and Solar Orbiter is given
+in parenthesis in Col. 11 of the list.
+For near 1 au observations, we used data from STEREO-A/SEPT
+and ACE/EPAM/DE as already explained in Sect. 4.1. After the solar
+superior conjunction of the STEREO spacecraft (from January to Au-
+gust 2015), STEREO-A spacecraft was rolled 180 degrees about the
+spacecraft-Sun line in order to allow the high gain antenna to remain
+pointing at Earth. Consequently, the nominal pointing directions of the
+SEP suite of instruments are now diﬀerent from originally intended and
+therefore we used omnidirectional averaging to measure the peak inten-
+sities. The electron peak intensities are listed in Col. 10 of Table 4. The
+units for both the peak intensity and the pre-event background intensity
+(in parenthesis) are particles (cm2 sr s MeV)-1. As indicated with "sev-
+eral events mixed" in Col. 10 for events number 5, 9, and 10, there was
+no clear association between the increase in electron intensities mea-
+sured by STEREO-A and the solar event indicated in Cols. 1-3. Thus,
+we used the nine remaining events for the radial dependence analysis.
+As we did for MESSENGER SEE events, we directly compared
+EPD/EPT on board Solar Orbiter with STEREO/SEPT data without us-
+ing any scaling correcting factor, but we divided ACE data by the inter-
+spacecraft calibration factor of 1.3 with STEREO, as discussed in Sect.
+4.2. This is noted in Col. 10 of Table 4 with (&). However, a preliminary
+comparison of electron measurements by ACE/EPAM/DE and EPT on
+board Solar Orbiter, shows that both instruments measured very similar
+intensities at energies near ∼70-100 keV (Gómez-Herrero et al. 2022).
+This comparison was made during the SEE events that occurred when
+Solar Orbiter was relatively close to Earth near the Earth ﬂyby on 27
+November 2021. Therefore, we also used a multiplying factor of 1.3
+on STEREO data to estimate the radial dependence based on the inter-
+calibration factor discussed in Sect. 4.2, using ACE data with no factor.
+We also applied the correction for the small longitudinal eﬀect present
+in the sample, as discussed in Sect. 4.2.
+Figure 10 shows the peak intensity as a function of heliocentric
+distance for Solar Orbiter SEE events. The gray (purple) lines connect
+the peak intensities in the prompt component of the events, where the
+separation of the nominal footpoints of Solar Orbiter and the respective
+spacecraft observing near 1 au were < 35◦ (< 20◦). The index α for each
+SEE event is shown in the legend, along with the corrections due to the
+longitudinal eﬀect. We also found an event-to-event variability, with α
+values varying between ∼-6 (event #4) and ∼2 (event #2). The diﬀer-
+ence between Figs. 10a and 10b is that Fig. 10a compares directly Solar
+Orbiter data with STEREO-A, dividing ACE data by 1.3, and Fig. 10b
+directly compares Solar Orbiter and ACE data, multiplying STEREO-A
+data by 1.3.
+Figure 11 shows the histogram of the alpha indices for the radial
+dependence ∝ Rα presented in Fig. 10. Figure 11a (b) shows the result
+based on no inter-spacecraft calibration factor between Solar Orbiter
+and near-Earth spacecraft for the peak (Corrected) intensity. Figure 11c
+(d) shows the result based on multiplying STEREO-A data by an in-
+tercalibration factor of 1.3 for the peak (Corrected) intensity. The leg-
+end in Fig. 11a shows that the median and the MAD of the α index,
+if a radial dependence Rα is assumed, are αMed=-2.5±1.0, based on 9
+SEE events and not including the corrections due to the intercalibra-
+tion factor or the longitudinal eﬀect. The correction in the median α
+index due to the intercalibration factor and longitudinal eﬀect is ∼36%
+each (αMed=-1.6±0.5 and αMed=-1.5±1.4, respectively). When consid-
+ering both corrections, the median of the α index is αMed=-0.8±1.9. A
+summary of the α indices for the diﬀerent corrections and subsamples
+is presented in Cols. (5)-(6) of Table 3.
+6.4. Peak-intensity energy spectra and their radial
+dependence in SEE events measured by Solar Orbiter
+In this section we present the selection of SEE events measured by
+Solar Orbiter where the peak-intensity energy spectra could be deter-
+mined. We also study the radial dependence of the spectral indices. As
+presented in Sect. 6.1, the EPT instrument on board Solar Orbiter mea-
+sures electrons from ∼30 keV to ∼470 keV divided into 34 energy bins,
+in four diﬀerent pointing directions (Sun, anti-Sun, north and south). We
+used the omnidirectional averaging to compare with STEREO-A data,
+as discussed in Sect. 6.3. The EPT energy channels below ∼45 keV
+are aﬀected by an instrumental eﬀect which we are currently investigat-
+ing. It leads to substantial variations in the count rates of these energy
+channels and aﬀects the electron spectra. Because we are particularly
+interested in the characterization of the spectral transitions and because
+these variations are likely to inﬂuence the spectral ﬁt, we excluded these
+low-energy bins from our analysis. Then, the energies used in the spec-
+trum analysis are ∼46 keV to ∼470 keV, divided into 28 bins. To com-
+pare with MESSENGER results, we followed the same procedure as
+explained in Sect. 5.1 regarding the hourly-average TOM spectra, in
+this case based on the 73-111 keV energy range. We also subtracted the
+pre-event background level and checked the signiﬁcance level, as de-
+ﬁned in Sect. 5.1, and the ion contamination. From the original list of
+12 events, we discarded three events following the criteria explained in
+Sect. 5.1.
+For the remaining nine events, we followed the ﬁtting procedure as
+explained by Strauss et al. (2020). The δ spectral indices found in the
+energy range around 70 keV (200 keV), namely δ70 (δ200), are given in
+Col. 8 (9) of Table 4. Only four events (number 5, 9, 10 and 12) showed
+electron intensity increase above 200 keV. Four events (number 5, 9,
+Article number, page 15 of 20
+A&A proofs: manuscript no. main
+Fig. 10. Radial dependence of the near-relativistic electron intensities in SEE events measured by Solar Orbiter. (b) same as in (a) but including
+an inter-spacecraft calibration factor of 1.3 on the STEREO measurements. Details given in Fig. 3 and in the text.
+Fig. 11. Histograms of the indices α for a radial dependence ∝ Rα of the quasi-relativistic electron intensities in SEE events measured by Solar
+Orbiter. (a) Gray (purple) color indicates the α indices for those SEP events for which the longitudinal separation of the nominal footpoints of
+Solar Orbiter and the respective spacecraft observing near 1 au were ≤ 35◦ (< 20◦). (b) Same as in (a) but including a correction for the diﬀerent
+connection angle. (c),(d) The same as in (a) and (b) but including a calibration factor of 1.3 on STEREO measurements. The legend shows both
+the mean and standard deviation and the median and median absolute deviation. Details given in the text.
+Article number, page 16 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+Fig. 12. Example of Solar Orbiter solar electron peak spectra. (a) Solar Orbiter omnidirectional spectrum showing a broken power-law for the
+ﬁtting. (b) and (c) Same spectrum as in (a) but respectively using only energies above ∼70 keV and ∼100 keV for the ﬁtting, showing a double
+and single power-law, respectively.
+Fig. 13. δ70 spectral indices near 1 au against the spectral indices at
+Solar Orbiter. The legend shows the radial distance of Solar Orbiter for
+each event.
+11 and 12) could be ﬁtted using a broken power-law, where the mean
+spectral transition is 111±53 keV. Figure 12a shows the omnidirectional
+peak-intensity energy spectrum ﬁtting for event #12 (2022/03/21), when
+Solar Orbiter’s radial distance from the Sun was 0.34 au, showing a dou-
+ble power-law. The spectral index below (δ1) and above (δ2) the spec-
+tral transition Eb (vertical dashed line) are shown in the legend. The
+uncertainties are calculated for a conﬁdence interval of 95%. Figure
+12b (12c) shows the spectral ﬁtting for the same event (2022/03/21),
+but using only the energy bins above ∼70 (∼100) keV, which is a sim-
+ilar starting energy for the ﬁttings done with MESSENGER data. We
+note that in the case of the MESSENGER spectra, there is only one bin
+(channel) covering ∼70-100 keV energies. The ﬁtting still resembles a
+double power-law for Fig. 12b but not for Fig. 12c.
+The mean of the <δ70> indices for nine events measured by So-
+lar Orbiter is -2.9±0.3, while the mean of the <δ200> for the four
+events showing >200 keV electron intensity enhancements is -2.7±0.5.
+We note that the mean of the <δ70> indices for the four events that
+show increases above 200 keV is -1.98±0.36, harder than the <δ200>
+of -2.7±0.5, as found in previous studies Dresing et al. (2020). To anal-
+yse the possible eﬀect of the IP scattering on the energy spectrum, we
+compared the Solar Orbiter spectra with near 1 au measurements, as de-
+scribed in Sect. 5.2, using the δ70 index. From the nine events measured
+by Solar Orbiter where the spectra could be determined, only six events
+could be used for the radial dependence study. As discussed in Sect. 6.3,
+in events number 5, 9, and 10 no clear association between the increase
+in electron intensities measured by STEREO-A and the solar event was
+found.
+Figure 13 shows the δ70 spectral indices measured near 1 au against
+the spectral indices at Solar Orbiter. Although we have only six SEE
+events, it is interesting to note that the position of the points with respect
+to the dashed line (representing equal indices) depends on the distance
+from the Sun of the Solar Orbiter spacecraft. The two events below the
+line correspond to events #11 (0.36 au) and #12 (0.34 au), where the
+spectral indices near 1 au are softer than near 0.3 au.
+7. Summary and discussion
+We presented a list of 61 SEE events measured by the MESSENGER
+mission from 2010 to 2015 when the heliocentric distance of the space-
+craft varied from 0.31 au to 0.47 au. As a preamble for future studies
+using data from new missions exploring the innermost regions of the he-
+liosphere, we also included in the study a reduced list of 12 SEE events
+measured by Solar Orbiter when the spacecraft was close to its ﬁrst per-
+ihelion passage, in particular when the Solar Orbiter’s radial distance
+varied from 0.34 to 0.83 au. For each of the SEE events, we identiﬁed
+the respective solar origin (ﬂare location, type III radio burst onset), es-
+timated the nominal connection angle to the solar source, measured the
+peak intensity, and calculated the peak-intensity energy spectrum when
+possible.
+Due to the elevated background level of the MESSENGER/EPS
+instrument, the majority of the SEE events measured by MESSEN-
+GER presented high peak intensity levels, with ∼1 MeV electron in-
+tensity enhancements (37 events), and being widespread in heliolongi-
+tude (32 events). For most of these events (56 out of 61), a CME-driven
+shock was detected in EUV and white-light coronagraph images. There
+were four events showing peak intensities above 107 (cm2 sr s MeV)-1.
+Among them, the SEP events on 2011 June 4 and 2012 March 7, dis-
+cussed in detail by Lario et al. (2013b), and the widespread event on
+2013 August 19, studied in detail by Rodríguez-García et al. (2021). In
+the case of the SEE events measured by Solar Orbiter, most of them (8
+out 12) were related to small jets and brightening presenting peak inten-
+sities below 103 (cm2 sr s MeV)-1. The two most intense events of the
+period, on 2022 February 15 and March 21, were associated with fast
+CMEs and CME-driven shocks.
+We derived the radial dependencies of the near-relativistic electron
+peak intensities in 28 SEE events measured by MESSENGER/EPS and
+Article number, page 17 of 20
+A&A proofs: manuscript no. main
+in 9 SEE events measured by Solar Orbiter/EPT, when a spacecraft near
+1 au was closely aligned with them along the nominal Parker spiral. In
+the case of MESSENGER, we ﬁnd that the radial dependence can be
+represented as ∝ Rα, where the median alpha index is αMed=-3.3±1.4,
+including both the corrections by the small longitudinal distance be-
+tween the footpoints and the intercalibration factor between the space-
+craft. However, their eﬀect on the median α index is small, namely 12%
+and 8%, respectively. In order to estimate how the anti-sunward MES-
+SENGER/EPS ﬁeld of view limitation aﬀects our results, we compared
+the ratio between intensities of the sunward and anti-sunward looking
+instruments obtained with telescopes on other spacecraft. The median
+ratio for the SEE events analysed in the present work is Imax_sun/Imax_asun
+=1.1±0.2 for STEREO, and =1.3±0.5 for Solar Orbiter. We therefore
+expect that the restricted ﬁeld of view of MESSENGER has an eﬀect
+on the median indices given in this study that lies within the given un-
+certainties.
+In the case of Solar Orbiter, the median α index is αMed=-0.8± 1.5.
+We note the reduced number (9) of events included in the sample and
+the presence of an event with a positive slope. Due to the smaller ra-
+dial separation between Solar Orbiter and STEREO-A for the major-
+ity of the events in comparison with the MESSENGER study, both the
+longitudinal eﬀect and the intercalibration factor play a stronger eﬀect
+(36% each) on the radial dependence analysed here than in the MES-
+SENGER study. Although the α indices derived from MESSENGER
+and Solar Orbiter data are comparable within the uncertainties, the dif-
+ferences might also result from the type of events included in the two
+samples. We mainly measured large intense events with MESSENGER
+while the event sample for Solar Orbiter mostly (8 out of 9) includes
+small impulsive events (peak intensities ∼102 (cm2 sr s MeV)-1). This
+selection may have an impact in the derived indices that cannot be eval-
+uated in this work. Future studies covering diﬀerent phases of the solar
+activity and with larger radial separations between the spacecraft could
+investigate further the radial dependences for diﬀerent kind of samples.
+We note that there is an event-to-event variability in the radial de-
+pendence of the peak intensities, with α values varying between ∼-9
+and ∼0 in the case of MESSENGER and between ∼-6 and ∼2 in the
+case of Solar Orbiter. A steeper or ﬂatter radial dependence than R-3,
+might be due to pre-existent transient solar wind structures, such as IP
+shocks and/or ICMEs and stream interaction regions (SIRs), and/or the
+variability of the scattering processes undergone by the particles during
+their transport in IP space (Lario et al. 2007). We note that the pres-
+ence of these intervening structures, apart from having an eﬀect on the
+transport of energetic particles, may also modify the estimated CA. Ex-
+amples of these scenarios for the MESSENGER SEE events studied
+here can be found in published studies, such as Lario et al. (2013b) for
+events #5 (2011/06/04b) and #19 (2012/03/07); Lario et al. (2013a) for
+SEE event #2 (2010/08/18), #4 (2011/06/04a), and #13 (2011/11/17);
+and Rodríguez-García et al. (2021) for event #36 (2013/08/19). The ac-
+tual heliospheric magnetic ﬁeld conﬁguration in which energetic elec-
+trons propagate varies from event to event. This may aﬀect the radial
+evolution of electron intensities, but can only be assessed in individual
+event studies. The statistical approach of our work describes an average
+behaviour.
+We also analysed the peak-intensity energy spectra in 42 SEE
+events measured by MESSENGER/EPS, where the spectra could be
+determined. The solar origin of most of these events (40 out of 42) in-
+volved a CME-driven shock seen by EUV and white-light coronagraph
+images. For all the events, the peak intensity energy spectra resembled
+a single power-law. In some of the Solar Orbiter events, we could ﬁt
+the spectra using a broken power-law, including two events when the
+spacecraft was near 0.3 au. We also ﬁtted one of these events, namely
+the event observed on 2022 March 21, using only the energy bins above
+∼70 keV and ∼100 keV. The ﬁttings show a broken and single power-
+law, respectively. The diﬀerence between the ﬁttings is mainly the num-
+ber of bins and the range of energies included. Thus, the identiﬁcation
+of a transition in the spectra is strongly conditioned by the experimental
+data set, particularly by the spectral resolution (i.e. number of energy
+bins) and the extension of the energy interval covered by the instru-
+ment. Thus, the lack of bins available at energies below ∼70 keV for
+MESSENGER data and the width of the energy bins above this energy,
+could be the main reason behind not ﬁnding a spectral transition.
+The mean and median spectral index of the 42 SEE events mea-
+sured by MESSENGER are <δ>=δMed=-1.9±0.3. For comparison, we
+considered two previous studies that analysed the forward spectra of
+near-relativistic solar energetic electron events near 1 au. Krucker et al.
+(2009) studied 62 impulsive electron events within energies from 1 to
+300 keV measured by the Wind spacecraft, ﬁnding a <δ200> mean
+value of -3.6±0.7. Dresing et al. (2020) analysed 781 near-relativistic
+solar energetic electron events measured by both STEREO spacecraft.
+They ﬁnd a <δ200> mean value of -3.5±1.4. Thus, the MESSENGER
+backward spectra is much harder than the forward spectra analysed by
+Krucker et al. (2009) and Dresing et al. (2020). With regard to estimate
+how the anti-sunward MESSENGER/EPS ﬁeld of view limitation af-
+fects our spectra results, we compare the ratio between spectral indices
+of the sunward and anti-sunward looking instruments obtained with
+telescopes on other spacecraft. The ratio for the SEE events analysed
+in the present work is δ200forward/ δ200backward=1.1±0.1 for STEREO,
+and =1.10±0.02 for a reduced sample of three events measured by So-
+lar Orbiter. We therefore expect that the hypothetical forward spectra
+of MESSENGER could also be ∼10% softer than the backward spec-
+tra, leading to a mean spectral value of <δ>forward=-2.1±0.3. This esti-
+mated mean value is still harder than that using near 1 au data mentioned
+above.
+The diﬀerence between the mean of the spectral indices measured
+in this study and in Krucker et al. (2009) or Dresing et al. (2020) might
+be related to the characteristics of the events measured by MESSEN-
+GER. Because of the elevated background intensity level of the EPS
+instrument, the majority of events are very intense. Additionally, the
+MESSENGER events showed wide angular particle spreads (32 out of
+42), were accompanied by coronal CME-driven shocks (40 out of 42),
+and extended to high energies exhibiting ∼1 MeV electrons intensity
+enhancements (37 out of 42). Dresing et al. (2022) analysed 33 electron
+energetic events that were related to the presence of coronal pressure
+waves. They derive a mean spectral index of <δ200> = -2.5±0.3. Thus,
+the subsample of events with coronal pressure waves contains those
+events with the hardest energy spectra in the whole sample of electrons
+events observed by STEREO during solar cycle 24. However, MES-
+SENGER spectra are still harder than this subsample measured near 1
+au, even when only using the higher energy bins of MESSENGER/EPS
+for the spectral ﬁtting. However the reliability of this comparison is low
+due to the very large uncertainties on the ﬁtting using only three wide
+bins, as discussed in Sect. 5.1.
+The peak-intensity energy spectra analysis using Solar Orbiter data
+is in agreement with the results presented above for MESSENGER re-
+garding the softening of the spectra between 0.3 au and 1 au. The mean
+spectral indices at both energies, δ70 (9 events, <δ70>=-2.9±0.3) and
+δ200 (4 events, <δ200>=-2.7±0.5) measured at Solar Orbiter are also
+harder than those reported by Dresing et al. (2020) using near 1 au mea-
+surements, but softer than MESSENGER results. If the scattering con-
+ditions for SEEs are energy dependent, namely the higher the energy
+of the electrons, the more frequent the scattering processes undergone
+by the particles (Dröge 2003; Strauss et al. 2020), this can result in a
+signiﬁcant change of the energy spectrum during the transport of the
+particles from the Sun to the observer. We note that Solar Orbiter dis-
+tance from the Sun varied from 0.34 to 0.83 au. Thus, the eﬀect of IP
+scattering processes, when present, might aﬀect the Solar Orbiter sam-
+ple in a higher degree than for the MESSENGER sample (always closer
+than 0.47 au), softening the spectra. Interestingly, the softening of the
+δ70 spectra index might depend on the distance of the spacecraft closer
+to the Sun that is used to compare with near 1 au measurements. For
+measurements when Solar Orbiter was near 0.3 au, the spectral index
+near 1 au is softer than the spectral index measured at Solar Orbiter, as
+we found for MESSENGER events. This distance dependence might be
+further explored in the future, as we progress into solar cycle 25.
+We also further investigated the radial dependence of the peak-
+intensity energy spectra, comparing MESSENGER spectral index with
+near 1 au forward (backward) spectra for a subsample of 20 (18) SEE
+events. We found that the backward spectra near 0.3 au is harder than
+the forward (backward) spectra near 1 au by a median factor of ∼20%
+Article number, page 18 of 20
+L. Rodríguez-García et al.: Solar energetic electron events measured by MESSENGER and Solar Orbiter
+(∼10%). Moreover, considering the ratio between forward and back-
+ward spectra near 0.3 au, as discussed above, the forward near 1 au
+spectra might be 10% softer than the forward spectra near 0.3 au. How-
+ever, there is no intercalibration among the diﬀerent energies measured
+by MESSENGER/EPS, STEREO/SEPT and/or Wind/3DP instruments,
+which would allow us to discard any systematic eﬀects that could inﬂu-
+ence their comparison.
+This statistical study of intense SEE events at heliocentric distances
+near 0.3 au is relevant and timely. The radial dependences of SEE in-
+tensities are used in Space Weather to determine the particle radiation
+environment at diﬀerent distances from the Sun, and they can also be
+used to constrain the models applied to understand the diﬀerent scenar-
+ios of acceleration and transport of SEE in the heliosphere. The radial
+dependence of the electron energy spectra and the presence of potential
+spectral transitions might be used in (and explained with) the diﬀerent
+modelling eﬀorts at this respect. The analysis and outcomes presented
+here might be further investigated with data from the new ongoing mis-
+sions exploring the innermost regions of the heliosphere, such as Parker
+Solar Probe, Solar Orbiter and BepiColombo, together with data from
+near 1 au spacecraft. By using these new multi-spacecraft observations
+and as we progress into solar cycle 25, we could measure more intense
+events and increase the statistics, which will allow a reduction of the
+uncertainties. We could also analyse those events departing from the in-
+ferred radial dependence of peak intensities and energy spectra. More-
+over, future cross calibration studies during close approaches of the dif-
+ferent spacecraft will grant a more accurate inter-comparison of the data
+sets from diﬀerent instruments.
+8. Conclusions
+In this paper we studied the radial dependence of the electron peak in-
+tensity and peak-intensity energy spectrum for SEE events measured by
+the MESSENGER mission from 2010 to 2015, when MESSENGER’s
+heliocentric distance varied between 0.31 and 0.47 au. We also analysed
+a reduced list of SEE events measured by Solar Orbiter during February
+and March 2022, when Solar Orbiter’s heliocentric distance varied from
+0.34 to 0.83 au. The three main conclusions derived from this study are
+as follows:
+1. Most of the selected events measured by MESSENGER/EPS are
+very intense, accompanied by a CME-driven shock, extended to
+high (∼1 MeV) energies and are widespread in longitude. The
+sample is biased towards large intense SEE events, because of the
+high background level of this instrument.
+The two main conclusions derived from the analysis of the large
+SEE events measured by MESSENGER, which are generally sup-
+ported by Solar Orbiter’s data results, are:
+2. There is a wide variability in the radial dependence of the electron
+peak intensity between ∼0.3 au and ∼1 au, but the peak intensities
+of the energetic electrons decrease with radial distance from the Sun
+in 27 out of 28 events. On average and within the uncertainties, we
+ﬁnd a radial dependence consistent with R-3.
+3. The electron spectral index found in the energy range around 200
+keV (δ200) of the backward-scattered population near 0.3 au is
+harder in 19 out of 20 (15 out of 18) events by a median factor
+of ∼20% (∼10%) when comparing to the anti-sunward propagating
+beam (backward-scattered population) near 1 au.
+Acknowledgements. The
+UAH
+team
+acknowledges
+the
+ﬁnancial
+sup-
+port by the Spanish Ministerio de Ciencia, Innovación y Universidades
+FEDER/MCIU/AEI Projects ESP2017-88436-R and PID2019-104863RB-
+I00/AEI/10.13039/501100011033 and by the European Union’s Horizon 2020
+research and innovation program under grant agreement No. 101004159 (SER-
+PENTINE). LRG is also supported by the European Space Agency, under the
+ESA/NPI program and thanks Nariaki Nitta for his help and Karl Ludwig Klein
+for the helpful comments and discussion that contributed to improve the quality
+of the manuscript. DL acknowledges support from NASA Living With a Star
+(LWS) programs NNH17ZDA001N-LWS and NNH19ZDA001N-LWS, and the
+Goddard Space Flight Center Internal Scientist Funding Model (competitive
+work package) program and the Heliophysics Innovation Fund (HIF) program.
+LAB acknowledges the support from the NASA program NNH17ZDA001N-
+LWS (Awards Nr. 80NSSC19K0069 and 80NSSC19K1235). AK acknowledges
+ﬁnancial support from NASA NNN06AA01C (SO-SIS Phase-E) contract. ND
+is grateful for support by the Turku Collegium for Science, Medicine and
+Technology of the University of Turku, Finland. Solar Orbiter is a mission of
+international cooperation between ESA and NASA, operated by ESA. The au-
+thors acknowledge the diﬀerent Wind, ACE, SOHO, STEREO, MESSENGER,
+Solar Orbiter instrument teams, and the STEREO and ACE science centers
+for providing the data used in this paper. The MESSENGER data used in this
+study is available online. The EPD/EPT sensor was built with support from the
+German Space Agency, DLR, under grants 50OT0901, 50OT1202, 50OT1702,
+and 50OT2002. The radio spectrograms used in this study are provided by the
+Observatoire de Paris-Meudon (http://secchirh.obspm.fr/).
+ORCID iDs
+Laura Rodríguez-García
+https://orcid.org/0000-0003-2361-5510
+Raúl Gómez-Herrero
+https://orcid.org/0000-0002-5705-9236
+Nina Dresing
+https://orcid.org/0000-0003-3903-4649
+David Lario
+https://orcid.org/0000-0002-3176-8704
+Ioannis Zouganelis
+https://orcid.org/0000-0003-2672-9249
+Laura Balmaceda
+https://orcid.org/0000-0003-1162-5498
+Athanasios Kouloumvakos
+https://orcid.org/0000-0001-6589-4509
+Annamaria Fedeli
+https://orcid.org/0000-0001-9449-4782
+Francisco Espinosa Lara
+https://orcid.org/0000-0001-9039-8822
+Ignacio Cernuda
+https://orcid.org/0000-0001-8432-5379
+George Ho
+https://orcid.org/0000-0003-1093-2066
+Robert F. Wimmer-Schweingruber
+https://orcid.org/0000-0002-7388-173X
+Javier Rodríguez-Pacheco
+https://orcid.org/0000-0002-4240-1115
+References
+Agueda, N., Lario, D., Vainio, R., et al. 2009, A&A, 507, 981
+Andrews, G. B., Zurbuchen, T. H., Mauk, B. H., et al. 2007, Space Sci. Rev.,
+131, 523
+Benkhoﬀ, J., van Casteren, J., Hayakawa, H., et al. 2010, Planet. Space Sci., 58,
+2
+Bougeret, J.-L., Goetz, K., Kaiser, M., et al. 2008, Space Science Reviews, 136,
+487
+Bougeret, J. L., Kaiser, M. L., Kellogg, P. J., et al. 1995, Space Science Reviews,
+71, 231
+Brueckner, G. E., Howard, R. A., Koomen, M. J., et al. 1995, Solar Physics, 162,
+357
+Domingo, V., Fleck, B., & Poland, A. I. 1995, Sol. Phys., 162, 1
+Dresing, N., Eﬀenberger, F., Gómez-Herrero, R., et al. 2020, ApJ, 889, 143
+Dresing, N., Gómez-Herrero, R., Heber, B., et al. 2014, Astrophysical Journal,
+567, A27
+Dresing, N., Kouloumvakos, A., Vainio, R., & Rouillard, A. 2022, ApJ, 925, L21
+Dresing, N., Theesen, S., Klassen, A., & Heber, B. 2016, A&A, 588, A17
+Dröge, W. 2003, ApJ, 589, 1027
+Feigelson, E. D. & Babu, G. J. 2012, Modern Statistical Methods for Astronomy
+(Cambridge: Cambridge University Press)
+Fox, N. J., Velli, M. C., Bale, S. D., et al. 2016, Space Sci. Rev., 204, 7
+García, H. A. 1994, Sol. Phys., 154, 275
+Gieseler, J., Dresing, N., Palmroos, C., et al. 2022, Frontiers in Astronomy and
+Space Physics, (submitted)
+Gieseler,
+J.,
+Dresing,
+N.,
+Palmroos,
+C.,
+et
+al.
+2022,
+arXiv
+e-prints,
+arXiv:2210.00819
+Gold, R. E., Krimigis, S. M., Hawkins, S. E., I., et al. 1998, Space Sci. Rev., 86,
+541
+Gómez-Herrero, R., Pacheco, D., Kollhoﬀ, A., et al. 2021, A&A, 656, L3
+Gómez-Herrero et al. 2022, in preparation
+Ho, G. C., Krimigis, S. M., Gold, R. E., et al. 2011a, Science, 333, 1865
+Ho, G. C., Starr, R. D., Gold, R. E., et al. 2011b, Planet. Space Sci., 59, 2016
+Howard, R. A., Moses, J. D., Vourlidas, A., et al. 2008, Space Sci. Rev., 136, 67
+Joyce, C. J., McComas, D. J., Christian, E. R., et al. 2020, ApJS, 246, 41
+Kahler, S. W. 2007, Space Sci. Rev., 129, 359
+Kaiser, M. L., Kucera, T. A., Davila, J. M., et al. 2008, Space Sci. Rev., 136, 5
+Kihara, K., Huang, Y., Nishimura, N., et al. 2020, ApJ, 900, 75
+Kilpua, E. K. J., Lumme, E., Andreeova, K., Isavnin, A., & Koskinen, H. E. J.
+2015, Journal of Geophysical Research: Space Physics, 120, 4112
+Klein, K. L., Krucker, S., Trottet, G., & Hoang, S. 2005, A&A, 431, 1047
+Kouloumvakos, A., Rouillard, A. P., Wu, Y., et al. 2019, ApJ, 876, 80
+Krucker, S., Hurford, G. J., Grimm, O., et al. 2020, A&A, 642, A15
+Krucker, S., Oakley, P. H., & Lin, R. P. 2009, ApJ, 691, 806
+Article number, page 19 of 20
+A&A proofs: manuscript no. main
+Lario, D. 2010, in American Institute of Physics Conference Series, Vol. 1216,
+Twelfth International Solar Wind Conference, ed. M. Maksimovic, K. Is-
+sautier, N. Meyer-Vernet, M. Moncuquet, & F. Pantellini, 625–628
+Lario, D., Aran, A., Agueda, N., & Sanahuja, B. 2007, Advances in Space Re-
+search, 40, 289
+Lario, D., Aran, A., Gómez-Herrero, R., et al. 2013a, Astrophysical Journal, 767,
+41
+Lario, D., Ho, G., & Roelof, E. 2011, in ACE news, Vol. 2011, 139,
+https://izw1.caltech.edu/ACE/ACENews/ACENews139.html
+Lario, D., Ho, G. C., Decker, R. B., et al. 2003, in American Institute of
+Physics Conference Series, Vol. 679, Solar Wind Ten, ed. M. Velli, R. Bruno,
+F. Malara, & B. Bucci, 640–643
+Lario, D., Ho, G. C., Roelof, E. C., Anderson, B. J., & Korth, H. 2013b, Journal
+of Geophysical Research (Space Physics), 118, 63
+Lario, D., Kallenrode, M. B., Decker, R. B., et al. 2006, ApJ, 653, 1531
+Lemen, J. R., Title, A. M., Akin, D. J., et al. 2012, Sol. Phys., 275, 17
+Lin, R. P., Anderson, K. A., Ashford, S., et al. 1995, Space Sci. Rev., 71, 125
+Luhmann, J. G., Curtis, D. W., Schroeder, P., et al. 2008, Space Sci. Rev., 136,
+117
+Maia, D. J. F. & Pick, M. 2004, ApJ, 609, 1082
+McGuire, R. E., Van Hollebeke, M. A. I., & Lal, N. 1983, in International Cosmic
+Ray Conference, Vol. 10, International Cosmic Ray Conference, 353–360
+McKibben, R. B. 1972, J. Geophys. Res., 77, 3957
+Müller, D., St. Cyr, O. C., Zouganelis, I., et al. 2020, A&A, 642, A1
+Müller-Mellin, R., Böttcher, S., Falenski, J., et al. 2008, Space Sci. Rev., 136,
+363
+Ontiveros, V. & Vourlidas, A. 2009, ApJ, 693, 267
+Paassilta, M., Papaioannou, A., Dresing, N., et al. 2018, Sol. Phys., 293, 70
+Papaioannou, A., Sandberg, I., Anastasiadis, A., et al. 2016, Journal of Space
+Weather and Space Climate, 6, A42
+Pesnell, W. D., Thompson, B. J., & Chamberlin, P. C. 2012, Sol. Phys., 275, 3
+Richardson, I. G., von Rosenvinge, T. T., Cane, H. V., et al. 2014, Solar Physics,
+289, 3059
+Rodríguez-García, L., Gómez-Herrero, R., Zouganelis, I., et al. 2021, A&A, 653,
+A137
+Rodríguez-Pacheco, J., Wimmer-Schweingruber, R. F., Mason, G. M., et al.
+2020, A&A, 642, A7
+Roelof, E. C., Gold, R. E., Simnett, G. M., et al. 1992, Geophys. Res. Lett., 19,
+1243
+Simnett, G. M., Roelof, E. C., & Haggerty, D. K. 2002, ApJ, 579, 854
+Solomon, S. C., McNutt, R. L., Gold, R. E., & Domingue, D. L. 2007,
+Space Sci. Rev., 131, 3
+Stone, E. C., Frandsen, A. M., Mewaldt, R. A., et al. 1998, Space Sci. Rev., 86,
+1
+Strauss, R. D., Dresing, N., Kollhoﬀ, A., & Brüdern, M. 2020, ApJ, 897, 24
+Szabo, A. 2015, Handbook of Cosmic Hazards and Planetary Defense, 141
+Tsurutani, B. T. & Lin, R. P. 1985, J. Geophys. Res., 90, 1
+Winslow, R. M., Lugaz, N., Philpott, L. C., et al. 2015, Journal of Geophysical
+Research (Space Physics), 120, 6101
+Wuelser, J.-P., Lemen, J. R., Tarbell, T. D., et al. 2004, in Society of Photo-
+Optical Instrumentation Engineers (SPIE) Conference Series, Vol. 5171, Tele-
+scopes and Instrumentation for Solar Astrophysics, ed. S. Fineschi & M. A.
+Gummin, 111–122
+Xie, H., St. Cyr, O. C., Mäkelä, P., & Gopalswamy, N. 2019, Journal of Geo-
+physical Research (Space Physics), 124, 6384
+Yashiro, S., Gopalswamy, N., Michalek, G., et al. 2004, Journal of Geophysical
+Research (Space Physics), 109, A07105
+Zouganelis, I., De Groof, A., Walsh, A. P., et al. 2020, A&A, 642, A3
+Article number, page 20 of 20

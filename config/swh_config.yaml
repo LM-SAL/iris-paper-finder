@@ -1,0 +1,73 @@
+name: "Space Weather Hazards"
+classifier:
+  name: "HAZARDS"
+  query: "Does this paper discuss space weather hazards or their implications on Earth and spacecraft?"
+  system_message: "You are a helpful assistant who helps analyze scientific documents and you produce Markdown outputs."
+  human_message: |
+    Based on the excerpts provided, please answer the following questions:
+
+    A. Does this paper directly discuss space weather hazards, such as geomagnetic storms, solar flares, or radiation belts?
+    B. Does this paper mention the impact of space weather hazards on human activities, satellite operations, or other terrestrial systems?
+    C. Does this paper describe forecasting, mitigation, or monitoring techniques for space weather hazards?
+
+    For each question, provide causal (not associative) reasoning with references to the provided excerpts. If the answer to ANY of these questions is yes, the paper is considered a HAZARDS paper. If the excerpts seem to be from a review of others' hazards-related work, the determination is UNCERTAIN. Finally, conclude whether the overall paper can be classified as a HAZARDS paper, and end with:
+
+    ```
+    Classification: <YES, NO, or UNCERTAIN>
+    Space Weather Hazards Discussed: ["EXAMPLE_HAZARD1", "EXAMPLE_HAZARD2", ...]
+    ```
+
+  answer_divider: "Classification:"
+  answer_key: "HAZARDS"
+  json_divider: "Space Weather Hazards Discussed:"
+  json_key: "hazards"
+  label_metadata_map:
+
+  filter_threshold: 80
+  filter_terms:
+      - "space weather"
+      - "geomagnetic storm"
+      - "solar flare"
+      - "radiation belt"
+      - "CME"
+      - "coronal mass ejection"
+      - "spacecraft anomalies"
+      - "aurora"
+      - "satellite disruption"
+      - "geomagnetic disturbance"
+      - "solar energetic particles"
+      - "space weather forecasting"
+      - "magnetosphere"
+      - "ionosphere"
+      - "thermosphere"
+      - "solar wind"
+      - "magnetopause"
+      - "solar radiation storm"
+      - "plasma cloud"
+      - "radio blackout"
+      - "solar proton event"
+      - "magnetospheric substorm"
+      - "ground induced currents"
+      - "GICs"
+      - "ionospheric scintillation"
+      - "solar cycle"
+      - "solar maximum"
+      - "solar minimum"
+      - "sunspot number"
+      - "heliosphere"
+      - "Kp index"
+      - "Dst index"
+      - "auroral oval"
+      - "geomagnetic indices"
+      - "charged particle environment"
+      - "solar radio burst"
+      - "flare classification"
+      - "X-ray flux"
+
+model_kwargs:
+  model_name: "gpt-4"
+  temperature: 0
+
+embedder_kwargs:
+  where:
+    passed_soho_heuristic: 1

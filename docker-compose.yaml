@@ -1,0 +1,60 @@
+version: '3.9'
+
+services:
+
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile.scraper
+    volumes:
+      - ./testdata:/code/data
+    profiles:
+      - tools
+    env_file:
+      - .env
+
+  redis:
+    image: redis:7.0.11
+    expose:
+      - 6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        YOUR_ENV: development
+    command: celery -A app.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        YOUR_ENV: development
+    ports:
+      - "8000:8000" # or whatever port your app runs on
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    env_file:
+      - .env
+    depends_on:
+      - celery
+
+  nginx:
+    build: nginx
+    volumes:
+      - ./nginx/.htpasswd:/etc/nginx/.htpasswd
+    ports:
+      - "80:80"
+    depends_on:
+      - web

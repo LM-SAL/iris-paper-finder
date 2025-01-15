@@ -1,0 +1,72 @@
+name: "Chandra X-ray Observatory Classifier"
+classifier:
+  name: "Chandra"
+  query: "Does this paper use data from the Chandra X-ray Observatory or its instruments (ACIS, HRC, LETG, HETG)?"
+  system_message: | 
+    You are a helpful assistant, and you produce Markdown outputs.
+    
+    Important Information:
+    ----------------------
+    When analyzing references to the "Chandra X-ray Observatory", remember the following primary instruments and their details:
+
+    - ACIS: Advanced CCD Imaging Spectrometer
+    - HRC: High Resolution Camera
+    - LETG: Low Energy Transmission Grating Spectrometer
+    - HETG: High Energy Transmission Grating Spectrometer
+
+    It's crucial to identify direct and indirect references to these instruments, as well as any related data or analyses tied to them.
+
+  human_message: | # be sure to keep this pipe as it preserves newlines in text below.
+    Based on the excerpts provided, please answer the following questions:
+
+    A. Does this paper directly use data from the Chandra X-ray Observatory and its primary catalogues?  
+    B. Does this paper make quantitative predictions of results from the Chandra X-ray Observatory?  
+    C. Does this paper describe the Chandra X-ray Observatory, its instruments, operations, software, or calibrations?
+
+    For your reference, here is a list of Chandra instruments: ACIS, HRC, LETG, HETG. Be sure to respond with these (and only these) instruments.
+
+    For each question, provide causal (not associative) reasoning with references to the provided excerpts (being sure to mention any Chandra instruments used). If the answer to ANY of these questions is yes, the paper is considered a Chandra paper. If the excerpts seem to be from a review of others' Chandra-related work, the determination is UNCERTAIN. Finally, conclude whether the overall paper can be classified as a Chandra paper, and end with:
+
+    ```
+    Classification: <YES, NO, or UNCERTAIN>
+    Chandra Instruments Used: ["EXAMPLE_INSTRUMENT1", "EXAMPLE_INSTRUMENT2", ...]
+    ```
+
+  answer_divider: "Classification:"
+  answer_key: "Chandra"
+  json_divider: "Chandra Instruments Used:"
+  json_key: "instruments"
+  label_metadata_map:
+    ACIS:
+      link: "https://chandra.harvard.edu/about/science_instruments.html#ACIS"
+      detail: "Advanced CCD Imaging Spectrometer"
+    HRC:
+      link: "https://chandra.harvard.edu/about/science_instruments.html#HRC"
+      detail: "High Resolution Camera"
+    LETG:
+      link: "https://chandra.harvard.edu/about/science_instruments.html#LETG"
+      detail: "Low Energy Transmission Grating Spectrometer"
+    HETG:
+      link: "https://chandra.harvard.edu/about/science_instruments.html#HETGS"
+      detail: "High Energy Transmission Grating Spectrometer"
+
+  filter_threshold: 80
+  filter_terms:
+      - "Chandra"
+      - "Chandra X-ray Observatory"
+      - "ACIS"
+      - "Advanced CCD Imaging Spectrometer"
+      - "HRC"
+      - "High Resolution Camera"
+      - "LETG"
+      - "Low Energy Transmission Grating Spectrometer"
+      - "HETG"
+      - "High Energy Transmission Grating Spectrometer"
+
+model_kwargs:
+  model_name: "gpt-4"
+  temperature: 0
+
+embedder_kwargs:
+  where:
+    passed_chandra_heuristic: 1

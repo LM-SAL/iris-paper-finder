@@ -1,0 +1,918 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Astronomy & Astrophysics manuscript no. manuscript ©ESO 2022
+May 31, 2022
+
+Letter to the Editor
+
+Prominence eruption observed in He II 304 Å up to >6 R�
+by EUI/FSI aboard Solar Orbiter
+
+M. Mierla1, 2, A. N. Zhukov1, 3, D. Berghmans1, S. Parenti4, F. Auchère4, P. Heinzel5, 6, D. B. Seaton7, E. Palmerio8,
+S. Jejčič9, 10, J. Janssens1, E. Kraaikamp1, B. Nicula1, D. M. Long11, L. A. Hayes12, I. C. Jebaraj1, D.-C. Talpeanu1,
+
+E. D’Huys1, L. Dolla1, S. Gissot1, J. Magdalenić1, L. Rodriguez1, S. Shestov1, K. Stegen1, C. Verbeeck1, C. Sasso13,
+M. Romoli14, 15, and V. Andretta13
+
+1 Solar–Terrestrial Centre of Excellence — SIDC, Royal Observatory of Belgium, 1180 Brussels, Belgium
+e-mail: marilena.mierla@oma.be
+
+2 Institute of Geodynamics of the Romanian Academy, 020032 Bucharest-37, Romania
+3 Skobeltsyn Institute of Nuclear Physics, Moscow State University, 119992 Moscow, Russia
+4 Université Paris-Saclay, CNRS, Institut d’Astrophysique Spatiale, 91405 Orsay, France
+5 Astronomical Institute of the Czech Academy of Sciences, 251 65 Ondřejov, Czech Republic
+6 University of Wrocław, Center of Scientific Excellence - Solar and Stellar Activity, Kopernika 11, 51-622 Wrocław, Poland
+7 Southwest Research Institute, Boulder, CO 80302, USA
+8 Predictive Science Inc., San Diego, CA 92121, USA
+9 Faculty of Education, University of Ljubljana, 1000 Ljubljana, Slovenia
+
+10 Faculty of Mathematics and Physics, University of Ljubljana, 1000 Ljubljana, Slovenia
+11 Mullard Space Science Laboratory, University College London, Holmbury St. Mary, Dorking, Surrey, RH5 6NT, UK
+12 ESTEC, European Space Agency, 2201 AZ Noordwijk, The Netherlands
+13 INAF — Osservatorio Astronomico di Capodimonte, I-80131 Naples, Italy
+14 Dipartimento di Fisica e Astronomia, Università di Firenze, I-50019 Sesto Fiorentino FI, Italy
+15 INAF — Associate Scientist
+
+ABSTRACT
+
+Aims. We report observations of a unique, large prominence eruption that was observed in the He II 304 Å passband of the the Extreme
+Ultraviolet Imager/Full Sun Imager telescope aboard Solar Orbiter on 15–16 February 2022.
+Methods. Observations from several vantage points – Solar Orbiter, the Solar–Terrestrial Relations Observatory, the Solar and Helio-
+spheric Observatory, and Earth-orbiting satellites – were used to measure the kinematics of the erupting prominence and the associated
+coronal mass ejection. Three-dimensional reconstruction was used to calculate the deprojected positions and speeds of different parts
+of the prominence. Observations in several passbands allowed us to analyse the radiative properties of the erupting prominence.
+Results. The leading parts of the erupting prominence and the leading edge of the corresponding coronal mass ejection propagate
+at speeds of around 1700 km s−1 and 2200 km s−1, respectively, while the trailing parts of the prominence are significantly slower
+(around 500 km s−1). Parts of the prominence are tracked up to heights of over 6 R�. The He II emission is probably produced via
+collisional excitation rather than scattering. Surprisingly, the brightness of a trailing feature increases with height.
+Conclusions. The reported prominence is the first observed in He II 304 Å emission at such a great height (above 6 R�).
+
+Key words. Sun: filaments, prominences – Sun: UV radiation
+
+1. Introduction
+
+Prominences (or filaments, when they are seen projected on
+the solar disk) are cool and dense plasma structures observed
+in the hot and tenuous solar corona (see e.g. Labrosse et al.
+2010; Mackay et al. 2010; Bemporad 2011; Parenti 2014; Gib-
+son 2018). When erupting, prominences are often associated
+with coronal mass ejections (CMEs), which can arrive at Earth
+and trigger geomagnetic storms. In quiescent prominences, one
+often detects dark absorbing features in various extreme ultra-
+violet (EUV) coronal passbands (e.g. Parenti et al. 2012). Cool
+prominence plasma absorbs background coronal EUV line radi-
+ation via the photoionisation of hydrogen, neutral helium, and
+singly ionised helium. Another mechanism is ‘emissivity block-
+ing’, but this is mostly negligible in comparison to absorption
+(Anzer & Heinzel 2005). While in the 193 Å passband one usu-
+
+ally sees absorption, the 171 Å and 131 Å passbands also show
+portions of prominences in emission, which Parenti et al. (2012)
+attributed to the prominence–corona transition region (PCTR) at
+temperatures below 1 MK.
+
+The evolution of an erupting prominence from its quasi-
+equilibrium state through eruption can be described by four
+phases: the quasi-static phase, the initiation phase (slow rise),
+the impulsive main acceleration phase (fast rise), and the prop-
+agation phase with only slowly varying velocity (e.g. Zhang &
+Dere 2006; Liu & Su 2021). In order to trigger the initiation
+phase, different mechanisms are invoked (see e.g. the review
+by Green et al. 2018), such as tether-cutting (e.g. van Balle-
+gooijen & Martens 1989; Moore et al. 2001), flux cancellation
+(e.g. Amari et al. 2003; Linker et al. 2003), magnetic breakout
+(e.g. Antiochos et al. 1999), flux emergence (e.g. Chen & Shi-
+bata 2000), and mass-loading (e.g. Seaton et al. 2011), as well
+
+Article number, page 1 of 12
+
+ar
+X
+
+iv
+:2
+
+20
+5.
+
+15
+21
+
+4v
+1 
+
+ [
+as
+
+tr
+o-
+
+ph
+.S
+
+R
+] 
+
+ 3
+0 
+
+M
+ay
+
+ 2
+02
+
+2
+
+
+
+A&A proofs: manuscript no. manuscript
+
+as the onset of ideal magnetohydrodynamic (MHD) instabilities,
+including kink (e.g. Török & Kliem 2005) and torus instabilities
+(e.g. Kliem & Török 2006), and loss of equilibrium (e.g. Priest
+& Forbes 2002).
+
+The acceleration phase occurs when the erupting prominence
+experiences a sudden increase in velocity. This phase is driven
+either by magnetic reconnection taking place at the site of the
+underlying current sheet (e.g. Lin & Forbes 2000; Karpen et al.
+2012) or by an ideal MHD instability (e.g. Fan & Gibson 2007;
+Démoulin & Aulanier 2010). After the acceleration phase, most
+erupting filaments rise with an almost-constant velocity (e.g.
+Kahler et al. 1988; Joshi & Srivastava 2007). This defines the
+propagation phase. Different kinematic characteristics indicate
+that different physical processes dominate in these phases. For
+example, Lorentz forces are dominant during the acceleration
+phase, while during the propagation phase the Lorentz force is
+comparable to the gravitational and drag forces (Chen & Krall
+2003; Temmer et al. 2011; Majumdar et al. 2020).
+
+The initiation and acceleration phases of prominence erup-
+tions close to the Sun are usually observed by EUV telescopes,
+while the propagation phase of corresponding CMEs farther out
+is usually covered by white-light coronagraphs (Mierla et al.
+2013; Reva et al. 2017). Connecting low-corona EUV obser-
+vations to high-corona white-light observations was attempted,
+for example, by Byrne et al. (2014), D’Huys et al. (2017), and
+O’Hara et al. (2019).
+
+Since the launch of the Solar Orbiter mission (Müller et al.
+2020), one of its remote-sensing instruments, the Extreme Ul-
+traviolet Imager (EUI; Rochus et al. 2020), recorded numer-
+ous erupting prominences with its Full Sun Imager (FSI), in
+the 304 Å and 174 Å channels. A novel aspect of FSI that is
+particularly important for studies of eruptive prominences is its
+uniquely large (3.8◦ × 3.8◦) field of view (FOV), which allows
+prominences to be tracked far out in the solar corona. In this Let-
+ter, we report observations of a unique, large prominence erup-
+tion that was observed on 15–16 February 2022 and tracked up
+to heights above 6 R� in the 304 Å channel of FSI. This is the
+first time that an erupting prominence emitting in EUV could be
+tracked that far in the corona.
+
+2. Observations
+
+2.1. Kinematics
+
+Positions of the observing spacecraft close to the prominence
+eruption time (16 February 2022, 00:00 UT) are shown in Fig. 1.
+The prominence observed by FSI in the 304 Å channel (FSI304)
+was a bright and complex event with developed fine structure
+(Fig. 2). The eruption started around 21:50 UT on 15 Febru-
+ary, and the prominence was last seen in the FOV of FSI on
+16 February around 05:00 UT. The eruption was first seen as
+a bright prominence with a clear leading edge (LE) ahead of
+it (Fig. 2a), resembling a typical three-part structure of a CME
+(Illing & Hundhausen 1985). Around 01:40 UT on 16 February,
+a trailing part of the erupting prominence was seen at heights as
+great as 6.6 R� (the outer limit of the FSI FOV; see Fig. 2f). A de-
+tailed description of the prominence eruption and the associated
+flare is given in Appendix A.
+
+The CME associated with the erupting prominence was
+observed by the Large-Angle Spectroscopic COronagraph
+(LASCO; Brueckner et al. 1995) aboard the Solar and Helio-
+spheric Observatory (SOHO; Domingo et al. 1995) and by the
+COR2 coronagraph (Howard et al. 2008) aboard the Solar–
+TErrestrial RElations Observatory (STEREO A; Kaiser et al.
+
+Fig. 1. Positions of Solar Orbiter, STEREO A, and Parker Solar Probe
+with respect to Earth on 16 February 2022, 00:00 UT, in heliocentric
+Earth equatorial coordinates. The black arrow shows the longitude of
+the prominence eruption. The image was created using Solar-MACH
+(https://solar-mach.github.io/).
+
+2008) Ahead spacecraft. Figure 3 shows that the prominence
+material constituting the core of the CME could be seen up to
+∼7.96 R� from the Sun’s centre (the edge of the LASCO/C2
+FOV).
+
+To analyse the eruption kinematics, we tracked several off-
+limb features (see Figs. 2 and 3) observed from at least two
+vantage points to reconstruct their position in three-dimensional
+(3D) space (Fig. 4). The overall tip of the prominence (i.e. the
+CME core) was tracked at a position angle (PA) of ∼56◦ in both
+FSI304 and COR1 data (the PA is measured anti-clockwise from
+the north pole) and at a PA of ∼65◦ in the EUVI304 data. Three
+bright knots of the prominence core (core1, core2, and core3) are
+marked in Fig. 2b. The core1 feature is a bright knot at the lead-
+ing part of the prominence (PA of ∼56◦) and was also observed
+by the Extreme-UltraViolet Imager (EUVI) aboard STEREO A,
+the Solar Ultraviolet Imager (SUVI), and the Atmospheric Imag-
+ing Assembly (AIA). The core2 feature is a bright knot that
+could be tracked at the PA of ∼60◦. The core3 feature is a kink-
+like structure that was observed at the PA of ∼50◦, also seen
+by LASCO C2 (PA of ∼46◦; see Fig. 3b), COR1 (PA of ∼51◦),
+and COR2 (PA of ∼49◦). The three core features are sufficiently
+compact for triangulation.
+
+A concave feature was observed after 23:30 UT at a PA of
+∼45◦. It was also observed by LASCO/C2 at a PA of ∼47◦ (see
+
+Article number, page 2 of 12
+
+https://solar-mach.github.io/
+
+
+M. Mierla et al.: Prominence eruption observed in He II 304 Å up to >6 R� by EUI/FSI aboard Solar Orbiter
+
+Fig. 2. Prominence eruption observed by EUI/FSI aboard Solar Orbiter in the 304 Å passband on 15–16 February 2022. The frame taken at
+21:50 UT on 15 February 2022 was subtracted from each frame. A few representative features are marked: the LE, three knots in the prominence
+(core1, core2, and core3), a concave feature, and a trailing feature. These features are used to measure the eruption kinematics shown in Fig. 4.
+The image was created using JHelioviewer (Müller et al. 2017). An animation of this figure is available online.
+
+Article number, page 3 of 12
+
+
+
+A&A proofs: manuscript no. manuscript
+
+Fig. 3. Propagation of the associated CME observed by the SOHO/LASCO C2 coronagraph. An inverted colour table is used (bright coronal
+features appear darker). A few features used for tracking the CME kinematics are marked (cf. Fig. 2): the LE of the CME at PA 56◦ (a), the part of
+the core marked as core3 (b), a concave feature (c), and a trailing feature (d). The image was produced using JHelioviewer (Müller et al. 2017).
+
+Fig. 3c). A trailing feature was tracked at a PA of ∼40◦ from
+00:36 UT on 16 February onwards. It was also observed by
+COR2 and C2 (see Fig. 3d) at approximately the same PA. Be-
+sides these features in the CME core, we also tracked the LE of
+the CME as observed by FSI304 (Fig. 2a), LASCO C2 (Fig. 3a),
+and STEREO/COR1 and COR2.
+
+The 3D positions were calculated using triangulation, except
+for the LE, for which we used graduated cylindrical shell (GCS)
+model reconstruction (Thernisien et al. 2009). The triangulation
+method requires identification of the same point in the two im-
+ages (tie-pointing; see Inhester 2006). The 3D positions of lines
+of sight passing through a point that is visible in the two im-
+ages are calculated, and the position of the intersection point in
+
+3D space is determined using the scc_measure.pro program of
+SolarSoft (Thompson & Reginald 2008).
+
+The GCS model is designed to reproduce the large-scale
+structure of flux-rope-like CMEs that cannot be determined via
+triangulation. It consists of a tubular section that forms the main
+body of the structure and is attached to two cones that corre-
+spond to the CME ‘legs’. Only the surface of the CME is mod-
+elled, there is no rendering of its internal structure. This provides
+information mostly on the propagation of the LE of the CME.
+
+All the tracked features together with their coordinates are
+listed in Table 1. We used the calculated longitude and latitude of
+the features and their measured radial heights seen in projection
+on the respective planes of the sky of each telescope (not shown)
+in order to calculate their true heights and velocities. The depro-
+
+Article number, page 4 of 12
+
+
+
+M. Mierla et al.: Prominence eruption observed in He II 304 Å up to >6 R� by EUI/FSI aboard Solar Orbiter
+
+Table 1. Features tracked to create the kinematic plots shown in Fig. 4.
+
+Tracked feature Description 3D position Colour Observations
+core1 bright knot at the prominence front E151N28 red FSI304, EUVI304, SUVI304, AIA304
+core2 bright knot in the prominence core E147N27 blue FSI304, SUVI304
+core3 kink in the prominence core E124N40 magenta FSI304, C2, COR1, COR2
+core prominence tip in EUVI304 E151N28 grey FSI304, EUVI304
+
+concave feature concave feature in the prominence E128N43 green FSI304, C2
+trailing feature seen up to the end of FOV of FSI304 E125N47 black FSI304, C2, COR2
+
+FSI304 LE CME leading edge E132N23 cyan FSI304, COR1
+C2 LE CME leading edge E132N34 yellow C2, COR2
+
+Notes. Column 1 identifies the feature, Col. 2 gives a short description, Col. 3 shows the longitude and latitude derived by the triangulation (except
+for the LEs, which are derived using the GCS reconstruction), Col. 4 shows the colour used to display the feature in the kinematic plots, and Col.
+5 lists the instruments that observed the features. The specific pairs of instruments used to perform the triangulation or the GCS reconstruction are
+marked in italics.
+
+jected height–time plot of the features measured by each tele-
+scope is shown in Fig. 4a. The errors in height were calculated
+using Eq. (1) of Zhukov et al. (2021) and take the finite pixel
+size of each telescope and the resulting 3D reconstruction error
+into account. Figure 4a shows a generally good agreement be-
+tween deprojected heights derived from the projected measure-
+ments made by individual telescopes. The remaining discrepan-
+cies could be explained by differences in spectral passbands of
+individual telescopes, and by the lack of the strict simultaneity
+of the images. The large FOV of EUI/FSI allows the erupting
+prominence in the 304 Å passband to be tracked to great heights,
+typically up to above 4 R� (deprojected). The trailing feature in
+this event is conspicuous, as it is visible in the 304 Å passband
+of the FSI up to the projected height of 6.64 R�, corresponding
+to a true 3D height of 6.97 R�.
+
+The speed of each feature was calculated by fitting a first-
+order polynomial to the height–time points. The deprojected
+speeds of the tracked features are shown in Fig. 4b. The CME
+LE reaches speeds of ∼2200 km s−1. The LE is closely followed
+by the prominence, which accelerates to speeds of∼1700 km s−1.
+The features that erupted earlier (core1 and core2) generally
+reach speeds that are higher than those of the features erupting
+later (core3, the concave feature, and the trailing feature). These
+trailing parts of the prominence are significantly slower, propa-
+gating at speeds of ∼500 km s−1.
+
+Figure 4c shows the evolution of the PA of each tracked fea-
+ture. The propagation is not fully radial, with the erupting promi-
+nence deflected towards the equator, as is often observed (Kilpua
+et al. 2009; Sieyra et al. 2020). The strongest deflections occur
+at the beginning of the eruption.
+
+2.2. Radiative properties
+
+The prominence eruption was also visible in coronal pass-
+bands that are usually dominated by the emission of hot (above
+∼0.5 MK) plasma, for example in the 174 Å passband of FSI
+and the 195 Å passband of EUVI. Figure 5 shows that the promi-
+nence was bright (i.e. observed in emission), with no sign of ab-
+sorption that could be seen in the coronal passbands. This may
+indicate that parts of the eruptive prominence were heated to
+temperatures above ∼0.5 MK and that there is not enough neu-
+tral hydrogen and helium to absorb the background coronal ra-
+diation. The apparent co-location of hot and cool features may
+be explained by projection effects, as the prominence may have
+
+a cooler central part (seen in He II at 304 Å) surrounded by the
+hotter PCTR plasma (seen at 174 Å, 195 Å, and in coronal lines
+present in the 304 Å passband).
+
+In the He II 304 Å channel, the eruptive prominence is seen
+clearly by FSI and EUVI (Fig. 5a–b). The lower part of the
+prominence is much brighter than the underlying disk, so it is
+unlikely that the He II emission there is produced by the resonant
+scattering of the disk radiation. Additionally, expected dark por-
+tions at the upper edge of the prominence (a characteristic fea-
+ture of the resonant scattering; see Heinzel 2015) are not clearly
+seen. At the observed speeds of around 500 km s−1, the Doppler
+dimming effect in the 304 Å line will make the resonantly scat-
+tered emission negligible (Labrosse & McGlinchey 2012). All
+this indicates that the excitation of the He II 304 Å line is prob-
+ably dominated by collisions rather than by resonant scattering.
+
+An unusual property of this eruption is that the brightness
+of the trailing feature of the prominence increases with dis-
+tance, starting from 01:20 UT at the latest, when the feature
+was at a distance of around 5.72 R�. To demonstrate this, we se-
+lected a sector around the trailing feature in the range 4.5–7 R�
+and between the PAs 35◦ and 49◦ (Fig. 6a). This sector is fur-
+ther divided into azimuthally aligned sub-sectors with a step of
+0.033 R�. The intensity was integrated in each sub-sector, and
+the resulting curves of intensity versus height are displayed in
+Fig. 6b for four different times. The brightness increases un-
+til 01:30 UT, at which point the trailing feature was situated at
+around 6.1 R�, and then decreases. At its peak, the trailing fea-
+ture of the prominence at 01:30 UT is approximately four times
+brighter than the background.
+
+3. Summary and discussion
+
+We have presented observations of a unique prominence eruption
+that was recorded by the He II 304 Å channel of the EUI/FSI
+telescope aboard Solar Orbiter on 15–16 February 2022. Ob-
+servations from different vantage points allowed us to calcu-
+late 3D locations of different prominence features and to de-
+rive their deprojected kinematics. Some parts of the prominence
+could be tracked up to projected heights of 6.64 R� (3D heights
+of 6.97 R�). This is the first time that a prominence has been ob-
+served at such a great height in the FOV of an EUV imager.
+
+The eruption was a far-side event as seen from the avail-
+able vantage points, so the initiation and acceleration phases
+
+Article number, page 5 of 12
+
+
+
+A&A proofs: manuscript no. manuscript
+
+Fig. 4. Kinematics of various tracked features (listed in Table 1) associated with the 15–16 February 2022 prominence eruption: deprojected radial
+height versus time (a), deprojected radial speeds (b), and evolution of the PA (c).
+
+were not observed. The prominence velocity reached speeds of
+∼1700 km s−1. While the leading parts of the prominence show
+a fast propagation, features at the prominence rear end that are
+seen later on propagate at lower speeds (∼500 km s−1). This may
+indicate that magnetic reconnection initiated the fast eruption
+(Zhang et al. 2001), and later on the prominence material was
+swept away as a part of the large-scale relaxation of the coronal
+magnetic field.
+
+The presence of the He II 304 Å emission at heights above
+6 R� indicates that this part of the prominence was not heated
+to the fully ionised state during its propagation (the correspond-
+ing He+ ions are only very rarely detected in the solar wind; see
+Lepri & Zurbuchen 2010). The coronal EUV passbands indicate
+the presence of hot PCTR plasma, and no absorption signature
+
+is observed, probably due to the dominance of the bright PCTR
+emission. The hydrogen and helium, which are responsible for
+EUV absorption, are apparently ionised under high-temperature
+conditions (collisional ionisation). The presence of ionised hy-
+drogen and helium is important for the derivation of the promi-
+nence mass from visible-light coronagraph observations, for in-
+stance by SOHO/LASCO. From coronagraph images, the col-
+umn electron density can be derived using Thomson scattering
+calculations, and the prominence column mass along the line of
+sight can then be deduced, assuming a certain ionisation degree
+(Kucera 2015). Moreover, if the helium is mostly ionised at least
+to the state of He+, then there will be almost no neutral helium
+He I D3 line emission, which is otherwise typical for promi-
+nences (Jejčič et al. 2018). This line is included in the orange
+
+Article number, page 6 of 12
+
+
+
+M. Mierla et al.: Prominence eruption observed in He II 304 Å up to >6 R� by EUI/FSI aboard Solar Orbiter
+
+(a) STEREO/SECCHI/EUVI-A 304 Å
+
+2022-02-15 21:58
+
+ 
+
+(c) STEREO/SECCHI/EUVI-A 195 Å
+
+2022-02-15 21:57
+
+ 
+
+(b) SolO/EUI/FSI 304 Å
+
+2022-02-15 21:56
+
+ 
+
+(d) SolO/EUI/FSI 174 Å
+
+2022-02-15 21:56
+
+ 
+
+Fig. 5. Erupting prominence observed on 15 February 2022 in different passbands: STEREO/EUVI 304 Å image (a), Solar Orbiter/EUI/FSI 304 Å
+image (b), STEREO/EUVI 195 Å image (c), and Solar Orbiter EUI/FSI 174 Å image (d).
+
+Fig. 6. Observations of the trailing feature. (a) Solar Orbiter/EUI/FSI image taken in the 304 Å passband at 01:34 UT on 16 February 2022,
+showing the sector between PAs of 35◦ and 49◦ and radial distances between 4.5 R� and 7 R�, in which the radial brightness profile is calculated.
+(b) Radial brightness profiles integrated along the azimuthal direction of the sector shown in the left panel, at four different times.
+
+channel of SOHO/LASCO C2 (Floyd & Lamy 2019) and in the
+visible-light channel of Metis (Heinzel et al. 2020), so the rela-
+tive importance of the spectral line emission in a passband needs
+to be taken into account in order to derive the prominence den-
+sity and mass (Mierla et al. 2011).
+
+The very bright 304 Å prominence emission suggests that the
+helium is mostly in the He+ state, which occurs at temperatures
+of 0.05–0.08 MK. The observed speeds of around 500 km s−1
+
+are high enough for the Doppler dimming to make the resonantly
+
+scattered emission negligible. We conjecture that the 304 Å line
+in this eruptive prominence is due to collisional excitation rather
+than to resonant scattering of incident disk radiation. In a future
+work we will analyse the 304 Å line formation in this unique
+event using radiometrically calibrated data and relevant non-LTE
+modelling (with ‘LTE’ standing for ‘local thermodynamic equi-
+librium’). If the resonant scattering is indeed negligible, then it
+may be possible to address temporal variations of plasma condi-
+
+Article number, page 7 of 12
+
+
+
+A&A proofs: manuscript no. manuscript
+
+tions without the bias introduced by Doppler dimming. This can
+also help in estimating the prominence mass.
+
+The increase in brightness during the outward propagation of
+the trailing feature of the prominence is difficult to explain with-
+out detailed knowledge of the plasma parameters. If the promi-
+nence emission is indeed dominated by the collisional mecha-
+nism, then one would expect the brightness to increase if the
+temperature increases (thus producing more He+ ions) or if the
+prominence column density increases due to geometrical rear-
+rangement (Labrosse & McGlinchey 2012).
+Acknowledgements. Solar Orbiter is a space mission of international collabora-
+tion between ESA and NASA, operated by ESA. The EUI instrument was built
+by CSL, IAS, MPS, MSSL/UCL, PMOD/WRC, ROB, LCF/IO with funding
+from the Belgian Federal Science Policy Office (BELPSO); the Centre National
+d’Etudes Spatiales (CNES); the UK Space Agency (UKSA); the Bundesminis-
+terium für Wirtschaft und Energie (BMWi) through the Deutsches Zentrum für
+Luft- und Raumfahrt (DLR); and the Swiss Space Office (SSO). We acknowl-
+edge the use of PROBA2/SWAP, SDO/AIA, GOES-16/SUVI, SOHO/LASCO,
+and STEREO EUVI, COR1, COR2 data. I.C.J and J.M. acknowledge funding by
+the BRAIN-be project SWiM (Solar Wind Modelling with EUHFORIA for the
+new heliospheric missions). The ROB team thanks the Belgian Federal Science
+Policy Office (BELSPO) for the provision of financial support in the framework
+of the PRODEX Programme of the European Space Agency (ESA) under con-
+tract numbers 4000134474, 4000134088, and 4000136424. M. M. would like
+to thank J. Dudik for fruitful discussions on filament eruption mechanisms and
+S. Willems for updating the missing data on the local servers. E. P. acknowledges
+support from NASA HTMS grant no. 80NSSC20K1274. S. J. acknowledges the
+support from the Slovenian Research Agency No. P1-0188. D. M. L. is grate-
+ful to the Science Technology and Facilities Council for the award of an Ernest
+Rutherford Fellowship (ST/R003246/1). P. H. was supported by grant No. 22-
+34841S of the Czech Funding Agency and acknowledges support from the grant
+No. 19-16890S of the Czech Science Foundation (GA ČR).
+
+References
+Amari, T., Luciani, J. F., Aly, J. J., Mikic, Z., & Linker, J. 2003, ApJ, 585, 1073
+Antiochos, S. K., DeVore, C. R., & Klimchuk, J. A. 1999, ApJ, 510, 485
+Antonucci, E., Romoli, M., Andretta, V., et al. 2020, A&A, 642, A10
+Anzer, U. & Heinzel, P. 2005, ApJ, 622, 714
+Bemporad, A. 2011, J. Atmos. Solar-Terr. Phys., 73, 1117
+Brueckner, G. E., Howard, R. A., Koomen, M. J., et al. 1995, Sol. Phys., 162,
+
+357
+Byrne, J. P., Morgan, H., Seaton, D. B., Bain, H. M., & Habbal, S. R. 2014,
+
+Sol. Phys., 289, 4545
+Chen, J. & Krall, J. 2003, J. Geophys. Res., 108, 1410
+Chen, P. F. & Shibata, K. 2000, ApJ, 545, 524
+Darnel, J. M., Seaton, D. B., Bethge, C., et al. 2022, Space Weather, 20,
+
+e2022SW003044
+Delaboudinière, J. P. 1999, Sol. Phys., 188, 259
+Delaboudinière, J. P., Artzner, G. E., Brunaud, J., et al. 1995, Sol. Phys., 162,
+
+291
+Démoulin, P. & Aulanier, G. 2010, ApJ, 718, 1388
+D’Huys, E., Seaton, D. B., De Groof, A., Berghmans, D., & Poedts, S. 2017,
+
+Journal of Space Weather and Space Climate, 7, A7
+Domingo, V., Fleck, B., & Poland, A. I. 1995, Sol. Phys., 162, 1
+Fan, Y. & Gibson, S. E. 2007, ApJ, 668, 1232
+Floyd, O. & Lamy, P. 2019, Sol. Phys., 294, 168
+Gibson, S. E. 2018, Living Rev. Sol. Phys., 15, 7
+Green, L. M., Török, T., Vršnak, B., Manchester, W., & Veronig, A. 2018,
+
+Space Sci. Rev., 214, 46
+Heinzel, P. 2015, in Astrophysics and Space Science Library, Vol. 415, Solar
+
+Prominences, ed. J.-C. Vial & O. Engvold, 103
+Heinzel, P., Štěpán, J., Bemporad, A., et al. 2020, ApJ, 900, 8
+Howard, R. A., Moses, J. D., Vourlidas, A., et al. 2008, Space Sci. Rev., 136, 67
+Illing, R. M. E. & Hundhausen, A. J. 1985, J. Geophys. Res., 90, 275
+Inhester, B. 2006, arXiv e-prints, astro
+Jejčič, S., Heinzel, P., Labrosse, N., et al. 2018, Sol. Phys., 293, 33
+Joshi, V. & Srivastava, N. 2007, Bull. Astron. Soc. India, 35, 447
+Kahler, S. W., Moore, R. L., Kane, S. R., & Zirin, H. 1988, ApJ, 328, 824
+Kaiser, M. L., Kucera, T. A., Davila, J. M., et al. 2008, Space Sci. Rev., 136, 5
+Karpen, J. T., Antiochos, S. K., & DeVore, C. R. 2012, ApJ, 760, 81
+Kilpua, E. K. J., Pomoell, J., Vourlidas, A., et al. 2009, Annales Geophysicae,
+
+27, 4491
+Kliem, B. & Török, T. 2006, Phys. Rev. Lett., 96, 255002
+
+Krucker, S., Hurford, G. J., Grimm, O., et al. 2020, A&A, 642, A15
+Kucera, T. A. 2015, in Astrophysics and Space Science Library, Vol. 415, Solar
+
+Prominences, ed. J.-C. Vial & O. Engvold, 79
+Labrosse, N., Heinzel, P., Vial, J. C., et al. 2010, Space Sci. Rev., 151, 243
+Labrosse, N. & McGlinchey, K. 2012, A&A, 537, A100
+Lemen, J. R., Title, A. M., Akin, D. J., et al. 2012, Sol. Phys., 275, 17
+Lepri, S. T. & Zurbuchen, T. H. 2010, ApJ, 723, L22
+Lin, J. & Forbes, T. G. 2000, J. Geophys. Res., 105, 2375
+Linker, J. A., Mikić, Z., Lionello, R., et al. 2003, Phys. Plasmas, 10, 1971
+Liu, T. & Su, Y. 2021, ApJ, 915, 55
+Liu, W. & Ofman, L. 2014, Sol. Phys., 289, 3233
+Mackay, D. H., Karpen, J. T., Ballester, J. L., Schmieder, B., & Aulanier, G.
+
+2010, Space Sci. Rev., 151, 333
+Majumdar, S., Pant, V., Patel, R., & Banerjee, D. 2020, ApJ, 899, 6
+Mierla, M., Chifu, I., Inhester, B., Rodriguez, L., & Zhukov, A. 2011, A&A,
+
+530, L1
+Mierla, M., Seaton, D. B., Berghmans, D., et al. 2013, Sol. Phys., 286, 241
+Moore, R. L., Sterling, A. C., Hudson, H. S., & Lemen, J. R. 2001, ApJ, 552,
+
+833
+Müller, D., Nicula, B., Felix, S., et al. 2017, A&A, 606, A10
+Müller, D., St. Cyr, O. C., Zouganelis, I., et al. 2020, A&A, 642, A1
+O’Hara, J. P., Mierla, M., Podladchikova, O., D’Huys, E., & West, M. J. 2019,
+
+ApJ, 883, 59
+Parenti, S. 2014, Living Rev. Sol. Phys., 11, 1
+Parenti, S., Schmieder, B., Heinzel, P., & Golub, L. 2012, ApJ, 754, 66
+Pesnell, W. D., Thompson, B. J., & Chamberlin, P. C. 2012, Sol. Phys., 275, 3
+Priest, E. R. & Forbes, T. G. 2002, A&A Rev., 10, 313
+Reva, A. A., Kirichenko, A. S., Ulyanov, A. S., & Kuzin, S. V. 2017, ApJ, 851,
+
+108
+Rochus, P., Auchère, F., Berghmans, D., et al. 2020, A&A, 642, A8
+Santandrea, S., Gantois, K., Strauch, K., et al. 2013, Sol. Phys., 286, 5
+Schou, J., Scherrer, P. H., Bush, R. I., et al. 2012, Sol. Phys., 275, 229
+Seaton, D. B., Berghmans, D., Nicula, B., et al. 2013, Sol. Phys., 286, 43
+Seaton, D. B., Mierla, M., Berghmans, D., Zhukov, A. N., & Dolla, L. 2011,
+
+ApJ, 727, L10
+Sieyra, M. V., Cécere, M., Cremades, H., et al. 2020, Sol. Phys., 295, 126
+Temmer, M., Rollett, T., Möstl, C., et al. 2011, ApJ, 743, 101
+Thernisien, A., Vourlidas, A., & Howard, R. A. 2009, Sol. Phys., 256, 111
+Thompson, W. T. & Reginald, N. L. 2008, Sol. Phys., 250, 443
+Török, T. & Kliem, B. 2005, ApJ, 630, L97
+van Ballegooijen, A. A. & Martens, P. C. H. 1989, ApJ, 343, 971
+Zhang, J. & Dere, K. P. 2006, ApJ, 649, 1100
+Zhang, J., Wang, J., Deng, Y., & Wu, D. 2001, ApJ, 548, L99
+Zhao, J., Hing, D., Chen, R., & Hess Webber, S. 2019, ApJ, 887, 216
+Zhukov, A. N. 2011, Journal of Atmospheric and Solar-Terrestrial Physics, 73,
+
+1096
+Zhukov, A. N., Mierla, M., Auchère, F., et al. 2021, A&A, 656, A35
+
+Article number, page 8 of 12
+
+
+
+M. Mierla et al.: Prominence eruption observed in He II 304 Å up to >6 R� by EUI/FSI aboard Solar Orbiter
+
+Appendix A: Detailed description of observations
+
+A.1. Overview of prominence observations
+
+The positions of different spacecraft close to the eruption time
+(16 February 2022, 00:00 UT) are given in Table A.1 and shown
+in Fig. 1. Solar Orbiter was observing from a distance of 0.721 au
+from the Sun. This means that a solar feature observed by FSI
+will be observed 2 minutes and 12.6 seconds later by instruments
+at Earth-orbiting observatories, and 2 minutes and 2.3 seconds
+later by the instruments aboard the STEREO A (Kaiser et al.
+2008) spacecraft. The cadence of the FSI data in the 304 Å and
+174 Å passbands was around 2 minutes. The Metis coronagraph
+(Antonucci et al. 2020) aboard Solar Orbiter was not observing
+at that time.
+
+Table A.1. Positions of observing spacecraft on 16 February 2022,
+00:00 UT.
+
+Vantage Distance to the Sun Latitude Longitude
+point [au] [deg] [deg]
+Earth 0.987 S07 E00
+
+Solar Orbiter 0.721 S03 E17
+STEREO-A 0.967 S04 E34
+
+PSP 0.377 N04 E146
+
+Notes. Column 1 gives the name of the vantage point, Col. 2 the distance
+to the Sun, Col. 3 the Heliocentric Earth EQuatorial (HEEQ) latitude,
+and Col. 4 the HEEQ longitude.
+
+The 304 Å passband that is mainly used in our study is dom-
+inated by the He II Ly-α emission line at 303.78 Å formed by the
+He+ ions. This ion is populated by photoionisation of the neutral
+helium at lower temperatures, but at higher PCTR temperatures
+the collisional ionisation will dominate. Then, having enough
+populated He+, the 304 Å line is formed by the resonance scat-
+tering of the disk radiation in a low-temperature and low-density
+regime, and will be enhanced at higher PCTR temperatures.
+However, at high speeds of a few hundred km s−1, the Doppler
+dimming effect will substantially lower the scattering component
+in the 304 Å line source function. The passband also contains
+a number of weaker coronal lines, most prominently the Si XI
+line at 303.33 Å formed at temperatures of around 2 MK (De-
+laboudinière 1999; Labrosse & McGlinchey 2012). Although
+any quantitative separation of coronal and prominence emission
+is difficult without spectroscopic observations, hot (coronal) and
+cool (prominence) structures can be qualitatively distinguished
+in the images based on morphology: smooth for coronal features,
+ragged for prominence features. We also see the prominence-like
+ragged structures (corresponding to the PCTR) in other hot coro-
+nal channels, such as 195 Å or 171 Å (Fig. 5; see Parenti et al.
+2012). Resonance continua of neutral hydrogen and helium are
+probably too weak to contribute to the 304 Å channel.
+
+Other EUV telescopes that observed the eruption were: the
+EUVI (Howard et al. 2008) aboard the STEREO A spacecraft,
+with a cadence of ∼3 min; the AIA (Lemen et al. 2012) aboard
+the Solar Dynamics Observatory (SDO; Pesnell et al. 2012), with
+a cadence of 12 s; the SUVI (Darnel et al. 2022) aboard Geo-
+stationary Operational Environmental Satellite-16 (GOES-16),
+with a cadence of ∼4 min; and the Sun Watcher using Active
+Pixel (SWAP; Seaton et al. 2013) sensor aboard the PRoject for
+On Board Autonomy 2 (PROBA2; Santandrea et al. 2013) space-
+
+craft, with a cadence of ∼2 min. The corresponding CME was
+subsequently observed in white light by the COR1 and COR2
+coronagraphs (Howard et al. 2008) aboard STEREO A, with
+cadences of 5 min and 15 min, respectively, and by LASCO
+(Brueckner et al. 1995) aboard SOHO (Domingo et al. 1995),
+with a 12-minute cadence.
+
+From triangulation (see Sect. 2.1), the positions of differ-
+ent prominence features span a longitudinal range from approxi-
+mately E125 to E150 and a latitudinal range from around N20 to
+N50 (Stonyhurst coordinates). This means that it was a far-side
+event for Solar Orbiter, Earth, and STEREO A, and it erupted
+in the direction of the Parker Solar Probe. After the eruption, a
+system of bright post-eruption loops (a flare) appears, seen bet-
+ter from the STEREO A perspective. A short description of the
+source location and the associated flare is presented in Sect. A.5.
+The prominence structure as seen by FSI304 is clearly recognis-
+able in the LASCO C2 images, as the angular separation between
+Solar Orbiter and SOHO is only 17◦.
+
+A.2. Observations from the Solar Orbiter perspective
+
+The prominence eruption was observed by FSI304 up to heights
+as great as 6.64 R� (see Fig. A.1 and the corresponding anima-
+tion). The eruption was also seen by FSI in its 174 Å channel
+(FSI174; see Fig. 5d). The morphology of the eruption was sim-
+ilar (consisting of the LE and the core), although not so clearly
+visible as the 174 Å passband is mostly sensitive to the emission
+of the hotter plasma at temperatures of around 1 MK. Accord-
+ing to the FSI174 observations, it was visible only up to heights
+of around 3.35 R� (at 23:26 UT). In the FSI304 image, one leg
+was connecting the leading part of the prominence to the Sun
+(Fig. 2b). Flows along the leg were observed in different struc-
+tures for quite some time after the leading part was last visible in
+the FSI FOV (∼22:20 UT). The leg seemed to disconnect from
+the Sun at ∼23:30 UT.
+
+A.3. Observations from the Earth perspective
+
+The eruption was observed in all SDO/AIA channels, except for
+94 Å, where it was not visible at all, and 335 Å, where only
+a faint off-limb LE was visible. Off-limb dimming and a large
+on-disk ‘EIT wave’1 or EUV wave (see e.g. reviews by Zhukov
+2011; Liu & Ofman 2014) were observed by AIA at 193 Å. The
+eruption was clearly seen in the 304 Å, 171 Å, 131 Å, and 211 Å
+channels. The eruption was seen up to a height of ∼1.48 R�,
+around the edge of the AIA FOV.
+
+PROBA2/SWAP observed the eruption up to a height of
+∼1.87 R�. Higher up, the weak prominence emission could no
+longer be distinguished against the noisy background. The erup-
+tion was also observed by GOES-16/SUVI in the 304 Å channel
+up to 1.88 R� (the limit of the SUVI FOV).
+
+The CME associated with the erupting prominence was ob-
+served as a full halo from the SOHO/LASCO vantage point. Fig-
+ure 3 shows that the prominence material constituting the core
+of the CME could be seen up to ∼7.96 R� from the Sun’s cen-
+tre (the edge of the LASCO C2 FOV). The prominence features
+were observed as high as 30.80 R� in the FOV of the LASCO C3
+coronagraph (not shown). Furthermore, LASCO also observed
+signatures of a shock wave propagating ahead of the LE of the
+CME.
+
+1 ‘EIT’ stands for the Extreme-ultraviolet Imaging Telescope, see De-
+laboudinière et al. (1995).
+
+Article number, page 9 of 12
+
+
+
+A&A proofs: manuscript no. manuscript
+
+SolO/EUI/FSI 304 Å
+
+2022-02-15 22:14
+Fig. A.1. Erupting prominence observed by EUI/FSI aboard Solar Orbiter in the He II 304 Å passband on 15 February 2022, at 22:14 UT. The
+off-limb emission has been enhanced with a radial filter. An animation of this figure is available online.
+
+A.4. Observations from the STEREO A perspective
+
+The EUVI telescope aboard STEREO A observed the eruption
+in all four of its channels (304 Å, 171 Å, 195 Å, and 284 Å)
+up to ∼1.73 R�, at which point the prominence could no longer
+be distinguished against the background. A dimming and an EIT
+wave (EUV wave) were observed off the limb and on the disk in
+the 195 Å and 284 Å channels. An unwinding (in the clockwise
+direction as seen from above) can be observed at the base of the
+erupting prominence shortly after the start of the eruption. The
+EUVI images used for triangulation were binned to 1024×1024
+pixels in order to have approximately the same spatial resolu-
+tion as the FSI304 images. The prominence constituting the core
+of the associated CME was observed by the COR1 and COR2
+coronagraphs up to a height of ∼15 R�.
+
+A.5. Observations of the associated flare
+
+There are no direct observations of the source region of this far-
+side eruption. Helioseismograms2 (see Zhao et al. 2019), based
+on the data taken by the Helioseismic and Magnetic Imager
+(Schou et al. 2012) aboard SDO, indicate a substantial active re-
+gion present on 15–16 February 2022 about 60◦ behind the east
+limb as seen by SDO. This region corresponds to the location of
+the old sunspot group complex NOAA AR 2936–2938. NOAA
+2936 was a rather big sunspot region that showed considerable
+flux emergence while rounding the north-west solar limb on 5
+February.
+
+A post-eruption system of loops is observed by EUVI in
+the 195 Å passband at the limb starting at ∼23:30 UT on 15
+February. The flare is occulted, and hence no X-ray emission is
+seen from either of the GOES X-ray Sensor (XRS) channels,
+as shown in Fig. A.2. From the perspective of Solar Orbiter,
+the X-ray emission was observed by the Spectrometer/Telescope
+
+2 http://jsoc.stanford.edu/data/timed/index.html
+
+Article number, page 10 of 12
+
+http://jsoc.stanford.edu/data/timed/index.html
+
+
+M. Mierla et al.: Prominence eruption observed in He II 304 Å up to >6 R� by EUI/FSI aboard Solar Orbiter
+
+for Imaging X-rays (STIX; Krucker et al. 2020), as shown in
+Fig. A.2. The footpoints of the flare associated with this erup-
+tion are most likely occulted by the limb as seen from STIX.
+This means that the observed emission is most likely thermal
+soft X-ray emission from the corona (perhaps with a small non-
+thermal contribution), either from the flare arcade or from the
+hottest part of the erupting CME. As the majority of the X-ray
+emission is occulted, it is not possible to conclusively determine
+the estimated GOES class from these observations. Further de-
+tailed analysis of this event as observed by STIX will be pre-
+sented in a separate paper.
+
+Article number, page 11 of 12
+
+
+
+A&A proofs: manuscript no. manuscript
+
+Fig. A.2. X-ray observations of the flare associated with the prominence eruption on 15–16 February 2022 from different vantage points. The
+relative positions of Solar Orbiter and Earth together with the estimated location of the flare associated with the eruption are shown on the left.
+The X-ray emission measured by XRS aboard the Earth-orbiting GOES spacecraft is shown in the top-right plot. No enhancement in emission is
+seen, confirming that the flare was completely occulted as seen from Earth. The Solar Orbiter/STIX observations in four different X-ray bands are
+shown in the bottom-right plot. Given the position of Solar Orbiter, STIX has a better view of the flare above the limb, and clear X-ray signatures
+can be seen at energies up to 28 keV.Article number, page 12 of 12
+
+
+	1 Introduction
+	2 Observations
+	2.1 Kinematics
+	2.2 Radiative properties
+
+	3 Summary and discussion
+	A Detailed description of observations
+	A.1 Overview of prominence observations
+	A.2 Observations from the Solar Orbiter perspective
+	A.3 Observations from the Earth perspective
+	A.4 Observations from the STEREO A perspective
+	A.5 Observations of the associated flare
+
+

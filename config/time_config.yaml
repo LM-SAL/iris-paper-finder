@@ -1,0 +1,55 @@
+name: "Time Range and Frequency Identifier"
+classifier:
+  name: "TimeFrequency"
+  query: "Does this paper specify time ranges and frequencies for the data sources used?"
+  system_message: "You are a helpful assistant who helps analyze scientific documents and you produce Markdown outputs."
+  human_message: | 
+    Based on the excerpts provided, please identify:
+
+    A. The time ranges mentioned in relation to the data sources used.  
+    B. The frequencies at which data was collected or analyzed.  
+
+    Provide references to the provided excerpts for each identified time range and frequency.
+
+    Finally, conclude with:
+
+    ```
+    Found Data with Time and Frequency: <YES, NO, or UNCERTAIN>
+    Identified Frequencies: {[
+      "EXAMPLE INSTRUMENT 1": {
+        "time_range": "TIME RANGE 1",
+        "frequency": "FREQUENCY1"
+      },
+      "EXAMPLE INSTRUMENT 2": {
+        "time_range": "TIME RANGE 2",
+        "frequency": "FREQUENCY2"
+      }
+    ]}
+    ```
+
+  answer_divider: "Identified Time Ranges:"
+  answer_key: "TimeRanges"
+  json_divider: "Identified Frequencies:"
+  json_key: "Frequencies"
+  label_metadata_map:
+
+  filter_threshold: 80
+  filter_terms:
+      - "time range"
+      - "frequency"
+      - "data collected from"
+      - "observed between"
+      - "analysis period"
+      - "Hz"  # This might indicate frequencies in Hertz
+      - "sampled at"
+      - "day"
+      - "month"
+      - "year"
+
+model_kwargs:
+  model_name: "gpt-4"
+  temperature: 0
+
+embedder_kwargs:
+  where:
+    passed_time_frequency_heuristic: 1
