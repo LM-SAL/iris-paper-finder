@@ -1,0 +1,65 @@
+name: "Interface Region Imaging Spectrograph"
+classifier:
+  name: "IRIS"
+  query: "Does this paper use data from the IRIS spacecraft or its instruments?"
+  system_message: |
+    You are a helpful assistant, and you produce Markdown outputs.
+
+    Important Information:
+    ----------------------
+    The "Interface Region Imaging Spectrograph" (IRIS) is a NASA small explorer mission launched on June 27, 2013. It's designed to observe the dynamics and fine structure of the Sun's chromosphere, transition region, and corona. IRIS aims to answer questions about how the solar atmosphere is energized and explore the impacts of solar activity on Earth's space environment.
+
+    Key capabilities and instruments of IRIS include:
+
+    - IRIS Telescope: Captures high-resolution images and spectra of the Sun's chromosphere and transition region. Its primary objective is to improve our understanding of solar energy transfer, focusing on the region where most of the Sun's ultraviolet emission is generated.
+    - Spectrograph: Provides high-resolution ultraviolet spectra, critical for studying the physical conditions and dynamics within the Sun's atmosphere.
+    - Slit-jaw Imager: Offers imaging in several ultraviolet passbands, complementing the spectrograph data by providing context images.
+
+    It's crucial to identify direct and indirect references to these capabilities, as well as any related data or analyses tied to them. Be mindful of distinguishing the IRIS mission from other entities or projects that might share the acronym 'IRIS'.
+  human_message: |
+    Based on the excerpts provided, please answer the following questions:
+
+    A. Does this paper directly use data from the IRIS mission and its instruments?
+    B. Does this paper make quantitative predictions or analysis using IRIS data?
+    C. Does this paper describe the IRIS mission, its telescope, spectrograph, operations, software, or calibrations?
+
+    For your reference, here are key aspects of IRIS: IRIS Telescope, Spectrograph, Slit-jaw Imager. Also, be sure to recall that IRIS stands for "Interface Region Imaging Spectrograph" and we are only interested in references to this specific IRIS. Carefully consider whether the IRIS being described is the IRIS spacecraft or another IRIS.
+
+    For each question, provide causal reasoning with references to the provided excerpts (mentioning any IRIS aspects). If the answer to ANY of these questions is yes, the paper is considered an IRIS paper. If the excerpts seem to be from a review of others' IRIS-related work, the determination is UNCERTAIN. Finally, conclude whether the overall paper can be classified as an IRIS paper, ending with:
+    Think step by step and don't miss any details!
+
+    ```
+    Classification: <YES, NO, or UNCERTAIN>
+    IRIS Aspects Used: ["IRIS Telescope", "Spectrograph", "Slit-jaw Imager"]
+    ```
+  answer_divider: "Classification:"
+  json_divider: "IRIS Aspects Used:"
+  answer_key: "IRIS"
+  json_key: "aspects"
+  label_metadata_map:
+    IRIS Telescope:
+      link: "https://iris.lmsal.com/"
+      detail: "High-resolution solar observation instrument"
+    Spectrograph:
+      link: "https://iris.lmsal.com/"
+      detail: "Captures ultraviolet spectra of the Sun"
+    Slit-jaw Imager:
+      link: "https://iris.lmsal.com/"
+      detail: "Imaging in ultraviolet passbands"
+  filter_threshold: 80
+  filter_terms:
+      - "IRIS"
+      - "Interface Region Imaging Spectrograph"
+      - "UV imaging"
+      - "Solar chromosphere"
+      - "Transition region"
+      - "High-resolution solar images"
+      - "Solar ultraviolet spectra"
+      - "Spectrograph"
+      - "Slit-jaw Imager"
+model_kwargs:
+  model_name: "gpt-4o"
+  temperature: 0
+embedder_kwargs:
+  where:
+    passed_iris_heuristic: 1

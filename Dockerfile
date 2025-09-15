@@ -1,62 +1,86 @@
-FROM python:3.10.13-slim
+##################################
+# Builder
+##################################
+FROM python:3.13-slim AS builder
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TORCH_VER=2.9.1+cpu
 
-ARG YOUR_ENV
+ENV PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DEFAULT_TIMEOUT=100 \
+    PATH="/opt/venv/bin:${PATH}"
 
-ENV YOUR_ENV=${YOUR_ENV} \
-  PYTHONFAULTHANDLER=1 \
-  PYTHONUNBUFFERED=1 \
-  PYTHONDONTWRITEBYTECODE=1 \
-  PYTHONHASHSEED=random \
-  PIP_NO_CACHE_DIR=off \
-  PIP_DISABLE_PIP_VERSION_CHECK=on \
-  PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.4.2
+# Build deps with cached apt
+RUN --mount=type=cache,target=/var/cache/apt,id=apt-archives-builder,sharing=locked \
+    set -eux; \
+    rm -f /var/cache/apt/archives/lock /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock || true; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends git gcc g++ python3-dev build-essential pkg-config \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/partial/*
 
+RUN python -m venv /opt/venv
+RUN --mount=type=cache,target=/root/.cache/pip,id=pip-cache,sharing=locked \
+    pip install -U pip wheel build
 
-# Install necessary packages
-RUN apt-get -y update && \
-    apt-get -y upgrade && \
-    apt-get -y install gcc g++ python3-dev poppler-utils tesseract-ocr && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+COPY requirements.txt /tmp/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip,id=pip-cache,sharing=locked \
+    pip install -r /tmp/requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
 
+WORKDIR /src
+COPY . /src
+RUN --mount=type=cache,target=/root/.cache/pip,id=pip-cache,sharing=locked \
+    pip install --no-deps --no-build-isolation .
 
-# System deps:
-RUN pip install "poetry==$POETRY_VERSION"
+# NLTK data with cache to avoid re-downloads; copy cached files into layer
+ENV NLTK_DATA=/nltk_data
+RUN --mount=type=cache,target=/nltk_cache,id=nltk-cache,sharing=locked bash -eux <<'SH'
+mkdir -p /nltk_cache /nltk_data
+python - <<'PY'
+import os, nltk
+cache_dir = "/nltk_cache"
+for p in ['punkt','punkt_tab','averaged_perceptron_tagger','averaged_perceptron_tagger_eng']:
+    nltk.download(p, download_dir=cache_dir)
+PY
+cp -a /nltk_cache/. /nltk_data/
+SH
 
-# Copy only requirements to cache them in docker layer
-WORKDIR /code
-COPY poetry.lock pyproject.toml /code/
+##################################
+# Runtime
+##################################
+FROM python:3.13-slim AS runtime
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Project initialization:
-RUN poetry config virtualenvs.create false \
-  && poetry install $(test "$YOUR_ENV" == production && echo "--no-dev") --no-interaction --no-ansi --no-root
+ENV PYTHONFAULTHANDLER=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_DEFAULT_TIMEOUT=100 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_ROOT_USER_ACTION=ignore \
+    NLTK_DATA=/usr/local/share/nltk_data \
+    PATH="/opt/venv/bin:${PATH}" \
+    PYTHONPATH=/code/src
 
-RUN pip3 install torch==2.0.1 --index-url https://download.pytorch.org/whl/cpu
+RUN --mount=type=cache,target=/var/cache/apt,id=apt-archives-runtime,sharing=locked \
+    set -eux; \
+    rm -f /var/cache/apt/archives/lock /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock || true; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends poppler-utils tesseract-ocr \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/partial/*
 
-RUN python -m nltk.downloader punkt && \
-    python -m nltk.downloader averaged_perceptron_tagger
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /nltk_data/ /usr/local/share/nltk_data/
 
-# create the app user
 RUN adduser --system --group app
+WORKDIR /code
 
-ADD models/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
-ADD models/onnx.tar.gz /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz
+# Reuse builder copy of the source (already filtered by .dockerignore)
+COPY --from=builder /src /code
+COPY --from=builder --chown=app:app --chmod=0755 /src/entrypoint.sh /code/entrypoint.sh
 
-# Creating folders, and files for a project:
-ADD app app
-ADD paper_data_linking paper_data_linking
-ENV PYTHONPATH "${PYTHONPATH}:/code/"
+# ONNX models: copy one form only (avoid duplicate tar+dir)
+COPY --chown=app:app models/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
 
-RUN chown -R app:app /code/
-#USER app
-
-WORKDIR app/
-
-# Copy the entrypoint script to the container
-COPY config /code/config/
-COPY entrypoint.sh /code/entrypoint.sh
-RUN chmod +x /code/entrypoint.sh
-
-# Use the entrypoint script as the default entrypoint
+USER app
+WORKDIR /code/src/paper_data_linking/app/
 ENTRYPOINT ["/code/entrypoint.sh"]
