@@ -48,15 +48,15 @@ classifier:
       detail: "Imaging in ultraviolet passbands"
   filter_threshold: 80
   filter_terms:
-      - "IRIS"
-      - "Interface Region Imaging Spectrograph"
-      - "UV imaging"
-      - "Solar chromosphere"
-      - "Transition region"
-      - "High-resolution solar images"
-      - "Solar ultraviolet spectra"
-      - "Spectrograph"
-      - "Slit-jaw Imager"
+    - "IRIS"
+    - "Interface Region Imaging Spectrograph"
+    - "UV imaging"
+    - "Solar chromosphere"
+    - "Transition region"
+    - "High-resolution solar images"
+    - "Solar ultraviolet spectra"
+    - "Spectrograph"
+    - "Slit-jaw Imager"
 model_kwargs:
   model_name: "gpt-4o"
   temperature: 0

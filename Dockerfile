@@ -65,22 +65,20 @@ RUN --mount=type=cache,target=/var/cache/apt,id=apt-archives-runtime,sharing=loc
     set -eux; \
     rm -f /var/cache/apt/archives/lock /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock || true; \
     apt-get update; \
-    apt-get install -y --no-install-recommends poppler-utils tesseract-ocr \
+    apt-get install -y --no-install-recommends poppler-utils tesseract-ocr libgl1 \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/partial/*
 
 COPY --from=builder /opt/venv /opt/venv
 COPY --from=builder /nltk_data/ /usr/local/share/nltk_data/
 
-RUN adduser --system --group app
 WORKDIR /code
 
 # Reuse builder copy of the source (already filtered by .dockerignore)
 COPY --from=builder /src /code
-COPY --from=builder --chown=app:app --chmod=0755 /src/entrypoint.sh /code/entrypoint.sh
+COPY --from=builder --chmod=0755 /src/entrypoint.sh /code/entrypoint.sh
 
-# ONNX models: copy one form only (avoid duplicate tar+dir)
-COPY --chown=app:app models/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
+# ONNX models: copy the model only
+COPY --chmod=777 models/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
 
-USER app
-WORKDIR /code/src/paper_data_linking/app/
+WORKDIR /code/src/paper_data_linking/web_app/
 ENTRYPOINT ["/code/entrypoint.sh"]

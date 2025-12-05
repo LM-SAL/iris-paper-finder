@@ -2,8 +2,13 @@
 
 The goal of this repository is to be able to find, identify and extract data references in research papers which talk about IRIS.
 
+An IRIS paper is defined as the following:
+
+- Any paper which shows IRIS data
+- Any paper which creates synthetic data of any IRIS passband
+
 The `paper-data-linking` library contains code for ingesting and downloading PDFs.
-There is also a web applicaiton which will allow one to upload PDFs and have them analaysed by a LLM.
+There is also a web application which will allow one to upload PDFs and have them analyzed by a LLM.
 
 ## **Installation**
 
@@ -81,19 +86,16 @@ The services may take a minute or two to start up.
 How to use the Paper Analyzer:
 
 1. **Select a Classifier**
-
    - Use the dropdown menu to select the appropriate classifier for your analysis
    - Different classifiers are optimized for different types of papers and analysis goals
    - For instance, you might select `Interface Region Imaging Spectrograph`.
 
 2. **Upload Your PDF**
-
    - Click "Choose File" to select your PDF document
    - The system accepts standard PDF files
    - There is an example PDF file available in the `scripts` dir of this repo.
 
 3. **Start Analysis**
-
    - Click the "Analyze" button to begin processing.
    - The system will show progress indicators for:
      - Parsing: Initial PDF text extraction
@@ -102,7 +104,6 @@ How to use the Paper Analyzer:
    - Analysis typically takes a few seconds to a minute depending on the PDF size.
 
 4. **View Results**
-
    - Results appear in three panels:
      - Text from PDF: Shows the extracted text with highlights
      - LLM Analysis: Detailed analysis of the content
@@ -148,13 +149,13 @@ This guide explains each component and how they work together.
 ### Top-Level Fields
 
 ```yaml
-name: "Interface Region Imaging Spectrograph"  # Name of the instrument/mission
-classifier:  # Main configuration block
+name: "Interface Region Imaging Spectrograph" # Name of the instrument/mission
+classifier: # Main configuration block
   # Classifier settings detailed below
-model_kwargs:  # LLM model settings
+model_kwargs: # LLM model settings
   model_name: "gpt-4"
   temperature: 0
-embedder_kwargs:  # Embedding settings
+embedder_kwargs: # Embedding settings
   where:
     passed_iris_heuristic: 1
 ```
@@ -163,30 +164,30 @@ embedder_kwargs:  # Embedding settings
 
 ```yaml
 classifier:
-  name: "IRIS"  # Identifier for this classifier
-  query: "Does this paper use data from the IRIS spacecraft or its instruments?"  # Query for relevant content
-  system_message: |  # Context for the LLM
+  name: "IRIS" # Identifier for this classifier
+  query: "Does this paper use data from the IRIS spacecraft or its instruments?" # Query for relevant content
+  system_message: | # Context for the LLM
     # Background information about the mission/instrument
-  human_message: |  # Instructions for analysis
+  human_message: | # Instructions for analysis
     # Specific questions and format requirements
-  answer_divider: "Classification:"  # Marker to extract classification
-  json_divider: "IRIS Aspects Used:"  # Marker to extract structured data
-  answer_key: "IRIS"  # Key for storing classification
-  json_key: "aspects"  # Key for storing structured data
-  filter_terms:  # Terms for initial filtering
+  answer_divider: "Classification:" # Marker to extract classification
+  json_divider: "IRIS Aspects Used:" # Marker to extract structured data
+  answer_key: "IRIS" # Key for storing classification
+  json_key: "aspects" # Key for storing structured data
+  filter_terms: # Terms for initial filtering
     - "IRIS"
     - "Interface Region Imaging Spectrograph"
     # ... more terms
-  filter_threshold: 80  # Fuzzy matching threshold (0-100)
+  filter_threshold: 80 # Fuzzy matching threshold (0-100)
 ```
 
 ### Metadata Mapping
 
 ```yaml
 label_metadata_map:
-  IRIS Telescope:  # Component name
-    link: "https://iris.lmsal.com/"  # Reference link
-    detail: "High-resolution solar observation instrument"  # Description
+  IRIS Telescope: # Component name
+    link: "https://iris.lmsal.com/" # Reference link
+    detail: "High-resolution solar observation instrument" # Description
 ```
 
 ## How It Works
@@ -241,7 +242,8 @@ Key considerations:
 
 ## Configuration Management
 
-The application uses configuration files to define how it processes scientific papers. These configurations are built directly into the Docker image and are available to all services using that image.
+The application uses configuration files to define how it processes scientific papers.
+These configurations are built directly into the Docker image and are available to all services using that image.
 
 ### Configuration Structure
 

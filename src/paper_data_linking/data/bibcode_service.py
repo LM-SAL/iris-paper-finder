@@ -1,23 +1,21 @@
-import argparse
 import json
-import os
+import argparse
 from pathlib import Path
-from typing import List
 
 import ads
 import numpy as np
 import requests
-from dotenv import load_dotenv, find_dotenv
 
 from paper_data_linking import logger
 from paper_data_linking.settings import ADS_TOKEN
 
 if ADS_TOKEN is None:
-    raise Exception("Must set ADS_TOKEN. Add ADS_TOKEN to .env file.")
+    msg = "Must set ADS_TOKEN. Add ADS_TOKEN to .env file."
+    raise Exception(msg)
 
 
 class BibcodeService:
-    def __init__(self, api_token: str):
+    def __init__(self, api_token: str) -> None:
         """
         Initializes the BibcodeService.
 
@@ -28,14 +26,15 @@ class BibcodeService:
         self.start = 0
         ads.config.token = self.api_token
 
-    def get_bibcodes_from_library(self, library_id: str) -> List[str]:
+    def get_bibcodes_from_library(self, library_id: str) -> list[str]:
         """
         Fetches bibcodes from the ADS API.
 
         Args:
             library_id (str): Library ID for ADS.
 
-        Returns:
+        Returns
+        -------
             List[str]: List of fetched bibcodes.
         """
         headers = {"Authorization": "Bearer " + self.api_token}
@@ -44,7 +43,7 @@ class BibcodeService:
         bibcodes = []
         while self.start <= num_found:
             url = f"https://api.adsabs.harvard.edu/v1/biblib/libraries/{library_id}?rows={rows}&start={self.start}"
-            response = requests.get(url, headers=headers)
+            response = requests.get(url, headers=headers, timeout=360)
             data = json.loads(response.content)
             num_found = data["solr"]["response"]["numFound"]
             bibcodes_chunk = data["documents"]
@@ -53,7 +52,7 @@ class BibcodeService:
             bibcodes.extend(bibcodes_chunk)
         return bibcodes
 
-    def get_bibcodes_by_query(self, query: str, rows: int = 2000) -> List[str]:
+    def get_bibcodes_by_query(self, query: str, rows: int = 2000) -> list[str]:
         """
         Fetches bibcodes from ADS based on a search query.
 
@@ -61,7 +60,8 @@ class BibcodeService:
             query (str): The search query for fetching bibcodes.
             rows (int, optional): Number of results to fetch. Defaults to 2000.
 
-        Returns:
+        Returns
+        -------
             List[str]: List of fetched bibcodes.
         """
         search_query = ads.SearchQuery(q=query, rows=rows)
@@ -72,8 +72,12 @@ def main():
     parser = argparse.ArgumentParser(description="Fetch bibcodes from ADS and save them to a file.")
     parser.add_argument("--api_token", default=ADS_TOKEN, help="API token for accessing ADS.")
     parser.add_argument("--output", help="Path to the output file where all bibcodes will be saved.", type=Path)
-    parser.add_argument("--num_records", type=int, default=2000,
-                        help="Desired number of records to fetch. Relevant mainly for search queries.",)
+    parser.add_argument(
+        "--num_records",
+        type=int,
+        default=2000,
+        help="Desired number of records to fetch. Relevant mainly for search queries.",
+    )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--library_id", help="Library ID for ADS.")
     group.add_argument("--query", help="Search query for fetching bibcodes.")

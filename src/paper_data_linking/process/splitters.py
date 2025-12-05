@@ -1,25 +1,23 @@
-import logging
 import re
+import logging
 from abc import ABC, abstractmethod
+from pathlib import Path
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
-from pathlib import Path
-from typing import List
 
 import fitz
 import pytesseract
 from langchain_core.documents import Document
-from langchain.text_splitter import TokenTextSplitter
+from langchain_text_splitters import TokenTextSplitter
 from pdf2image import convert_from_bytes
 from tqdm import tqdm
-from unstructured.documents.elements import NarrativeText, FigureCaption, Title
+from unstructured.documents.elements import FigureCaption, NarrativeText, Title
 from unstructured.partition.pdf import partition_pdf
-from unstructured.partition.text_type import is_possible_narrative_text
-from unstructured.partition.text_type import sentence_count
+from unstructured.partition.text_type import is_possible_narrative_text, sentence_count
 
 from paper_data_linking.utils import get_stage_message
 
-LOG = logging.getLogger(__file__)
+LOG = logging.getLogger(__name__)
 
 
 REFERNCES_TERMS = [
@@ -56,10 +54,7 @@ def is_junk_pdf(content, line_to_char_ratio_threshold=0.10, similarity_threshold
     most_common_line_count = line_counts.most_common(1)[0][1]
     similarity_ratio = most_common_line_count / num_lines
 
-    if similarity_ratio > similarity_threshold:
-        return True
-
-    return False
+    return similarity_ratio > similarity_threshold
 
 
 def remove_references(text: str, reference_terms: list):
@@ -84,11 +79,9 @@ def is_junk(s):
     s = re.sub(r"['\"]", "", s)
 
     # Check for url-like patterns
-    # url_pattern = re.compile(
-    #     r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+"
-    # )
-    # if re.search(url_pattern, s):
-    #     return True
+    url_pattern = re.compile(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+")
+    if re.search(url_pattern, s):
+        return True
 
     # Check if the string has unusual spacing (a space after every character)
     unusual_spacing_pattern = re.compile(r"^((\w\s)+)$")
@@ -101,12 +94,9 @@ def is_junk(s):
         return True
 
     # Check if the string matches a citation pattern
-    # citation_pattern = re.compile(r"(\w+[\.,]\s*)+([\da-zA-Z]{2,}\.?.*|$)")
-    # if re.match(citation_pattern, s.strip()):
-    #     return True
-
-    # If none of the above conditions were met, the string is not "junk"
-    return False
+    citation_pattern = re.compile(r"(\w+[\.,]\s*)+([\da-zA-Z]{2,}\.?.*|$)")
+    # If none of the above conditions or this one were met, the string is not "junk"
+    return re.match(citation_pattern, s.strip()) is not None
 
 
 def is_figure_caption(s):
@@ -119,31 +109,16 @@ def is_figure_caption(s):
 
 class Splitter(ABC):
     @abstractmethod
-    def split(self, doc) -> List[Document]:
+    def split(self, doc) -> list[Document]:
         pass
-
-
-class FakeSplitter(Splitter):
-    def split(self, content) -> List[Document]:
-        splits = [
-            Document(
-                page_content="The sun is really neat",
-                metadata={"page": 1, "x": 0, "y": 2, "width": 1, "height": 1},
-            ),
-            Document(
-                page_content="The moon is pretty cool.",
-                metadata={"page": 2, "x": 1, "y": 3, "width": 2, "height": 1},
-            ),
-        ]
-        return splits
 
 
 class UnstructuredSplitter(Splitter):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def _load_doc(self, content):
-        if isinstance(content, str) or isinstance(content, Path):
+        if isinstance(content, (str, Path)):
             content = None
             doc = fitz.open(content)
         else:
@@ -152,11 +127,12 @@ class UnstructuredSplitter(Splitter):
         return doc
 
     @staticmethod
-    def _split(doc) -> List[Document]:
+    def _split(doc) -> list[Document]:
         """
         Extracts the text and location information from the document.
 
-        Returns:
+        Returns
+        -------
             A list of MyDocument objects with text, location information, and langchain documents.
         """
         documents = []
@@ -177,29 +153,24 @@ class UnstructuredSplitter(Splitter):
 
     def _filter(self, elements):
         keep_categories = (Title, NarrativeText, FigureCaption)
-        filtered_elements = []
-        for e in elements:
-            if isinstance(e, keep_categories) and not is_junk(e.text):
-                filtered_elements.append(e)
-        return filtered_elements
+        return [e for e in elements if isinstance(e, keep_categories) and not is_junk(e.text)]
 
-    def split(self, content) -> List[Document]:
+    def split(self, content) -> list[Document]:
         elements = partition_pdf(content, include_page_breaks=True)
         filtered_elements = self._filter(elements)
-        tmp = "\n\n".join([f"{e.category}:{e.text}" for e in filtered_elements])
+        "\n\n".join([f"{e.category}:{e.text}" for e in filtered_elements])
         with self._load_doc(content) as doc:  # make sure we close the fitz pdf
             all_splits = self._split(doc)
-        filtered_splits = self._filter(all_splits)
-        return filtered_splits
+        return self._filter(all_splits)
 
 
 class PyMuPDFTokenSplitter(Splitter):
-    def __init__(self, max_workers=None, update_progress=None):
+    def __init__(self, max_workers=None, update_progress=None) -> None:
         self.max_workers = max_workers
         self.update_progress = update_progress
 
     def _load_doc(self, content):
-        if isinstance(content, Path) or isinstance(content, str):
+        if isinstance(content, (Path, str)):
             with open(content, "rb") as f:
                 content_bytes = f.read()
             doc = fitz.open(stream=content_bytes, filetype="pdf")
@@ -211,9 +182,8 @@ class PyMuPDFTokenSplitter(Splitter):
                 content_bytes = content.read()
                 doc = fitz.open(stream=content_bytes, filetype="pdf")
             except Exception as e:
-                raise TypeError(
-                    "Content must be a Path, str, bytes, or a readable file-like object"
-                ) from e
+                msg = "Content must be a Path, str, bytes, or a readable file-like object"
+                raise TypeError(msg) from e
         return doc, content_bytes
 
     def _get_text_ocr(self, data, use_multiprocessing=False):
@@ -232,11 +202,8 @@ class PyMuPDFTokenSplitter(Splitter):
                 txts.append(ocr_image(image))
                 if self.update_progress:
                     m = get_stage_message(stage=-1)
-                    self.update_progress(
-                        m, f"OCR Progress: Page {i + 1}/{total_images}"
-                    )
-        txt = chr(12).join(txts)
-        return txt
+                    self.update_progress(m, f"OCR Progress: Page {i + 1}/{total_images}")
+        return chr(12).join(txts)
 
     def _get_text(self, content, coerce_ocr=False):
         doc, data = self._load_doc(content)
@@ -245,16 +212,14 @@ class PyMuPDFTokenSplitter(Splitter):
             if not is_junk_pdf(txt):
                 return txt, False
 
-        LOG.info(
-            "Failed to parsed with PyMuPDF, attempting to use pytesseract for OCR."
-        )
+        LOG.info("Failed to parsed with PyMuPDF, attempting to use pytesseract for OCR.")
         txt = self._get_text_ocr(data)
         if is_junk_pdf(txt):
-            raise Exception("Failed to parse PDF with PyMuPDF and pytesseract OCR.")
-        else:
-            return txt, True
+            msg = "Failed to parse PDF with PyMuPDF and pytesseract OCR."
+            raise Exception(msg)
+        return txt, True
 
-    def split(self, content) -> List[Document]:
+    def split(self, content) -> list[Document]:
         txt, ocr = self._get_text(content)
         all_splits = self._split(txt)
         filtered_splits = self._filter(all_splits)
@@ -267,16 +232,12 @@ class PyMuPDFTokenSplitter(Splitter):
         return filtered_splits, ocr
 
     @staticmethod
-    def _filter(docs: List[Document]) -> List[Document]:
+    def _filter(docs: list[Document]) -> list[Document]:
         # maybe should filter out references. Find way to do this.
         filtered_docs = []
         for d in docs:
             text = d.page_content
-            if (
-                is_possible_narrative_text(text)
-                and sentence_count(text) > 2
-                and not is_junk(text)
-            ):
+            if is_possible_narrative_text(text) and sentence_count(text) > 2 and not is_junk(text):
                 filtered_docs.append(d)
             else:
                 continue
@@ -294,12 +255,11 @@ class PyMuPDFTokenSplitter(Splitter):
 
 
 class PyMuPDFSplitter(Splitter):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     def _load_doc(self, content):
-        if isinstance(content, str) or isinstance(content, Path):
-            # content = None
+        if isinstance(content, (str, Path)):
             doc = fitz.open(content)
         else:
             content = content.read()
@@ -307,11 +267,12 @@ class PyMuPDFSplitter(Splitter):
         return doc
 
     @staticmethod
-    def _split(doc) -> List[Document]:
+    def _split(doc) -> list[Document]:
         """
         Extracts the text and location information from the document.
 
-        Returns:
+        Returns
+        -------
             A list of MyDocument objects with text, location information, and langchain documents.
         """
         documents = []
@@ -331,23 +292,18 @@ class PyMuPDFSplitter(Splitter):
         return documents
 
     @staticmethod
-    def _filter(docs: List[Document]) -> List[Document]:
+    def _filter(docs: list[Document]) -> list[Document]:
         # maybe should filter out references. Find way to do this.
         filtered_docs = []
         for d in docs:
             text = d.page_content
-            if (
-                is_possible_narrative_text(text)
-                and sentence_count(text) > 2
-                and not is_junk(text)
-            ):
+            if is_possible_narrative_text(text) and sentence_count(text) > 2 and not is_junk(text):
                 filtered_docs.append(d)
             else:
                 continue
         return filtered_docs
 
-    def split(self, content) -> List[Document]:
+    def split(self, content) -> list[Document]:
         with self._load_doc(content) as doc:  # make sure we close the fitz pdf
             all_splits = self._split(doc)
-        filtered_splits = self._filter(all_splits)
-        return filtered_splits
+        return self._filter(all_splits)

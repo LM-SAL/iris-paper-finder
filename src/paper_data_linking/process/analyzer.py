@@ -1,27 +1,21 @@
 """
-Used in the web app
+Used in the web app.
 """
-import logging
+
 import uuid
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List, Dict, Tuple
-from typing import Union
 
 import spacy
 from langchain_core.documents import Document
 
-from paper_data_linking.process.embedders import Embedder, ChromaEmbedder
-from paper_data_linking.process.plugins import (
-    Plugin,
-    ZeroShotClassifier,
-    is_soho_related, )
-from paper_data_linking.process.splitters import Splitter, PyMuPDFTokenSplitter
-from paper_data_linking.utils import (
-    get_stage_message, PluginRecord, ContentAnalyzerRecord,
-)
+from paper_data_linking.process.embedders import ChromaEmbedder, Embedder
+from paper_data_linking.process.plugins import Plugin, ZeroShotClassifier, is_soho_related
+from paper_data_linking.process.splitters import PyMuPDFTokenSplitter, Splitter
+from paper_data_linking.utils import ContentAnalyzerRecord, PluginRecord, get_stage_message
 
-LOG = logging.getLogger(__file__)
+LOG = logging.getLogger(__name__)
 
 NLP = spacy.blank("en")
 NLP.add_pipe("sentencizer")
@@ -32,12 +26,12 @@ class ContentAnalyzer(ABC):
         self,
         splitter: Splitter,
         embedder: Embedder,
-        plugins: List[Plugin],
-    ):
+        plugins: list[Plugin],
+    ) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def process(self, content: Union[Path, str]):
+    def process(self, content: Path | str):
         pass
 
 
@@ -46,38 +40,38 @@ class MyContentAnalyzer(ContentAnalyzer):
         self,
         splitter: Splitter,
         embedder: Embedder,
-        plugins: List[Plugin],
-    ):
+        plugins: list[Plugin],
+    ) -> None:
         self.splitter = splitter
         self.embedder = embedder
         self.validate_plugins(plugins)
         self.plugins = plugins
 
     @staticmethod
-    def validate_plugins(plugins: List[Plugin]) -> None:
+    def validate_plugins(plugins: list[Plugin]) -> None:
         """
         Validate the list of plugins.
 
-        Specifically, make sure that 'embedder_kwargs["where"]' is a dictionary and
-        that its keys are unique across plugins.
+        Specifically, make sure that 'embedder_kwargs["where"]' is a
+        dictionary and that its keys are unique across plugins.
         """
         embedder_keys = set()
 
         for p in plugins:
             if "where" not in p.embedder_kwargs:
-                raise ValueError(
-                    f"The plugin {p.name} does not have 'where' in embedder_kwargs.")
+                msg = f"The plugin {p.name} does not have 'where' in embedder_kwargs."
+                raise ValueError(msg)
 
             where_dict = p.embedder_kwargs["where"]
 
             if not isinstance(where_dict, dict):
-                raise TypeError(
-                    f"'where' in plugin {p.name}'s embedder_kwargs should be a dictionary.")
+                msg = f"'where' in plugin {p.name}'s embedder_kwargs should be a dictionary."
+                raise TypeError(msg)
 
-            for key in where_dict.keys():
+            for key in where_dict:
                 if key in embedder_keys:
-                    raise ValueError(
-                        f"Duplicate key '{key}' found in plugin {p.name}'s 'where' dictionary.")
+                    msg = f"Duplicate key '{key}' found in plugin {p.name}'s 'where' dictionary."
+                    raise ValueError(msg)
                 embedder_keys.add(key)
 
     @staticmethod
@@ -86,7 +80,7 @@ class MyContentAnalyzer(ContentAnalyzer):
             relevant_docs = []
         relevant_positions = [d.metadata["position"] for d, _ in relevant_docs]
         full_text = ""
-        for i, d in enumerate(docs):
+        for _i, d in enumerate(docs):
             pos = d.metadata["position"]
             content = d.page_content
             if pos in relevant_positions:
@@ -97,15 +91,10 @@ class MyContentAnalyzer(ContentAnalyzer):
 
     def enrich_metadata(self, docs, plugin):
         new_docs = []
-        soho_related: List[bool] = []
+        soho_related: list[bool] = []
         for d in docs:
-            soho = is_soho_related(
-                NLP,
-                d.page_content,
-                plugin.filter_terms,
-                threshold=plugin.filter_threshold
-            )
-            key = list(plugin.embedder_kwargs["where"].keys())[0]
+            soho = is_soho_related(NLP, d.page_content, plugin.filter_terms, threshold=plugin.filter_threshold)
+            key = next(iter(plugin.embedder_kwargs["where"].keys()))
             # assumes that first key is for heuristic filter
             # and that dict has ordered keys (true for python 3.7+)
             new_doc = Document(
@@ -118,12 +107,14 @@ class MyContentAnalyzer(ContentAnalyzer):
 
     @staticmethod
     def _update_progress(stage: int, default_message: str, update_progress_func=None):
-        """Internal method to streamline progress updates."""
+        """
+        Internal method to streamline progress updates.
+        """
         if update_progress_func:
             message = get_stage_message(stage)
             update_progress_func(message, default_message)
 
-    def _apply_heuristic_filters(self, docs: List[Document]) -> Tuple[List[Document], List[Plugin], List[PluginRecord]]:
+    def _apply_heuristic_filters(self, docs: list[Document]) -> tuple[list[Document], list[Plugin], list[PluginRecord]]:
         early_exit_records = []
         skip_plugins = []
 
@@ -136,8 +127,9 @@ class MyContentAnalyzer(ContentAnalyzer):
 
         return docs, skip_plugins, early_exit_records
 
-    def _process_plugins(self, docs: List[Document], skip_plugins: List[Plugin], update_progress=None) -> List[
-        PluginRecord]:
+    def _process_plugins(
+        self, docs: list[Document], skip_plugins: list[Plugin], update_progress=None
+    ) -> list[PluginRecord]:
         all_records = []
         for i, p in enumerate(self.plugins):
             self._update_progress(1, f"Analyzing content (Plugin {i + 1}/{len(self.plugins)})", update_progress)
@@ -148,11 +140,11 @@ class MyContentAnalyzer(ContentAnalyzer):
             all_records.append(analysis_record)
         return all_records
 
-    def process(self, content: Union[Path, str], update_progress=None) -> ContentAnalyzerRecord:
+    def process(self, content: Path | str, update_progress=None) -> ContentAnalyzerRecord:
         self._update_progress(-1, "Parsing and Splitting PDF content...", update_progress)
-        LOG.warning(f"Splitting")
+        LOG.info("Splitting")
         docs, ocr = self.splitter.split(content)
-        LOG.warning(f"Applying heuristic filters")
+        LOG.info("Applying heuristic filters")
         docs, skip_plugins, early_exit_records = self._apply_heuristic_filters(docs)
 
         # Check if all plugins have exited early
@@ -160,7 +152,7 @@ class MyContentAnalyzer(ContentAnalyzer):
             all_records = early_exit_records
         else:
             self._update_progress(0, "Creating embeddings...", update_progress)
-            LOG.warning(f"Creating embeddings for {len(docs)} documents.")
+            LOG.info(f"Creating embeddings for {len(docs)} documents.")
             self.embedder.create_embeddings(docs)
 
             all_records = self._process_plugins(docs, skip_plugins, update_progress)
@@ -197,9 +189,8 @@ def get_analyzer(config_paths, update_progress=None):
     embedder = ChromaEmbedder(collection_name=str(uuid.uuid4()))
     plugins = [ZeroShotClassifier.from_yaml(config_path) for config_path in config_paths]
 
-    analyzer = MyContentAnalyzer(
+    return MyContentAnalyzer(
         splitter=splitter,
         embedder=embedder,
         plugins=plugins,
     )
-    return analyzer

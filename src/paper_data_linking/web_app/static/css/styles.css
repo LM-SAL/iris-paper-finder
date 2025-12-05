@@ -7,11 +7,16 @@
 
 body {
   background-color: var(--brand-rose);
-  font-family: 'Georgia', serif;
+  font-family: "Georgia", serif;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Futura', sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Futura", sans-serif;
 }
 
 h1.display-4 {
@@ -30,7 +35,10 @@ footer {
   color: white;
 }
 
-#pdf-container, #analysis-container, #json-container, #text-container {
+#pdf-container,
+#analysis-container,
+#json-container,
+#text-container {
   padding: 10px;
   max-height: 70vh;
   overflow-y: auto;
@@ -82,40 +90,39 @@ button:hover {
 }
 
 @keyframes rotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .has-tooltip {
-    border-bottom: 1px dotted #888;
-    cursor: help; /* changes the cursor to a question mark on hover */
+  border-bottom: 1px dotted #888;
+  cursor: help; /* changes the cursor to a question mark on hover */
 }
 
 .title-bg {
-    background-color: var(--brand-teal);  /* Dark background */
-    color: #fff;  /* White text color for the title */
-    padding: 20px 0;  /* Some padding for top and bottom */
-    width: 100vw;  /* This makes it span the full viewport width */
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+  background-color: var(--brand-teal); /* Dark background */
+  color: #fff; /* White text color for the title */
+  padding: 20px 0; /* Some padding for top and bottom */
+  width: 100vw; /* This makes it span the full viewport width */
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
 
 .title-bg a {
-    color: #fff;
+  color: #fff;
 }
 
 .title-bg a:hover {
-    color: #ddd;
+  color: #ddd;
 }
 
 #d3-container {
-    background-color: white;
+  background-color: white;
 }
-
-
-
-
-

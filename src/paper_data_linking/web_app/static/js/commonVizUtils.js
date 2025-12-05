@@ -1,4 +1,3 @@
-
 function someUtilityFunction() {
-    // Some utility code
+  // Some utility code
 }

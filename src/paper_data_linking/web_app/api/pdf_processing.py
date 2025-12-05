@@ -1,21 +1,20 @@
 """
-This whole file should live in paper-data-linking, not the api dir. This should
-just have the API methods.
+This whole file should live in paper-data-linking, not the api dir.
+
+This should just have the API methods.
 """
 
-from typing import List
-from uuid import uuid4
-import yaml
+import os
 import json
+from uuid import uuid4
 
 import openai
+import yaml
 
-from paper_data_linking.app.celery_app import app
-from paper_data_linking.app.settings import OPENAI_API_KEY, CONFIG_DIR
 from paper_data_linking.process.analyzer import get_analyzer
-import os
-
 from paper_data_linking.utils import get_time
+from paper_data_linking.web_app.celery_app import app
+from paper_data_linking.web_app.settings import CONFIG_DIR, OPENAI_API_KEY
 
 openai.openai_api_key = OPENAI_API_KEY
 
@@ -25,15 +24,15 @@ def get_config_files():
     config_list = []
     for f in os.listdir(config_dir):
         if os.path.isfile(os.path.join(config_dir, f)):
-            with open(os.path.join(config_dir, f), 'r') as file:
+            with open(os.path.join(config_dir, f)) as file:
                 content = yaml.safe_load(file)
-                name = content.get('name', 'Unnamed')
+                name = content.get("name", "Unnamed")
                 config_list.append({"filename": f, "name": name})
     return config_list
 
 
 def get_location_dct(doc, intensity=1, color=(255, 255, 0)):
-    rect = {
+    return {
         "page": doc.metadata["page"],
         "rect": {
             "x": doc.metadata["x"],
@@ -44,7 +43,6 @@ def get_location_dct(doc, intensity=1, color=(255, 255, 0)):
         "intensity": intensity,
         "color": color,
     }
-    return rect
 
 
 def get_rectangles_from_docs(docs, color=(255, 255, 0)):
@@ -60,10 +58,7 @@ def prepare_records_for_frontend(records):
     full_analysis = ""
     all_data = []
     for r in records:
-        if r.analysis is None:
-            analysis = ""
-        else:
-            analysis = r.analysis
+        analysis = "" if r.analysis is None else r.analysis
         full_analysis = full_analysis + "\n\n---\n\n" + analysis
         all_data.append(json.loads(r.json()))
     return all_rects, full_analysis, all_data
@@ -77,6 +72,7 @@ def get_docs_for_frontend(self, pdf_file, filename, config_file, analyzer=None):
                 state="PROGRESS",
                 meta={"current": percentage, "total": 100, "status": message},
             )
+
     config_loc = os.path.join(CONFIG_DIR, config_file)
     text, rect_locations, analysis, json_data = get_docs(
         pdf_file, filename, [config_loc], update_progress=update_progress, analyzer=analyzer
@@ -89,7 +85,7 @@ def get_docs_for_frontend(self, pdf_file, filename, config_file, analyzer=None):
     }
 
 
-def get_full_text(docs: List, relevant_docs=None) -> str:
+def get_full_text(docs: list, relevant_docs=None) -> str:
     if relevant_docs is None:
         relevant_docs = []
     relevant_positions = [d.metadata["position"] for d in relevant_docs]
@@ -113,7 +109,7 @@ def get_docs(pdf_file, filename, config_files, analyzer=None, update_progress=No
     analysis_results = analyzer.process(pdf_file, update_progress=update_progress)
 
     docs = analysis_results.docs
-    records: List = analysis_results.records
+    records: list = analysis_results.records
 
     # Let's gather all the relevant docs from the records
     # This is highlighting relevant docs for all plugins in one spot
@@ -131,7 +127,7 @@ def get_docs(pdf_file, filename, config_files, analyzer=None, update_progress=No
     try:
         rects, analysis, data = prepare_records_for_frontend(records)
         message = "success"
-    except:
+    except Exception:
         rects = []
         analysis = ""
         data = []

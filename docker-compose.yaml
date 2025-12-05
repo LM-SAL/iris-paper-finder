@@ -1,5 +1,4 @@
 services:
-
   built_app:
     build:
       context: .
@@ -13,14 +12,14 @@ services:
     expose:
       - 6379
     healthcheck:
-      test: [ "CMD", "redis-cli", "ping" ]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 2s
       timeout: 10s
       retries: 5
 
   celery:
     image: built_app:latest
-    command: celery -A paper_data_linking.app.celery_app worker --loglevel=debug
+    command: celery -A paper_data_linking.web_app.celery_app:app worker -E -B
     env_file:
       - .env
     depends_on:

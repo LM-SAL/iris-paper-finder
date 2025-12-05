@@ -1,21 +1,23 @@
+import re
 import json
 import argparse
-import re
 from pathlib import Path
+
 import requests
-from tqdm import tqdm
 from bs4 import BeautifulSoup
-from paper_data_linking.data.models import MetadataRecord
+from tqdm import tqdm
+
 from paper_data_linking import logger
-import urllib.request
 from paper_data_linking.data import HEADERS
+from paper_data_linking.data.models import MetadataRecord
+
 
 class URLTransformationService:
     def transform(self, urls):
         transformed_urls = [self._transform_single_url(url) for url in urls]
         return self._prioritize_urls(list(set(transformed_urls)))
 
-    def _transform_single_url(self, url):
+    def _transform_single_url(self, url):  # NOQA: PLR0911
         # Transformations for various URL types go here:
         if "doi.org" in url:
             return self._transform_doi_url(url)
@@ -25,8 +27,10 @@ class URLTransformationService:
             return self._transform_ads_url(url)
         if "link.springer.com/article/" in url:
             return self._transform_springer_url(url)
-        if ("earth-planets-space.springeropen.com/articles/" in url or
-            "geoscienceletters.springeropen.com/articles/" in url):
+        if (
+            "earth-planets-space.springeropen.com/articles/" in url
+            or "geoscienceletters.springeropen.com/articles/" in url
+        ):
             return self._transform_springer_open_url(url)
         if "copernicus.org/articles/" in url:
             return self._transform_copernicus_url(url)
@@ -45,8 +49,7 @@ class URLTransformationService:
             response = requests.get(url, allow_redirects=True, timeout=360, headers=HEADERS)
             response.raise_for_status()
             return self._transform_single_url(response.url)
-        except requests.exceptions.RequestException as e:
-            print(f"Error retrieving URL for DOI {url}: {e}")
+        except requests.exceptions.RequestException:
             return url
 
     def _transform_arxiv_url(self, url):
@@ -92,18 +95,18 @@ class URLTransformationService:
         return url
 
     def _transform_degruyter_url(self, url):
-        return url.replace('html', 'pdf')
+        return url.replace("html", "pdf")
 
     def _prioritize_urls(self, urls):
         def url_priority(url):
             if "arxiv.org" in url:
                 return 0
-            elif "articles.adsabs.harvard.edu/full/" in url:
+            if "articles.adsabs.harvard.edu/full/" in url:
                 return 1
-            elif "link.springer.com/article/" in url or "copernicus.org/articles/" in url:
+            if "link.springer.com/article/" in url or "copernicus.org/articles/" in url:
                 return 2
-            else:
-                return 10
+            return 10
+
         return sorted(urls, key=url_priority)
 
     def _get_aanda_pdf_url(self, url):
@@ -111,10 +114,9 @@ class URLTransformationService:
         try:
             response = requests.get(url, allow_redirects=True, timeout=360, headers=HEADERS)
             if response.status_code == 200:
-                soup = BeautifulSoup(response.content, 'html.parser')
-                pdf_link = soup.select_one('.article_doc > ul:nth-child(1) > li:nth-child(3) > a:nth-child(1)')
+                soup = BeautifulSoup(response.content, "html.parser")
+                pdf_link = soup.select_one(".article_doc > ul:nth-child(1) > li:nth-child(3) > a:nth-child(1)")
                 if pdf_link:
-                    print(f"Found pdf link: {pdf_link['href']}")
                     return f"https://www.aanda.org{pdf_link['href']}"
         except Exception as e:
             logger.warning(f"Failed to get pdf url because {e}")
@@ -122,12 +124,11 @@ class URLTransformationService:
 
 
 class MetadataTransformer:
-
-    def __init__(self, transformation_service):
+    def __init__(self, transformation_service) -> None:
         self.transformation_service = transformation_service
 
     def _filter_open_access(self, links_data):
-        return [link['url'] for link in links_data if link['access'] == 'open']
+        return [link["url"] for link in links_data if link["access"] == "open"]
 
     def _omit_unwanted_urls(self, urls):
         omit_urls = ["hcvalidate.perfdrive.com"]
@@ -138,7 +139,7 @@ class MetadataTransformer:
         input_path = Path(input_file)
         output_path = Path(output_file)
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        with input_path.open('r') as infile, output_path.open('w') as outfile:
+        with input_path.open("r") as infile, output_path.open("w") as outfile:
             for line in tqdm(infile):
                 record_dict = json.loads(line)
                 record = MetadataRecord.from_dict(record_dict)
@@ -148,12 +149,15 @@ class MetadataTransformer:
                 # Transform the URLs
                 transformed_urls = self.transformation_service.transform(urls)
                 record.pdf_links = transformed_urls
-                outfile.write(json.dumps(record.to_dict()) + '\n')
+                outfile.write(json.dumps(record.to_dict()) + "\n")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Transform URLs in metadata records.")
     parser.add_argument("input_file", type=str, help="Path to the input JSONL file with metadata records.")
-    parser.add_argument("output_file", type=str, help="Path to the output JSONL file to store metadata with links to pdfs.")
+    parser.add_argument(
+        "output_file", type=str, help="Path to the output JSONL file to store metadata with links to pdfs."
+    )
     args = parser.parse_args()
     transformation_service = URLTransformationService()
     transformer = MetadataTransformer(transformation_service)

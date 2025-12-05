@@ -1,14 +1,11 @@
-import json
 import re
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Dict, Any, List, Optional
-from pydantic import BaseModel
-
-import tiktoken
+import json
+from typing import Any
 from pathlib import Path
+from datetime import UTC, datetime
 
 from langchain_core.documents import Document
+from pydantic import BaseModel
 from thefuzz import fuzz, process
 
 INSTRUMENT_DOI_DICT = {
@@ -42,46 +39,38 @@ INSTRUMENT_ACRONYM_EXPANSIONS = [
     ("VIRGO", "Variability of solar IRradiance and Gravity Oscillations"),
 ]
 
+
 def get_acronym(inst_str, acronym_expansion_list, threshold=70):
     # Create separate lists of acronyms and full names for fuzzy matching
-    acronyms, full_names = zip(*acronym_expansion_list)
+    acronyms, full_names = zip(*acronym_expansion_list, strict=False)
     # Check for an exact match with an acronym
     if inst_str in acronyms:
         return inst_str
     # If no exact match was found, perform fuzzy matching
-    else:
-        # Get best match with acronyms and its score
-        best_match_acronym, score_acronym = process.extractOne(
-            inst_str, acronyms, scorer=fuzz.token_sort_ratio
-        )
-        # Get best match with full names and its score
-        best_match_full_name, score_full_name = process.extractOne(
-            inst_str, full_names, scorer=fuzz.token_sort_ratio
-        )
-        # If both scores are below the threshold, return the original string
-        if score_acronym < threshold and score_full_name < threshold:
-            return inst_str
-        # Else, return the acronym corresponding to the best match
-        else:
-            if score_acronym > score_full_name:
-                return best_match_acronym
-            else:
-                index = full_names.index(best_match_full_name)
-                return acronyms[index]
+    # Get best match with acronyms and its score
+    best_match_acronym, score_acronym = process.extractOne(inst_str, acronyms, scorer=fuzz.token_sort_ratio)
+    # Get best match with full names and its score
+    best_match_full_name, score_full_name = process.extractOne(inst_str, full_names, scorer=fuzz.token_sort_ratio)
+    # If both scores are below the threshold, return the original string
+    if score_acronym < threshold and score_full_name < threshold:
+        return inst_str
+    # Else, return the acronym corresponding to the best match
+    if score_acronym > score_full_name:
+        return best_match_acronym
+    index = full_names.index(best_match_full_name)
+    return acronyms[index]
 
 
 def get_correct_instruments(
-    instruments, metadata,
+    instruments,
+    metadata,
 ):
     if metadata is None:
         return instruments
-    acronym_expansion_list = [(k, v['detail']) for k, v in metadata.items()]
+    acronym_expansion_list = [(k, v["detail"]) for k, v in metadata.items()]
     if acronym_expansion_list is None:
         acronym_expansion_list = INSTRUMENT_ACRONYM_EXPANSIONS
-    corrected_instruments = [
-        get_acronym(inst, acronym_expansion_list) for inst in instruments
-    ]
-    return corrected_instruments
+    return [get_acronym(inst, acronym_expansion_list) for inst in instruments]
 
 
 def to_jsonlines(docs, outfile):
@@ -102,13 +91,13 @@ def write_pdf(content, dir_loc, bibcode):
         with (dir_loc / f"{bibcode}.pdf").open("wb") as f0:
             f0.write(content)
         return 1
-    else:
-        return 0
+    return 0
+
 
 def read_local_pdf(file_path):
     with open(file_path, "rb") as f:
-        content = f.read()
-    return content
+        return f.read()
+
 
 def validate_pdfs(dir_loc):
     dir_loc = Path(dir_loc)
@@ -123,18 +112,16 @@ def validate_pdfs(dir_loc):
                     valid_count += 1
                 else:
                     invalid_files.append(pdf_file.name)
-        except Exception as e:
+        except Exception:
             invalid_files.append(pdf_file.name)
     total_files = len(pdf_files)
     if total_files > 0:
-        print(f"Validated {valid_count}/{total_files} PDF files.")
+        pass
     if invalid_files:
-        print(f"Invalid PDF files: {invalid_files}")
-        print("Removing invalid PDF files...")
         # Remove invalid files and add it to failed_bibcodes.txt
         failed_bibcodes_file = dir_loc / "failed_bibcodes.txt"
         for invalid_file in invalid_files:
-            with failed_bibcodes_file.open('a') as f:
+            with failed_bibcodes_file.open("a") as f:
                 f.write(f"{invalid_file.split('.pdf')[0]}\n")
             (dir_loc / invalid_file).unlink()
 
@@ -160,10 +147,9 @@ def clean_collection_name_for_chroma(input_string):
 
 
 def load_bibcodes_list(infile):
-    with open(infile, "r") as f0:
+    with open(infile) as f0:
         bibcodes = f0.readlines()
-    bibcodes = [b.strip() for b in bibcodes if b.strip() != ""]
-    return bibcodes
+    return [b.strip() for b in bibcodes if b.strip() != ""]
 
 
 def get_stage_message(stage=0):
@@ -172,30 +158,25 @@ def get_stage_message(stage=0):
     stages = ["parsing", "embedding", "analyzing"]
     messages = []
     for i, s in enumerate(stages):
-        if i <= stage:
-            marker = complete
-        else:
-            marker = in_progress
+        marker = complete if i <= stage else in_progress
         messages.append(f"{s}{marker}")
-    message = " › ".join(messages)
-    return message
+    return " > ".join(messages)
 
 
 class PluginRecord(BaseModel):
     analyzer: str
     passed_heuristic_filter: bool
-    data: Optional[Dict[str, Any]] = None
-    analysis: Optional[str] = None
-    relevant_indices: Optional[List[int]] = None
+    data: dict[str, Any] | None = None
+    analysis: str | None = None
+    relevant_indices: list[int] | None = None
+
 
 class ContentAnalyzerRecord(BaseModel):
-    docs: List[Document]
+    docs: list[Document]
     ocr_status: bool
-    records: List[PluginRecord]
-
+    records: list[PluginRecord]
 
 
 def get_time():
-    timestamp = datetime.now()
-    timestamp_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-    return timestamp_str
+    timestamp = datetime.now(tz=UTC)
+    return timestamp.strftime("%Y-%m-%d %H:%M:%S")

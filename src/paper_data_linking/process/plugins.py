@@ -1,62 +1,43 @@
 import json
 import logging
-from typing import List
-import random
-from json.decoder import JSONDecodeError
 from abc import ABC, abstractmethod
-import yaml
-from typing import Tuple
+from json.decoder import JSONDecodeError
 
 import openai
 import spacy
-from langchain_openai import ChatOpenAI
+import yaml
 from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
 from thefuzz import fuzz
 
 from paper_data_linking.process.embedders import Embedder
 from paper_data_linking.settings import OPENAI_API_KEY
-from paper_data_linking.utils import get_correct_instruments, PluginRecord
+from paper_data_linking.utils import PluginRecord, get_correct_instruments
 
-LOG = logging.getLogger(__file__)
+LOG = logging.getLogger(__name__)
 openai.api_key = OPENAI_API_KEY
 
 
 class Plugin(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         self._query = None
 
     @abstractmethod
     def process(
-        self, docs: list[Document], embedder: Embedder, embedder_kwargs: dict = None
-    ) -> Tuple[dict, str, list[Document]]:
+        self, docs: list[Document], embedder: Embedder, embedder_kwargs: dict | None = None
+    ) -> tuple[dict, str, list[Document]]:
         pass
 
 
-class FakePlugin(Plugin):
-    def __init__(self):
-        self._query = "Does this paper use data from the SOHO spacecraft or its instruments (CDS, CELIAS, COSTEP, EIT, ERNE, GOLF, LASCO, MDI, SUMER, SWAN, UVCS, VIRGO)?"
-
-    def process(
-        self, docs: list[Document], embedder: Embedder, embedder_kwargs: dict = None
-    ) -> Tuple[dict, str, list[Document]]:
-        relevant_docs = embedder.get_relevant_docs(self._query, embedder_kwargs)
-        analysis = "This paper looks like it is pretty cool."
-        soho = random.choice(["YES", "NO", "UNCERTAIN"])
-        data = {"status": "very cool", "space": True, "SOHO": soho}
-        return data, analysis, relevant_docs
-
-
 class SOHOStepwiseBinaryClassifier(Plugin):
-    def __init__(self, kwargs):
+    def __init__(self, kwargs) -> None:
         super().__init__()
         self._query = "Does this paper use data from the SOHO spacecraft or its instruments (CDS, CELIAS, COSTEP, EIT, ERNE, GOLF, LASCO, MDI, SUMER, SWAN, UVCS, VIRGO)?"
         self.system_message = SystemMessage(
             content="""You are a helpful assistant who analyzes scientific documents and you produce Markdown outputs."""
         )
-        self.model = ChatOpenAI(
-            model=kwargs["model"], temperature=kwargs["temperature"]
-        )
+        self.model = ChatOpenAI(model=kwargs["model"], temperature=kwargs["temperature"])
         # ^ should probably just unpack these with **kwargs
         self.questions = [
             "Do these excerpts directly use data from the SOHO mission and its primary catalogues?",
@@ -66,7 +47,7 @@ class SOHOStepwiseBinaryClassifier(Plugin):
 
     @staticmethod
     def _construct_question(context, question):
-        p = f"""For your reference, the Solar and Heliospheric Observatory (SOHO) has these instruments: CDS, CELIAS, COSTEP, EIT, ERNE, GOLF, LASCO, MDI, SUMER, SWAN, UVCS, VIRGO.
+        return f"""For your reference, the Solar and Heliospheric Observatory (SOHO) has these instruments: CDS, CELIAS, COSTEP, EIT, ERNE, GOLF, LASCO, MDI, SUMER, SWAN, UVCS, VIRGO.
 
         Now, use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
 
@@ -74,7 +55,6 @@ class SOHOStepwiseBinaryClassifier(Plugin):
 
 Question: {question}
 Helpful Answer:"""
-        return p
 
     def _get_questions(self, context):
         questions = []
@@ -89,41 +69,37 @@ Helpful Answer:"""
         results = []
         for q in questions:
             messages = [self.system_message, q]
-            result = self.model(messages)
+            result = self.model.invoke(messages)
             results.append(result)
         return results
 
     @staticmethod
     def _create_context(docs: list[Document]) -> str:
         full_text = ""
-        for i, (dd, score) in enumerate(docs):
+        for i, (dd, _score) in enumerate(docs):
             text = dd.page_content
             full_text += f"{i + 1}. {text}\n\n"
         return full_text
 
     def _get_second_human_message(self, analysis):
-        human_message = HumanMessage(
+        return HumanMessage(
             content=f"""```{analysis}```
 Here are the answers to three questions. Is the answer to ANY of these questions yes? Answer with YES, NO, or UNCERTAIN. Give no explanation. Just one word."""
         )
-        return human_message
 
     def _get_second_set_of_messages(self, analysis):
-        messages = [self.system_message, self._get_second_human_message(analysis)]
-        return messages
+        return [self.system_message, self._get_second_human_message(analysis)]
 
     def process(
-        self, docs: list[Document], embedder: Embedder, embedder_kwargs: dict = None
-    ) -> Tuple[dict, str, list[Document]]:
+        self,
+        docs: list[Document],  # NOQA: ARG002
+        embedder: Embedder,
+        embedder_kwargs: dict | None = None,
+    ) -> tuple[dict, str, list[Document]]:
         relevant_docs = embedder.get_relevant_docs(self._query, embedder_kwargs)
-        # analyses = []
-        # for i, d in enumerate(relevant_docs):
-
         results = self._ask_questions(relevant_docs)
-        print(results)
-
         analyses = []
-        for i, (q, result) in enumerate(zip(self.questions, results)):
+        for _, (q, result) in enumerate(zip(self.questions, results, strict=False)):
             analysis = f"#### {q}\n" + result.content
             analyses.append(analysis)
         total_analysis = "\n\n".join(analyses)
@@ -136,11 +112,10 @@ Here are the answers to three questions. Is the answer to ANY of these questions
 
 
 def get_remaining_contents(text, phrase):
-    try :
-        value = text.split(phrase)[1].split("```")[0]
-        return value
-    except Exception as e:
-        LOG.error(f"Error in get_remaining_contents: {e}")
+    try:
+        return text.split(phrase)[1].split("```")[0]
+    except Exception:
+        LOG.exception("Error in get_remaining_contents")
         return None
 
 
@@ -156,18 +131,15 @@ def get_contents_after_phrase_before_newline(text, phrase):
         # Split the line on ':', and return the second part (the classification value)
         _, value = classification_line.split(":", 1)
         return value.strip()
-    else:
-        return None
+    return None
+
 
 def get_dois(instruments: list, metadata: dict):
     if metadata is None:
         return [{"label": inst, "link": "not found"} for inst in instruments]
     instruments_data = []
     for inst in instruments:
-        if inst in metadata:
-            doi = metadata[inst]['link']
-        else:
-            doi = "not found"
+        doi = metadata[inst]["link"] if inst in metadata else "not found"
         inst_data = {"label": inst, "link": doi}
         instruments_data.append(inst_data)
     return instruments_data
@@ -185,7 +157,7 @@ def is_soho_related(nlp, txt, indicator_strings, threshold=80):
 
 
 class ZeroShotClassifier(Plugin):
-    def __init__(self, nl_config, model_kwargs, embedder_kwargs=None):
+    def __init__(self, nl_config, model_kwargs, embedder_kwargs=None) -> None:
         super().__init__()
         self._load_config_from_dict(nl_config)
         self.validate_model_kwargs(model_kwargs)
@@ -196,10 +168,9 @@ class ZeroShotClassifier(Plugin):
 
     # method which validates that model_kwargs has 'model_name' and 'temperature' keys
     def validate_model_kwargs(self, model_kwargs):
-        if not "model_name" in model_kwargs or not "temperature" in model_kwargs:
-            raise ValueError(
-                "Invalid model_kwargs configuration: Missing required fields."
-            )
+        if "model_name" not in model_kwargs or "temperature" not in model_kwargs:
+            msg = "Invalid model_kwargs configuration: Missing required fields."
+            raise ValueError(msg)
 
     def _load_config_from_dict(self, config):
         self.name = config.get("name")
@@ -216,25 +187,26 @@ class ZeroShotClassifier(Plugin):
 
     @classmethod
     def from_yaml(cls, config_path):
-        with open(config_path, "r") as f:
+        with open(config_path) as f:
             config = yaml.safe_load(f)
 
         # Extract and validate classifier config
         classifier_config = config.get("classifier", {})
         if (
-            not "name" in classifier_config
-            or not "query" in classifier_config
-            or not "system_message" in classifier_config
-            or not "human_message" in classifier_config
-            or not "answer_divider" in classifier_config
-            or not "json_divider" in classifier_config
-            or not "answer_key" in classifier_config
-            or not "json_key" in classifier_config
-            or not "label_metadata_map" in classifier_config
-            or not "filter_terms" in classifier_config
-            or not "filter_threshold" in classifier_config
+            "name" not in classifier_config
+            or "query" not in classifier_config
+            or "system_message" not in classifier_config
+            or "human_message" not in classifier_config
+            or "answer_divider" not in classifier_config
+            or "json_divider" not in classifier_config
+            or "answer_key" not in classifier_config
+            or "json_key" not in classifier_config
+            or "label_metadata_map" not in classifier_config
+            or "filter_terms" not in classifier_config
+            or "filter_threshold" not in classifier_config
         ):
-            raise ValueError("Invalid classifier configuration in YAML: Missing required fields.")
+            msg = "Invalid classifier configuration in YAML: Missing required fields."
+            raise ValueError(msg)
 
         # Extract model_kwargs and embedder_kwargs
         model_kwargs = config.get("model_kwargs", {})
@@ -243,31 +215,23 @@ class ZeroShotClassifier(Plugin):
         return cls(classifier_config, model_kwargs, embedder_kwargs)
 
     def _get_human_message(self, context):
-        human_message = HumanMessage(
-            content=f"```{context}```\n\n {self._human_message}"
-        )
-        return human_message
+        return HumanMessage(content=f"```{context}```\n\n {self._human_message}")
 
     @staticmethod
     def _create_context(docs: list[Document]) -> str:
         full_text = ""
         for i, dd in enumerate(docs):
             text = dd.page_content
-            if "position" in dd.metadata:
-                p = dd.metadata["position"]
-            else:
-                p = i
+            p = dd.metadata.get("position", i)
             full_text += f"\n\n#Excerpt {p + 1}##\n\n{text}"
         return full_text
 
     def _get_messages(self, docs):
         context = self._create_context(docs)
-        messages = [self.system_message, self._get_human_message(context)]
-        return messages
+        return [self.system_message, self._get_human_message(context)]
 
     def get_answer_from_analysis(self, text):
-        val = get_contents_after_phrase_before_newline(text, phrase=self._answer_divider)
-        return val
+        return get_contents_after_phrase_before_newline(text, phrase=self._answer_divider)
 
     def get_instruments_from_analysis(self, text):
         inst_str = get_remaining_contents(text, phrase=self._json_divider)
@@ -288,23 +252,23 @@ class ZeroShotClassifier(Plugin):
             relevant_indices=None,
         )
 
-    def process(self, docs: List[Document], embedder: Embedder) -> PluginRecord:
-        relevant_docs, distances = embedder.get_relevant_docs(self._query, self.embedder_kwargs)
-        LOG.warning(f"Relevant docs: {len(relevant_docs)}")
+    def process(self, docs: list[Document], embedder: Embedder) -> PluginRecord:
+        relevant_docs, _distances = embedder.get_relevant_docs(self._query, self.embedder_kwargs)
+        LOG.info(f"Relevant docs: {len(relevant_docs)}")
         messages = self._get_messages(relevant_docs)
-        LOG.warning(f"Querying LLM")
-        result = self.model(messages)
+        LOG.info("Querying LLM")
+        result = self.model.invoke(messages)
         analysis = result.content
-        LOG.warning(f"Got analysis from LLM")
+        LOG.info("Got analysis from LLM")
         try:
             answer = self.get_answer_from_analysis(analysis)
         except JSONDecodeError:
-            LOG.warning("Could not decode JSON from analysis.")
+            LOG.info("Could not decode JSON from analysis.")
             answer = ""
         try:
             instruments = self.get_instruments_from_analysis(analysis)
         except JSONDecodeError:
-            LOG.warning("Could not decode JSON from analysis.")
+            LOG.info("Could not decode JSON from analysis.")
             instruments = []
         data = {
             self._answer_key: answer,
@@ -312,14 +276,13 @@ class ZeroShotClassifier(Plugin):
             "analyzer": self.name,
         }
         relevant_indices = []
-        LOG.warning(f"Getting relevant indices")
+        LOG.info("Getting relevant indices")
         for d in relevant_docs:
             try:
                 i = docs.index(d)
                 relevant_indices.append(i)
             except ValueError:
-                LOG.warning("Could not find relevant doc in original list.")
-        # relevant_indices = [docs.index(d) for d in relevant_docs]
+                LOG.info("Could not find relevant doc in original list.")
         return PluginRecord(
             analyzer=self.name,
             passed_heuristic_filter=True,
