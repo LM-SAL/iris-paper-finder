@@ -1,118 +1,114 @@
-# paper-data-linking
+# IRIS Paper LLM
 
-Identify and extract data references in heliophysics research papers.
+The goal of this repository is to be able to find, identify and extract data references in research papers which talk about IRIS.
 
-## Description
-Tools for information extraction on heliophysics papers. The `paper-data-linking` library contains code for ingesting and analyzing pdfs in order to enrich their metadata.
+An IRIS paper is defined as the following:
+
+- Any paper which shows IRIS data
+- Any paper which creates synthetic data of any IRIS passband
+
+The `paper-data-linking` library contains code for ingesting and downloading PDFs.
+There is also a web application which will allow one to upload PDFs and have them analyzed by a LLM.
 
 ## **Installation**
 
-To run the API, you’ll need to set up Docker, Docker Compose, and a few configuration files. Follow these steps:
+To run the library, you can pip install the library into your virtual environment with the "scrape" extras.
 
----
+```bash
+pip install -e ".[scrape]"
+```
+
+### Getting Papers
+
+This part of the library is managed via the Makefile.
+
+```bash
+make help
+```
+
+will provide you the targets and the order of the commands for normal use.
+
+The queries to the ADS are fixed and one should modify the Makefile.
+Currently it will fetch the IRIS ADS library and do a query for all papers which have cited the IRIS instrument paper.
+
+Typically when downloading the papers, you will hit bot procetions.
+Within `src/paper_data_linking/data/headers.py` is the code which creates the request headers.
+This might need updating or the bot protection is too advanced to bypass which means you will need to manually download those papers.
+
+When you have them all downloaded, you can precede with the rest of the readme.
+
+## Web Application
+
+To run the API, you will need to set up Docker, Docker Compose, and a few configuration files.
 
 ### **1. Prerequisites**
+
 Make sure you have the following installed on your system:
+
 - **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
 - **Docker Compose**: [Install Docker Compose](https://docs.docker.com/compose/install/)
 
----
-
 ### **2. Configure Environment Variables**
+
 1. Copy the example `.env` file:
+
    ```bash
    cp .env_example .env
    ```
-2. Open the `.env` file and fill in the required environment variables under the `App variables` section. Don't worry about `App credentials` just yet.
 
----
+2. Open the `.env` file and fill in the required environment variables.
 
-### **3. Set Up Authentication**
-1. Navigate to the `nginx` directory:
-   ```bash
-   cd nginx
-   ```
-2. Create a password file for the reverse proxy:
-   ```bash
-   htpasswd -c .htpasswd <USERNAME>
-   ```
-   Replace `<USERNAME>` with your desired username, then enter your desired password when prompted.
-3. Return to the root directory:
-   ```bash
-   cd ..
-   ```
-4. Now fill in the `App Credentials` section from the `.env` file with these chosen values.
+### **3. Download ONNX Model**
 
----
+1. Run the following make command:
 
-### **4. Download ONNX Model**
-1. Create a `models` directory if it doesn’t exist:
    ```bash
-   mkdir -p models
-   ```
-2. Navigate to the `models` directory:
-   ```bash
-   cd models
-   ```
-3. Download the `all-MiniLM-L6-v2` ONNX model:
-   ```bash
-   wget https://chroma-onnx-models.s3.amazonaws.com/all-MiniLM-L6-v2/onnx.tar.gz
-   ```
-4. Extract the model:
-   ```bash
-   tar -xzvf onnx.tar.gz
-   ```
-5. Return to the root directory:
-   ```bash
-   cd ..
+   make onnx
    ```
 
----
+### **4. Build Docker Images**
 
-### **5. Build Docker Images**
 Navigate to the root of the repository and build the Docker images:
+
 ```bash
-docker compose build
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
 ```
+
 This process may take a few minutes.
 
----
+### **5. Start the Services**
 
-### **6. Start the Services**
 Run the application:
-- For **production mode**:
-  ```bash
-  docker compose -f docker-compose.yaml up
-  ```
-- For **development mode**:
-  ```bash
-  docker compose up
-  ```
-This will also use the `docker-compose.override.yaml` file. The services may take a minute or two to start up.
 
----
+```bash
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up
+```
 
-### **7. Access the Application**
+(The reason the env variables are still used here, is that its easier to just replace build with up in the commandline history)
+
+The services may take a minute or two to start up.
+
+### **6. Access the Application**
+
 1. Open your browser and navigate to:
-   ```
+
+   ```bash
    http://localhost:80
    ```
-2. If you see an NGINX 500 error, wait a moment for the `web` service to fully initialize.
-3. Log in with:
-   - **Username**: The one you created in step 3.
-   - **Password**: The password you entered in step 3.
 
----
+2. If you see an NGINX 500 error, wait a moment for the `web` service to fully initialize.
 
 ### **Notes**
+
 - For troubleshooting, ensure Docker is running and check logs using:
+
   ```bash
   docker-compose logs
   ```
-- If you encounter any issues, refer to the project’s documentation or contact support.
 
+- If you encounter any issues, refer to the project's documentation or contact support.
 
-## Usage
+## Usage of the Web App
 
 How to use the Paper Analyzer:
 
@@ -152,7 +148,11 @@ For programmatic access, the following endpoints are available:
 
 Note: The API has a rate limit of 20 requests per minute.
 
-You can see an example of how to programmatically use the API endpoints to do a prediction in the file [scripts/query_api.py](scripts/query_api.py). Note that this script requires the `requests` and `python-dotenv` libraries in order to run.
+You can see an example of how to programmatically use the API endpoints to do a prediction in the file [scripts/query_api.py](scripts/query_api.py).
+Note that this script requires the `requests` and `python-dotenv` libraries in order to run.
+
+This is how this is meant to be run.
+Using the Makefile, you can do a ADS query, get the PDFs and then use the script above to do the LLM processing.
 
 ### Tips
 
@@ -160,14 +160,15 @@ You can see an example of how to programmatically use the API endpoints to do a 
 - Large files may take longer to process
 - Check the classifier descriptions to choose the most appropriate one for your paper
 
-# Analyzer Configuration Guide
+## Analyzer Configuration Guide
 
-The analyzer uses a YAML configuration file to define how it processes scientific papers. This guide explains each component and how they work together.
+The analyzer uses a YAML configuration file to define how it processes scientific papers.
+This guide explains each component and how they work together.
 
 ## Processing Pipeline
 
 1. **Initial Filtering**: Uses fuzzy string matching to quickly identify potentially relevant content
-2. **Embedding & Retrieval**: Creates embeddings of the text and finds relevant sections 
+2. **Embedding & Retrieval**: Creates embeddings of the text and finds relevant sections
 3. **LLM Analysis**: Analyzes the relevant sections to extract detailed information
 
 ## Configuration File Structure
@@ -175,13 +176,13 @@ The analyzer uses a YAML configuration file to define how it processes scientifi
 ### Top-Level Fields
 
 ```yaml
-name: "Interface Region Imaging Spectrograph"  # Name of the instrument/mission
-classifier:  # Main configuration block
+name: "Interface Region Imaging Spectrograph" # Name of the instrument/mission
+classifier: # Main configuration block
   # Classifier settings detailed below
-model_kwargs:  # LLM model settings 
+model_kwargs: # LLM model settings
   model_name: "gpt-4"
   temperature: 0
-embedder_kwargs:  # Embedding settings
+embedder_kwargs: # Embedding settings
   where:
     passed_iris_heuristic: 1
 ```
@@ -190,30 +191,30 @@ embedder_kwargs:  # Embedding settings
 
 ```yaml
 classifier:
-  name: "IRIS"  # Identifier for this classifier
-  query: "Does this paper use data from the IRIS spacecraft or its instruments?"  # Query for relevant content
-  system_message: |  # Context for the LLM
+  name: "IRIS" # Identifier for this classifier
+  query: "Does this paper use data from the IRIS spacecraft or its instruments?" # Query for relevant content
+  system_message: | # Context for the LLM
     # Background information about the mission/instrument
-  human_message: |  # Instructions for analysis
+  human_message: | # Instructions for analysis
     # Specific questions and format requirements
-  answer_divider: "Classification:"  # Marker to extract classification
-  json_divider: "IRIS Aspects Used:"  # Marker to extract structured data
-  answer_key: "IRIS"  # Key for storing classification
-  json_key: "aspects"  # Key for storing structured data
-  filter_terms:  # Terms for initial filtering
+  answer_divider: "Classification:" # Marker to extract classification
+  json_divider: "IRIS Aspects Used:" # Marker to extract structured data
+  answer_key: "IRIS" # Key for storing classification
+  json_key: "aspects" # Key for storing structured data
+  filter_terms: # Terms for initial filtering
     - "IRIS"
     - "Interface Region Imaging Spectrograph"
     # ... more terms
-  filter_threshold: 80  # Fuzzy matching threshold (0-100)
+  filter_threshold: 80 # Fuzzy matching threshold (0-100)
 ```
 
 ### Metadata Mapping
 
 ```yaml
 label_metadata_map:
-  IRIS Telescope:  # Component name
-    link: "https://iris.lmsal.com/"  # Reference link
-    detail: "High-resolution solar observation instrument"  # Description
+  IRIS Telescope: # Component name
+    link: "https://iris.lmsal.com/" # Reference link
+    detail: "High-resolution solar observation instrument" # Description
 ```
 
 ## How It Works
@@ -221,16 +222,20 @@ label_metadata_map:
 ### 1. Initial Filtering
 
 The `is_soho_related()` function performs initial filtering using:
+
 - `filter_terms`: List of relevant terms to look for
 - `filter_threshold`: Minimum fuzzy match score (0-100) to consider a match
 - Uses sentence-level matching with spaCy
 - Returns True if ANY term matches above threshold
 
-Passages which do not contain any of these terms (or close matches) will NOT be analyzed by the LLM. Moreover, if not a single passage contains on of these terms (or a close match), no LLM analysis will even occur and we will assume the paper is not relevant. Therefore, one should be reasonably certain that if a paper does not contain any of these terms, the paper is not relevant.
+Passages which do not contain any of these terms (or close matches) will NOT be analyzed by the LLM.
+Moreover, if not a single passage contains on of these terms (or a close match), no LLM analysis will even occur and we will assume the paper is not relevant.
+Therefore, one should be reasonably certain that if a paper does not contain any of these terms, the paper is not relevant.
 
 ### 2. Embedding & Retrieval
 
 Uses the `embedder_kwargs` to:
+
 - Create embeddings of document sections
 - Find sections relevant to the `query`
 - Filters based on the initial filtering results using the `where` clause
@@ -238,6 +243,7 @@ Uses the `embedder_kwargs` to:
 ### 3. LLM Analysis
 
 The LLM:
+
 1. Receives context via `system_message`
 2. Processes relevant sections using `human_message` instructions
 3. Returns structured output based on the message templates
@@ -255,6 +261,7 @@ To modify the analyzer for a new instrument:
 6. Define instrument components in `label_metadata_map`
 
 Key considerations:
+
 - Filter terms should be distinctive to minimize false positives
 - System message should provide comprehensive context
 - Human message should clearly specify output format
@@ -262,58 +269,20 @@ Key considerations:
 
 ## Configuration Management
 
-The application uses configuration files to define how it processes scientific papers. These configurations are built directly into the Docker image and are available to all services using that image.
+The application uses configuration files to define how it processes scientific papers.
+These configurations are built directly into the Docker image and are available to all services using that image.
 
 ### Configuration Structure
 
-- `config/`: Contains all configuration YAML files
+- `src/paper_data_linking/web_app/config/`: Contains all configuration YAML files
   - Analysis rules for different instruments
   - LLM prompts and parameters
   - Filter terms and thresholds
   - Metadata mappings
 
-### Docker Setup
-
-The configuration files are built directly into the Docker image during build time:
-```dockerfile
-# In Dockerfile
-COPY config /code/config/
-```
-
-Since both web and celery services use the same Dockerfile, they automatically share identical configurations.
-
-The entrypoint script verifies configurations are present:
-```bash
-#!/bin/bash
-
-# Check if the config directory has yaml files
-if [ ! -d "/code/config" ] || [ -z "$(ls -A /code/config/*.yaml 2>/dev/null)" ]; then
-    echo "Error: No configuration files found in /code/config/"
-    exit 1
-fi
-
-# Execute the provided command
-exec "$@"
-```
-
 ### Managing Configurations
 
 1. **Making Changes**:
-   - Edit YAML files in the `config/` directory
+   - Edit YAML files in the `src/paper_data_linking/web_app/config/` directory
    - Rebuild the Docker image
    - Restart services to use the new image
-
-2. **Development/Production**:
-   ```bash
-   # Build image with updated configs
-   docker compose build
-   
-   # Start services (both web and celery will use same configs)
-   docker compose up
-   ```
-
-This approach ensures:
-- Configuration changes are version-controlled
-- All services use identical configurations
-- No runtime configuration management needed
-- Simple, reliable deployment process

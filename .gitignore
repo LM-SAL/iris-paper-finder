@@ -2,8 +2,6 @@
 .env
 app/.chroma
 .chroma
-src/*
-!src/*.py
 .idea
 reports/*
 !reports/.gitkeep
