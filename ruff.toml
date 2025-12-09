@@ -51,6 +51,7 @@ lint.extend-ignore = [
     "TRY002", # Create your own exception
     "PTH", # Use `pathlib` instead of `os.path`
     "G004", # Logging statement uses f-string
+    "S311", # Standard pseudo-random generators are not suitable for cryptographic purposes
 ]
 
 [lint.per-file-ignores]

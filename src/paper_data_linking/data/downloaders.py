@@ -10,7 +10,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-from paper_data_linking.data import HEADERS
+from .headers import build_headers
 
 
 class Downloader(ABC):
@@ -28,7 +28,7 @@ class Downloader(ABC):
 
 class AsyncRequestsDownloader(Downloader):
     def __init__(self, headers=None, max_retries=2, delay=1.5) -> None:
-        self.headers = headers or HEADERS
+        self.headers = headers or build_headers()
         self.max_retries = max_retries
         self.delay = delay
 
