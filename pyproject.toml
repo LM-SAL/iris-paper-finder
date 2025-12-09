@@ -30,16 +30,14 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-metadata = [
+scrape = [
     "ads",
+    "aiohttp",
+    "beautifulsoup4",
     "numpy",
     "pydantic",
-]
-download = [
-    "tqdm",
-    "beautifulsoup4",
-    "aiohttp",
     "selenium",
+    "tqdm",
     "webdriver-manager",
 ]
 webapp = [

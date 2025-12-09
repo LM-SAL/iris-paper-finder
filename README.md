@@ -12,7 +12,32 @@ There is also a web application which will allow one to upload PDFs and have the
 
 ## **Installation**
 
-To run the library, you can pip install the library into your virtual environment.
+To run the library, you can pip install the library into your virtual environment with the "scrape" extras.
+
+```bash
+pip install -e ".[scrape]"
+```
+
+### Getting Papers
+
+This part of the library is managed via the Makefile.
+
+```bash
+make help
+```
+
+will provide you the targets and the order of the commands for normal use.
+
+The queries to the ADS are fixed and one should modify the Makefile.
+Currently it will fetch the IRIS ADS library and do a query for all papers which have cited the IRIS instrument paper.
+
+Typically when downloading the papers, you will hit bot procetions.
+Within `src/paper_data_linking/data/headers.py` is the code which creates the request headers.
+This might need updating or the bot protection is too advanced to bypass which means you will need to manually download those papers.
+
+When you have them all downloaded, you can precede with the rest of the readme.
+
+## Web Application
 
 To run the API, you will need to set up Docker, Docker Compose, and a few configuration files.
 
@@ -56,8 +81,10 @@ This process may take a few minutes.
 Run the application:
 
 ```bash
-docker compose up
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up
 ```
+
+(The reason the env variables are still used here, is that its easier to just replace build with up in the commandline history)
 
 The services may take a minute or two to start up.
 
@@ -81,7 +108,7 @@ The services may take a minute or two to start up.
 
 - If you encounter any issues, refer to the project's documentation or contact support.
 
-## Usage
+## Usage of the Web App
 
 How to use the Paper Analyzer:
 
@@ -247,7 +274,7 @@ These configurations are built directly into the Docker image and are available 
 
 ### Configuration Structure
 
-- `config/`: Contains all configuration YAML files
+- `src/paper_data_linking/web_app/config/`: Contains all configuration YAML files
   - Analysis rules for different instruments
   - LLM prompts and parameters
   - Filter terms and thresholds
@@ -256,23 +283,6 @@ These configurations are built directly into the Docker image and are available 
 ### Managing Configurations
 
 1. **Making Changes**:
-   - Edit YAML files in the `config/` directory
+   - Edit YAML files in the `src/paper_data_linking/web_app/config/` directory
    - Rebuild the Docker image
    - Restart services to use the new image
-
-2. **Development/Production**:
-
-   ```bash
-   # Build image with updated configs
-   docker compose build
-
-   # Start services (both web and celery will use same configs)
-   docker compose up
-   ```
-
-This approach ensures:
-
-- Configuration changes are version-controlled
-- All services use identical configurations
-- No runtime configuration management needed
-- Simple, reliable deployment process
