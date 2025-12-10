@@ -5,7 +5,7 @@ from pathlib import Path
 import requests
 
 from paper_data_linking import logger
-from paper_data_linking.data.models import MetadataRecord
+from paper_data_linking.data.models import BasicMetadataRecord
 from paper_data_linking.settings import ADS_TOKEN
 from paper_data_linking.utils import load_bibcodes_list, to_jsonlines
 
@@ -26,15 +26,7 @@ class MetadataService:
         }
         fields = [
             "bibcode",
-            "id",
-            "title",
-            "author",
-            "year",
-            "pub",
             "links_data",
-            "pubdate",
-            "doi",
-            "doctype",
         ]
         fields_str = ",".join(fields)
         payload = "bibcode\n" + "\n".join(bibcodes)
@@ -46,7 +38,7 @@ class MetadataService:
                 f"https://api.adsabs.harvard.edu/v1/search/bigquery?q=*:*&fl={fields_str}&rows=2000&start={start}",
                 headers=headers,
                 data=payload,
-                timeout=360,
+                timeout=30,
             )
             data = json.loads(response.content)
             num_found = data["response"]["numFound"]
@@ -57,7 +49,7 @@ class MetadataService:
             logger.info(f"{start + num_downloaded}/{num_found}")
             start = data["response"]["start"] + num_downloaded
             docs.extend(inner_docs)
-        return [MetadataRecord.from_dict(doc) for doc in docs]
+        return [BasicMetadataRecord.from_dict(doc) for doc in docs]
 
 
 def main():

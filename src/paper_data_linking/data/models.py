@@ -67,3 +67,37 @@ class MetadataRecord:
             doctype=data["doctype"],
             pdf_links=data.get("pdf_links", []),
         )
+
+
+class BasicMetadataRecord:
+    def __init__(
+        self,
+        bibcode: str,
+        links_data: list[dict],
+        pdf_links: list[str] | None = None,
+    ) -> None:
+        self.bibcode = bibcode
+        self.links_data = links_data
+        self.pdf_links = pdf_links or []
+
+    def to_dict(self):
+        """
+        Convert the object to a dictionary.
+        """
+        return {
+            "bibcode": self.bibcode,
+            "links_data": self.links_data,
+            "pdf_links": self.pdf_links,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """
+        Create an instance from a dictionary.
+        """
+        links_data = [json.loads(link) if isinstance(link, str) else link for link in data.get("links_data", [])]
+        return cls(
+            bibcode=data["bibcode"],
+            links_data=links_data,
+            pdf_links=data.get("pdf_links", []),
+        )

@@ -32,10 +32,12 @@ dependencies = [
 [project.optional-dependencies]
 scrape = [
     "ads",
+    "aiofiles",
     "aiohttp",
     "beautifulsoup4",
     "numpy",
     "pydantic",
+    "pypdf",
     "selenium",
     "tqdm",
     "webdriver-manager",
