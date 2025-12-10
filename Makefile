@@ -34,10 +34,10 @@ iris_library_processed_data_output=data/processed/iris_library_processed_data.js
 $(iris_library_bibcodes_path):
 	python $(bibcode_service) --library_id $(IRIS_LIB_ID) --output $(iris_library_bibcodes_path)
 
-# This is for results which cite the main IRIS instrument paper
+# This is for results which cite the main IRIS instrument paper or contains the full pharse: Interface Region Imaging Spectrograph
 # You can add pubdate:[2025-05 TO 2026-01] if you want to limit by publication date
 $(iris_search_bibcodes_path):
-	python $(bibcode_service) --query "citations(bibcode:2014SoPh..289.2733D) property:refereed" --output $@
+	python $(bibcode_service) --query '=full:"Interface Region Imaging Spectrograph" OR citations(bibcode:2014SoPh..289.2733D) + property:refereed + doctype:"Article"' --output $@
 
 # Metadata collection targets with dependencies
 $(iris_search_metadata_path): $(iris_search_bibcodes_path)
