@@ -1,27 +1,29 @@
 import json
 import asyncio
 import argparse
+from typing import Any
 from pathlib import Path
 
+import aiofiles
 from tqdm.asyncio import tqdm
 
 from paper_data_linking import logger, utils
 from paper_data_linking.data.downloaders import AsyncRequestsDownloader, AsyncSeleniumDownloader, Downloader
-from paper_data_linking.data.models import MetadataRecord
+from paper_data_linking.data.models import BasicMetadataRecord
 
 
-class PdfDownloadService:
+class AsyncPdfDownloadService:
     def __init__(self, downloaders: list[Downloader]) -> None:
         self.downloaders = downloaders
 
-    def download_pdf(self, urls: list[str]) -> bytes:
+    async def download_pdf(self, urls: list[str]) -> bytes:
         errors = []
         for url in urls:
             for downloader in self.downloaders:
                 try:
-                    with downloader:
+                    async with downloader:
                         logger.debug(f"Trying {downloader.__class__.__name__} for {url}")
-                        return downloader.download(url)
+                        return await downloader.download(url)
                 except Exception as e:
                     logger.debug(f"Downloader {downloader.__class__.__name__} failed for {url} due to {e}")
                     errors.append((downloader.__class__.__name__, url, str(e)))
@@ -29,7 +31,12 @@ class PdfDownloadService:
         raise Exception(msg)
 
 
-def main():
+async def read_dict_records(input_path: Path) -> list[dict[str, Any]]:
+    async with aiofiles.open(input_path) as f:
+        return [json.loads(line) async for line in f]
+
+
+async def main():
     parser = argparse.ArgumentParser(description="Download PDFs using various methods.")
     parser.add_argument(
         "--input",
@@ -66,11 +73,10 @@ def main():
     output_dir.mkdir(exist_ok=True, parents=True)
     request_downloader = AsyncRequestsDownloader(headers)
     selenium_downloader = AsyncSeleniumDownloader()
-    pdf_service = PdfDownloadService([request_downloader, selenium_downloader])
+    pdf_service = AsyncPdfDownloadService([request_downloader, selenium_downloader])
     input_path = Path(args.input)
-    with input_path.open("r") as f:
-        dict_records = [json.loads(line) for line in f]
-    all_records = [MetadataRecord.from_dict(doc) for doc in dict_records]
+    dict_records = await read_dict_records(input_path)
+    all_records = [BasicMetadataRecord.from_dict(doc) for doc in dict_records]
     # Exclude records for which we already have pdfs
     records = [
         r for r in all_records if not (output_dir / f"{r.bibcode}.pdf").exists() and r.bibcode not in failed_bibcodes
@@ -83,17 +89,17 @@ def main():
     for r in pbar:
         try:
             logger.info(f"Downloading PDF for {r.bibcode} using {r.pdf_links}")
-            content = pdf_service.download_pdf(r.pdf_links)
+            content = await pdf_service.download_pdf(r.pdf_links)
             if len(content) <= 8 * 1024:
                 msg = f"Downloaded PDF is too small for {r.pdf_links}"
                 logger.info(msg)
                 failed_bibcodes.add(r.bibcode)
-            utils.write_pdf(content, output_dir, r.bibcode)
-            success_count += 1
+            else:
+                await utils.write_pdf(content, output_dir, r.bibcode)
+                success_count += 1
         except Exception as e:
             logger.info(f"Failed to get PDF for {r.bibcode} due to {e}")
-            with open(failed_bibcodes_file, "a") as f:
-                f.write(f"{r.bibcode}\n")
+            await utils.append_failed_bibcode(failed_bibcodes_file, r.bibcode)
         finally:
             total_count += 1
             pbar.set_description(f"Success: {success_count} | Ratio: {success_count / total_count:.2f}")
