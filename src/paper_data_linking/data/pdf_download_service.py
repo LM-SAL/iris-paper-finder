@@ -22,10 +22,10 @@ class AsyncPdfDownloadService:
             for downloader in self.downloaders:
                 try:
                     async with downloader:
-                        logger.debug(f"Trying {downloader.__class__.__name__} for {url}")
+                        logger.info(f"Trying {downloader.__class__.__name__} for {url}")
                         return await downloader.download(url)
                 except Exception as e:
-                    logger.debug(f"Downloader {downloader.__class__.__name__} failed for {url} due to {e}")
+                    logger.info(f"Downloader {downloader.__class__.__name__} failed for {url} due to {e}")
                     errors.append((downloader.__class__.__name__, url, str(e)))
         msg = f"All download attempts failed. Errors: {errors}"
         raise Exception(msg)
