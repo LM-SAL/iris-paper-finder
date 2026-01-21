@@ -1,5 +1,7 @@
 # IRIS Paper LLM
 
+**This project was created by Buonomo, Anthony R.**
+
 The goal of this repository is to be able to find, identify and extract data references in research papers which talk about IRIS.
 
 An IRIS paper is defined as the following:
