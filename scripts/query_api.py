@@ -163,13 +163,14 @@ if __name__ == "__main__":
     args = path.parse_args()
     pdf_path = args.pdf_path
     pdf_files = sorted(glob(f"{pdf_path}/*.pdf"))
-    results_file = "iris_search_results.json"
+    results_name = pdf_path.split("/")[-1]
+    results_file = f"{results_name}_results.json"
     failed_files = []
     for pdf_file in tqdm(pdf_files):
         try:
             result = analyze_paper(
                 pdf_file,
-                config_name="iris_config.yaml",
+                config_name="iris_config_v2.yaml",
             )
             save_results(result, results_file=results_file)
         except Exception:
