@@ -30,7 +30,7 @@ classifier:
 
     2. "Synthetic IRIS data" or "synthetic IRIS passbands":
        - Simulated or forward-modeled spectra/images calculated specifically for IRIS channels, lines, or passbands
-         (e.g., synthetic Mg II k spectra at IRIS resolution, synthetic SJI 1400 images, forward modeling to predict IRIS observables).
+         (e.g., synthetic Mg II k spectra at IRIS resolution, synthetic SJI 1400 images, forward modeling to predict IRIS observables etc).
        - These are explicitly described as being in IRIS passbands or as mimicking IRIS observations.
 
     3. "Review of IRIS work":
@@ -54,11 +54,11 @@ classifier:
 
     A. IRIS observational data
        Does this paper directly use observational data from the IRIS mission and its instruments
-       (e.g., IRIS spectrograph (SG), IRIS slit-jaw (SJI) images, IRIS data products)?
+       (e.g., IRIS spectrograph (SG), IRIS slit-jaw (SJI) images, IRIS data products such as IRIS passbands or channels which are 1330, 1400, 2796, 2832, Mg II k 2796, Mg II h 2803, C II 1335, C II 1336, C I 1354, O I 1356, Si IV 1394, O IV 1400, O IV 1401, Si IV 1403, S I 1334, Ni II 1335, O IV 1339, Ni II 1340, Ni II 1346, Cl I 1352, C I 1357, C I 1358, O I 1359, Fe II 1392, S I 1393, Fe II 1393, Ni II 1393, S I 1396, O IV 1397, S IV 1398, Ni II 1399, Fe II 1400, S I 1402, S IV 1405, O IV 1405, Fe II 1406, S IV 1406 at IRIS resolution)?
 
-    B. Synthetic IRIS passbands / observables
+    B. Synthetic IRIS observables
        Does this paper create or analyze synthetic data that is explicitly:
-       - in IRIS passbands or channels (e.g., SJI 1330, 1400, 2796, 2832, Mg II h&k, Si IV lines at IRIS resolution), or
+       - in IRIS passbands or channels (which are 1330, 1400, 2796, 2832, Mg II k 2796, Mg II h 2803, C II 1335, C II 1336, C I 1354, O I 1356, Si IV 1394, O IV 1400, O IV 1401, Si IV 1403, S I 1334, Ni II 1335, O IV 1339, Ni II 1340, Ni II 1346, Cl I 1352, C I 1357, C I 1358, O I 1359, Fe II 1392, S I 1393, Fe II 1393, Ni II 1393, S I 1396, O IV 1397, S IV 1398, Ni II 1399, Fe II 1400, S I 1402, S IV 1405, O IV 1405, Fe II 1406, S IV 1406 at IRIS resolution), or
        - described as synthetic observables designed to mimic or be compared with IRIS observations?
 
     C. Quantitative analysis using IRIS (observed or synthetic)
@@ -163,6 +163,39 @@ classifier:
     - "Spectrograph"
     - "Transition region"
     - "UV imaging"
+    - "C I 1354"
+    - "C I 1357"
+    - "C I 1358"
+    - "C II 1335"
+    - "C II 1336"
+    - "Cl I 1352"
+    - "Fe II 1392"
+    - "Fe II 1393"
+    - "Fe II 1400"
+    - "Fe II 1406"
+    - "Mg II h 2803"
+    - "Mg II k 2796"
+    - "Ni II 1335"
+    - "Ni II 1340"
+    - "Ni II 1346"
+    - "Ni II 1393"
+    - "Ni II 1399"
+    - "O I 1356"
+    - "O I 1359"
+    - "O IV 1339"
+    - "O IV 1397"
+    - "O IV 1400"
+    - "O IV 1401"
+    - "O IV 1405"
+    - "S I 1334"
+    - "S I 1393"
+    - "S I 1396"
+    - "S I 1402"
+    - "S IV 1398"
+    - "S IV 1405"
+    - "S IV 1406"
+    - "Si IV 1394"
+    - "Si IV 1403"
 model_kwargs:
   model_name: "gpt-5-mini"
   temperature: 0
