@@ -32,6 +32,7 @@ def compare_keys(iris_bibcodes, search_results):
     iris_bibcodes = set(iris_bibcodes)
     true_bibcodes = set()
     false_bibcodes = set()
+    uncertain_bibcodes = set()
     logger.info("Comparing IRIS bibcodes with search results...")
     logger.info("")
     print_per_bib = False
@@ -42,7 +43,14 @@ def compare_keys(iris_bibcodes, search_results):
                 if print_per_bib:
                     logger.info(f"Bibcode {bibcode} classified as YES.")
                 true_bibcodes.add(bibcode)
+            elif "UNCERTAIN" in result.get("iris_classification"):
+                if print_per_bib:
+                    logger.info(f"Bibcode {bibcode} classified as UNCERTAIN.")
+
+                uncertain_bibcodes.add(bibcode)
             else:
+                if print_per_bib:
+                    logger.info(f"Bibcode {bibcode} classified as NO.")
                 false_bibcodes.add(bibcode)
         else:
             logger.info(f"Bibcode {bibcode} has no iris_classification in search results.")
@@ -59,6 +67,7 @@ def compare_keys(iris_bibcodes, search_results):
         false_positive_bibcodes,
         unavailable_bibcodes,
         found_positive_bibcodes,
+        uncertain_bibcodes,
     )
 
 
@@ -86,12 +95,14 @@ if __name__ == "__main__":
         false_positive_bibcodes,
         unavailable_bibcodes,
         found_positive_bibcodes,
+        uncertain_bibcodes,
     ) = compare_keys(iris_library_bibcodes, search_results_bibcodes)
     log_per_bib = False
     logger.info("In total, there are %d bibcodes classified by the LLM.", len(search_results_bibcodes))
     logger.info("In total, there are %d bibcodes in the IRIS list.", len(iris_library_bibcodes))
     logger.info("In total, there are %d bibcodes classified as positive by the LLM.", len(true_bibcodes))
     logger.info("In total, there are %d bibcodes classified as negative by the LLM.", len(false_bibcodes))
+    logger.info("In total, there are %d bibcodes classified as uncertain by the LLM.", len(uncertain_bibcodes))
     logger.info("Comparison results:")
     if missing_positive_bibcodes:
         logger.info("Missing positive bibcodes:")
