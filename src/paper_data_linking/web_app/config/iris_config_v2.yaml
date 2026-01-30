@@ -10,19 +10,20 @@ classifier:
 
     You produce Markdown outputs.
 
-    Mission background (for disambiguation only):
-    ---------------------------------------------
-    The "Interface Region Imaging Spectrograph" (IRIS) is a NASA Small Explorer mission launched on June 27, 2013. It observes the Sun's chromosphere, transition region, and corona in the ultraviolet.
+    Mission background
+    ------------------
+    The "Interface Region Imaging Spectrograph" (IRIS) is a NASA Small Explorer mission launched on June 27, 2013. It's designed to observe the dynamics and fine structure of the Sun's chromosphere, transition region, and corona. IRIS aims to answer questions about how the solar atmosphere is energized and explore the impacts of solar activity on Earth's space environment.
 
     Key capabilities and instruments of IRIS include:
+
     - IRIS Telescope: High-resolution solar ultraviolet telescope feeding the spectrograph and slit-jaw imager.
     - Spectrograph: Obtains high-resolution UV spectra (e.g., Mg II h&k, C II, Si IV lines) for diagnosing physical conditions and dynamics.
     - Slit-jaw Imager (SJI): Provides context imaging in several UV passbands (e.g., 1330 Å, 1400 Å, 2796 Å, 2832 Å).
 
     Your job is to identify real *use* of IRIS observations or IRIS-based synthetic data, not just mentions or descriptions.
 
-    Definitions (use these strictly):
-    ---------------------------------
+    Definitions (use these strictly)
+    --------------------------------
     1. "IRIS observational data":
        - Direct use of IRIS level-0/1/2 data products, spectra, or images.
        - Phrases like "we analyze IRIS observations", "IRIS SJI 1400 images", "IRIS Mg II spectra", or specific IRIS datasets/pointings.
@@ -36,8 +37,8 @@ classifier:
        - The text mainly summarizes or discusses IRIS results from other papers, without presenting new analysis of IRIS observational data
          or newly generated synthetic IRIS observables.
 
-    Exclusions (to avoid false positives):
-    --------------------------------------
+    Exclusions (to avoid false positives)
+    -------------------------------------
     The following DO NOT by themselves count as IRIS data use:
     - Merely describing the IRIS mission, its instruments, or capabilities.
     - Citing IRIS papers or mentioning "IRIS has shown that..." in the introduction or related work.
@@ -47,13 +48,13 @@ classifier:
     Be mindful that "IRIS" can also be an acronym for unrelated projects. Only treat "IRIS" as the NASA solar mission when the description clearly matches this spacecraft and its solar instruments.
 
   human_message: |
-    Based on the excerpts provided, decide whether the paper actually uses IRIS-related data or is just mentioning/describing IRIS.
+    Based on the excerpts provided, decide whether the paper actually uses IRIS data or is just mentioning/describing IRIS.
 
     Answer the following questions:
 
     A. IRIS observational data
        Does this paper directly use observational data from the IRIS mission and its instruments
-       (e.g., IRIS spectra, IRIS slit-jaw images, IRIS data products)?
+       (e.g., IRIS spectrograph (SG), IRIS slit-jaw (SJI) images, IRIS data products)?
 
     B. Synthetic IRIS passbands / observables
        Does this paper create or analyze synthetic data that is explicitly:
@@ -68,8 +69,9 @@ classifier:
        Is this paper primarily a review that summarizes IRIS results from other works, rather than presenting new analysis of IRIS data
        or newly generated synthetic IRIS observables?
 
-    Important distinctions to reduce false positives:
-    -------------------------------------------------
+    Important distinctions to reduce false positives
+    ------------------------------------------------
+
     - If the excerpts only:
       • describe the IRIS mission or its instruments, or
       • cite IRIS-based results from other papers,
@@ -82,22 +84,25 @@ classifier:
       • A/B/C = NO or UNCERTAIN,
       • overall classification should lean toward UNCERTAIN.
 
-    IRIS aspects:
-    -------------
+    IRIS aspects
+    ------------
+
     Consider the following aspects only when there is real data or synthetic-data use (not mere description):
-    - "IRIS Telescope": when IRIS observations in general are used but not tied uniquely to SJI or spectra.
-    - "Spectrograph": when IRIS spectral data (e.g., Mg II, C II, Si IV) or synthetic IRIS spectra are analyzed or modeled.
+    - "IRIS Telescope": when IRIS observations in general are used but not tied uniquely to SJI or spectra/spectrograph.
+    - "Spectrograph": when IRIS spectral data (e.g., Mg II h or k, C II, Si IV) or synthetic IRIS spectra are analyzed or modeled.
     - "Slit-jaw Imager": when IRIS SJI images or synthetic SJI passband images are analyzed or modeled.
 
     Do NOT list an IRIS aspect as "used" if it is only described or mentioned without data or synthetic-data analysis.
 
-    Short justifications:
-    ---------------------
+    Short justifications
+    --------------------
+
     For each question (A-D), decide on YES, NO, or UNCERTAIN. Base your decision only on the provided excerpts.
     Give brief textual reasoning (1-3 short sentences per question) that quotes or paraphrases the key phrases from the excerpts.
 
-    Overall classification rule:
-    ----------------------------
+    Overall classification rule
+    ---------------------------
+
     After answering A-D, classify the overall paper as an IRIS paper as follows:
 
     - Classification = YES
@@ -113,8 +118,8 @@ classifier:
 
     If A, B, and C are all NO or UNCERTAIN, then "IRIS Aspects Used" must be an empty list: [].
 
-    Output format:
-    --------------
+    Output format
+    -------------
     At the end, output exactly in this format (you may add reasoning above or below, but keep this block exactly):
 
     ```
@@ -141,18 +146,25 @@ classifier:
       detail: "Imaging in ultraviolet passbands"
   filter_threshold: 80
   filter_terms:
-    - "IRIS"
+    - "High-resolution solar images"
     - "Interface Region Imaging Spectrograph"
-    - "IRIS observations"
-    - "IRIS spectrograph"
-    - "IRIS slit-jaw"
-    - "IRIS SJI"
     - "IRIS 1330"
     - "IRIS 1400"
     - "IRIS 2796"
     - "IRIS 2832"
+    - "IRIS observations"
+    - "IRIS SJI"
+    - "IRIS slit-jaw"
+    - "IRIS spectrograph"
+    - "IRIS"
+    - "Slit-jaw Imager"
+    - "Solar chromosphere"
+    - "Solar ultraviolet spectra"
+    - "Spectrograph"
+    - "Transition region"
+    - "UV imaging"
 model_kwargs:
-  model_name: "gpt-4o" # gpt-5-nano or gpt-5-mini in the future
+  model_name: "gpt-5-mini"
   temperature: 0
 embedder_kwargs:
   where:
