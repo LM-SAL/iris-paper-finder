@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 import fitz
 
-from paper_data_linking.ads import iris_query
+from paper_data_linking.ads import _metadata_for_bibcodes, iris_query
 from paper_data_linking.classify import DEFAULT_MODEL, classify_paths
 from paper_data_linking.evaluate import prepare_case_pdfs, write_report
 from paper_data_linking.models import (
@@ -155,7 +155,35 @@ def test_standard_query_is_scoped_to_year() -> None:
     assert "pubdate:[2025-01 TO 2025-12]" in query
 
 
+def test_ads_metadata_normalizes_link_records() -> None:
+    response = SimpleNamespace(
+        raise_for_status=lambda: None,
+        json=lambda: {
+            "response": {
+                "start": 0,
+                "numFound": 1,
+                "docs": [
+                    {
+                        "bibcode": "TEST",
+                        "links_data": ['{"access":"open","type":"pdf","url":"https://example.test/paper.pdf"}'],
+                    }
+                ],
+            }
+        },
+    )
+    with patch("paper_data_linking.ads.requests.post", return_value=response):
+        records = _metadata_for_bibcodes(["TEST"], "token")
+    assert records == [
+        {
+            "bibcode": "TEST",
+            "links_data": [{"access": "open", "type": "pdf", "url": "https://example.test/paper.pdf"}],
+            "pdf_links": [],
+        }
+    ]
+
+
 if __name__ == "__main__":
     test_one_pdf_and_directory_resume()
     test_reviewed_pdf_preparation_uses_manifest_checksum()
     test_standard_query_is_scoped_to_year()
+    test_ads_metadata_normalizes_link_records()

@@ -7,10 +7,57 @@ import os
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
-from paper_data_linking.data.bibcode_service import BibcodeService
-from paper_data_linking.data.metadata_service import MetadataService
+import requests
 
 IRIS_INSTRUMENT_BIBCODE = "2014SoPh..289.2733D"
+
+
+def _bibcodes_by_query(query: str, token: str, limit: int) -> list[str]:
+    response = requests.get(
+        "https://api.adsabs.harvard.edu/v1/search/query",
+        params={"q": query, "fl": "bibcode", "rows": limit},
+        headers={"Authorization": f"Bearer {token}"},
+        timeout=60,
+    )
+    response.raise_for_status()
+    return [document["bibcode"] for document in response.json()["response"]["docs"]]
+
+
+def _metadata_for_bibcodes(bibcodes: list[str], token: str) -> list[dict]:
+    if not bibcodes:
+        return []
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "big-query/csv",
+    }
+    payload = "bibcode\n" + "\n".join(bibcodes)
+    records = []
+    start = 0
+    total = len(bibcodes)
+    while start < total:
+        response = requests.post(
+            "https://api.adsabs.harvard.edu/v1/search/bigquery",
+            params={"q": "*:*", "fl": "bibcode,links_data", "rows": 2000, "start": start},
+            headers=headers,
+            data=payload,
+            timeout=30,
+        )
+        response.raise_for_status()
+        page = response.json()["response"]
+        total = page["numFound"]
+        documents = page["docs"]
+        if not documents and start < total:
+            msg = f"ADS returned no metadata records at offset {start} of {total}"
+            raise RuntimeError(msg)
+        for document in documents:
+            record = dict(document)
+            record["links_data"] = [
+                json.loads(link) if isinstance(link, str) else link for link in record.get("links_data", []) or []
+            ]
+            record.setdefault("pdf_links", [])
+            records.append(record)
+        start = page["start"] + len(documents)
+    return records
 
 
 def iris_query(year: int) -> str:
@@ -56,8 +103,7 @@ def search_papers(
     if not api_token:
         msg = "ADS_TOKEN or --api-token is required"
         raise ValueError(msg)
-    bibcodes = BibcodeService(api_token).get_bibcodes_by_query(query, rows=limit)
-    metadata = MetadataService(api_token).get_metadata_for_bibcodes(bibcodes)
-    records = [record.to_dict() for record in metadata]
+    bibcodes = _bibcodes_by_query(query, api_token, limit)
+    records = _metadata_for_bibcodes(bibcodes, api_token)
     _write_jsonl(output, records)
     return {"found": len(bibcodes), "written": len(records), "skipped": 0}

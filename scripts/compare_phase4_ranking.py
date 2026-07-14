@@ -10,8 +10,7 @@ from pathlib import Path
 import numpy as np
 
 from paper_data_linking.models import RetrievalMode
-from paper_data_linking.process.embedders import ONNXEmbedder
-from paper_data_linking.retrieval import IRIS_RETRIEVAL_QUERY, chunk_pdf, retrieve_chunks
+from paper_data_linking.retrieval import IRIS_RETRIEVAL_QUERY, ONNXEmbedder, chunk_pdf, retrieve_chunks
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "data/eval/reviewed_cases.jsonl"

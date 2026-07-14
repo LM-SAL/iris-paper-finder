@@ -7,6 +7,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import logging
 import os
 from datetime import UTC, datetime
 from pathlib import Path
@@ -16,8 +17,6 @@ from typing import TYPE_CHECKING
 
 import fitz
 import requests
-
-from paper_data_linking import logger
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
@@ -30,6 +29,7 @@ DEFAULT_HEADERS = {
     "Accept": "application/pdf,application/octet-stream;q=0.9,*/*;q=0.1",
 }
 TRANSIENT_HTTP_STATUS = {408, 425, 429}
+logger = logging.getLogger(__name__)
 
 
 def read_jsonl(path: Path) -> list[dict]:

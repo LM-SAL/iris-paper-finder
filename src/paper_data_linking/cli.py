@@ -6,9 +6,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
+import os
 from pathlib import Path
 
 import requests
+from dotenv import load_dotenv
 
 from paper_data_linking.ads import iris_query, search_papers
 from paper_data_linking.classify import DEFAULT_MODEL, classify_paths
@@ -233,6 +236,9 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> None:
+    load_dotenv()
+    level = getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO)
+    logging.basicConfig(level=level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     parser = build_parser()
     args = parser.parse_args(argv)
     try:

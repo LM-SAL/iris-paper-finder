@@ -2,16 +2,12 @@ from __future__ import annotations
 
 # ruff: noqa: S101
 
-import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
 
 import fitz
-import requests
 
-from paper_data_linking.data.url_service import MetadataTransformer, URLTransformationService
-from paper_data_linking.download import download_records, read_jsonl, validate_pdf
+from paper_data_linking.download import candidate_pdf_urls, download_records, read_jsonl, validate_pdf
 
 
 def one_page_pdf() -> bytes:
@@ -55,25 +51,17 @@ def test_download_is_atomic_validated_and_resumable() -> None:
 
 
 def test_ads_link_fallback_returns_a_list() -> None:
-    line = json.dumps(
-        {
-            "bibcode": "test-paper",
-            "links_data": [
-                {
-                    "access": "open",
-                    "type": "preprint",
-                    "url": "http://arxiv.org/abs/2501.01234",
-                }
-            ],
-        }
-    )
-    transformer = MetadataTransformer(URLTransformationService())
-    with patch(
-        "paper_data_linking.data.url_service.requests.get",
-        side_effect=requests.ConnectionError("offline"),
-    ):
-        record = json.loads(transformer._process_line(line))
-    assert record["pdf_links"] == ["http://export.arxiv.org/pdf/2501.01234"]
+    record = {
+        "bibcode": "test-paper",
+        "links_data": [
+            {
+                "access": "open",
+                "type": "preprint",
+                "url": "http://arxiv.org/abs/2501.01234",
+            }
+        ],
+    }
+    assert candidate_pdf_urls(record) == ["https://arxiv.org/pdf/2501.01234"]
 
 
 def test_manual_queue_is_deduplicated() -> None:

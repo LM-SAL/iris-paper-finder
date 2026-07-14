@@ -275,22 +275,34 @@ extras.
 
 ## Phase 9: delete remaining dead abstractions
 
-- [ ] Follow every module from the CLI and delete files with no live caller.
-- [ ] Remove unused parser and splitter variants.
-- [ ] Remove the unused SOHO stepwise classifier.
-- [ ] Remove factories and abstract base classes with one implementation.
-- [ ] Replace LangChain `Document` with the existing `PaperChunk` or a plain
+- [x] Follow every module from the CLI and delete files with no live caller.
+- [x] Remove unused parser and splitter variants.
+- [x] Remove the unused SOHO stepwise classifier.
+- [x] Remove factories and abstract base classes with one implementation.
+- [x] Replace LangChain `Document` with the existing `PaperChunk` or a plain
   local record.
-- [ ] Keep one PDF reader and one junk/valid-PDF check.
-- [ ] Remove unused settings, metadata models, constants, environment loading,
+- [x] Keep one PDF reader and one junk/valid-PDF check.
+- [x] Remove unused settings, metadata models, constants, environment loading,
   and logging setup.
-- [ ] Remove migration-only scripts whose evidence is already frozen under
+- [x] Remove migration-only scripts whose evidence is already frozen under
   `data/eval/`; retain only scripts needed to reproduce recorded comparisons.
-- [ ] Decide whether Python 3.13 is genuinely required; lower it only if useful
+- [x] Decide whether Python 3.13 is genuinely required; lower it only if useful
   and verified.
 
 Done when the package can be understood by following the CLI into one pipeline,
 and every retained module has a live caller.
+
+Implementation note (2026-07-14): ADS acquisition now lives directly in
+`ads.py`, and ONNX inference/ranking lives directly in `retrieval.py`; the
+single-implementation service, settings, metadata-model, and embedder packages
+were deleted. Three migration-only scripts were removed, while the scripts
+needed to reproduce Phase 3 and Phase 4 evidence remain. Python 3.13 stays as
+the minimum because it is the existing tested floor and lowering it adds a
+support matrix without a current use case. Locked sync, package build, static
+checks, self-checks, offline checks, model checks, and the 13-case resume pass.
+A fresh Phase 4 comparison retained identical top-20 order for all 13 papers
+with a maximum cosine-distance delta of `3.5762786865234375e-07`; its bitwise
+embedding hashes differed, so the frozen comparison artifact was not rewritten.
 
 ## Phase 10: minimal offline verification and final documentation
 
@@ -321,7 +333,7 @@ Keep the remaining work independently reviewable:
 4. [x] `fix: bound OpenAI requests` (`71dc258`)
 5. [x] `refactor: simplify PDF acquisition` (`0832eec`)
 6. [x] `feat: add iris-papers CLI` (`268112b`)
-7. [ ] `refactor: remove web application`
+7. [x] `refactor: remove web application` (`4675d11`)
 8. [ ] `refactor: delete legacy pipeline code`
 9. [ ] `test: add offline pipeline smoke test`
 10. [ ] `docs: document the local workflow`
