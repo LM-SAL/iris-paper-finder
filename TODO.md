@@ -115,14 +115,10 @@ Evidence:
 
 ### Known migration gaps
 
-- The new classification path works, but the old web/LangChain path remains as
-  the temporary fallback.
-- A clean clone has 10 of the 13 reviewed PDFs. These checksum-recorded PDFs
-  currently exist only in ignored local data:
-
-  - `2025SSRv..221...50H.pdf`
-  - `2025ApJ...978...27D.pdf`
-  - `2025ApJ...982..147M.pdf`
+- The web/LangChain fallback was removed after the CLI gate passed; Git history
+  and the frozen v2 evaluation artifacts are the rollback path.
+- A clean clone has 10 reviewed PDFs and acquires the other three from the
+  checksum-bearing manifest without committing publisher files.
 - The old Phase 0 freeze check reports expected implementation-hash drift after
   Phases 1-4. Do not rewrite the historical manifest to hide that drift.
 
@@ -148,9 +144,9 @@ Remaining:
   `--model` available for intentional experiments.
 - [x] Run the existing classifier self-check and a one-case resume check.
 
-Deferred to web removal:
+Completed during web removal:
 
-- [ ] Delete `ChatOpenAI`, LangChain document/message wrappers,
+- [x] Delete `ChatOpenAI`, LangChain document/message wrappers,
   `answer_divider`, `json_divider`, and their dependencies once the fallback is
   retired.
 
@@ -160,7 +156,7 @@ bounded request behavior, and never requires prose parsing.
 Implementation note (2026-07-14): the active path now defaults to
 `gpt-5-mini-2025-08-07`, uses a 300-second request timeout with at most two SDK
 retries, passes the offline classifier self-check, and skips an unchanged
-successful case without an API call. LangChain removal remains gated on Phase 8.
+successful case without an API call. Phase 8 removed the LangChain fallback.
 
 ## Phase 6: simplify ADS and PDF acquisition
 
@@ -247,28 +243,35 @@ Removal gate:
 - [x] CLI exposes the prompt/model/retrieval choices people use.
 - [x] CLI results retain classifications, evidence, provenance, errors, and
   review output.
-- [ ] Direct download and explicit browser fallback both work.
+- [x] Direct download and explicit browser fallback both work.
 - [x] One stopped-and-resumed corpus run has been verified.
 
 After the gate passes:
 
-- [ ] Move the frozen v2 prompt/config into evaluation history if necessary.
-- [ ] Delete `src/paper_data_linking/web_app/`.
-- [ ] Delete web-only Celery callbacks, HTML/highlight generation, rectangle
+- [x] Move the frozen v2 prompt/config into evaluation history if necessary.
+- [x] Delete `src/paper_data_linking/web_app/`.
+- [x] Delete web-only Celery callbacks, HTML/highlight generation, rectangle
   helpers, and frontend serialization code.
-- [ ] Delete `Makefile`, `Dockerfile`, `docker-compose.yaml`, `.dockerignore`,
+- [x] Delete `Makefile`, `Dockerfile`, `docker-compose.yaml`, `.dockerignore`,
   `entrypoint.sh`, and `nginx/`.
-- [ ] Remove FastAPI/Uvicorn, Celery/Redis/Flower, SlowAPI, frontend, OCR-web,
+- [x] Remove FastAPI/Uvicorn, Celery/Redis/Flower, SlowAPI, frontend, OCR-web,
   and LangChain dependencies that have no CLI caller.
-- [ ] Remove the legacy YAML-divider classification path.
-- [ ] Remove Docker, Nginx, browser UI, and Make instructions from `README.md`.
-- [ ] Generate `uv.lock` from the reduced `pyproject.toml` and document
+- [x] Remove the legacy YAML-divider classification path.
+- [x] Remove Docker, Nginx, browser UI, and Make instructions from `README.md`.
+- [x] Generate `uv.lock` from the reduced `pyproject.toml` and document
   `uv sync` as the single installation path.
-- [ ] Confirm the default workflow needs no Docker, Redis, browser, or local
+- [x] Confirm the default workflow needs no Docker, Redis, browser, or local
   HTTP server.
 
 Git history and retained evaluation artifacts are the fallback after this
 phase; dead executable web code is not.
+
+Implementation note (2026-07-14): a live headless-Chrome check downloaded a
+tracked PDF through the explicit browser fallback and matched its checksum.
+The frozen v2 YAML moved under `data/eval/phase0_v2_2025/`; the web, container,
+Make, and YAML/LangChain paths were deleted. A locked default `uv sync`
+installed 39 packages and imported the CLI without any web, OCR, or Selenium
+extras.
 
 ## Phase 9: delete remaining dead abstractions
 
@@ -317,7 +320,7 @@ Keep the remaining work independently reviewable:
 
 4. [x] `fix: bound OpenAI requests` (`71dc258`)
 5. [x] `refactor: simplify PDF acquisition` (`0832eec`)
-6. [ ] `feat: add iris-papers CLI`
+6. [x] `feat: add iris-papers CLI` (`268112b`)
 7. [ ] `refactor: remove web application`
 8. [ ] `refactor: delete legacy pipeline code`
 9. [ ] `test: add offline pipeline smoke test`

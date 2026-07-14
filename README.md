@@ -2,8 +2,7 @@
 
 Find solar-physics papers through ADS, download their PDFs, select relevant
 passages locally, and ask the OpenAI API for a schema-validated IRIS-use
-classification. The supported interface is the `iris-papers` command; Docker
-and the web application are legacy fallbacks scheduled for removal.
+classification. The only interface is the `iris-papers` command.
 
 Created by Anthony R. Buonomo.
 
@@ -12,17 +11,15 @@ Created by Anthony R. Buonomo.
 Python 3.13 or newer is required.
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -e .
-python scripts/setup_onnx.py
+uv sync
+uv run python scripts/setup_onnx.py
 ```
 
 Set the API key and classify a local PDF:
 
 ```bash
 export OPENAI_API_KEY=your-key
-iris-papers classify paper.pdf --output data/results/one-paper.jsonl
+uv run iris-papers classify paper.pdf --output data/results/one-paper.jsonl
 ```
 
 The command first extracts page-aware text, finds deterministic IRIS/passband
@@ -42,15 +39,15 @@ export ADS_TOKEN=your-token
 Run each durable stage separately:
 
 ```bash
-iris-papers search --year 2025
-iris-papers download data/metadata/2025.jsonl
-iris-papers classify data/pdfs/2025 --output data/results/2025.jsonl
+uv run iris-papers search --year 2025
+uv run iris-papers download data/metadata/2025.jsonl
+uv run iris-papers classify data/pdfs/2025 --output data/results/2025.jsonl
 ```
 
 Or compose the same three functions plus report generation:
 
 ```bash
-iris-papers run --year 2025
+uv run iris-papers run --year 2025
 ```
 
 The default files are:
@@ -71,7 +68,7 @@ existing PDF.
 The checksum-bearing manifest contains 13 manually reviewed cases:
 
 ```bash
-iris-papers evaluate data/eval/reviewed_cases.jsonl --prepare-pdfs
+uv run iris-papers evaluate data/eval/reviewed_cases.jsonl --prepare-pdfs
 ```
 
 `--prepare-pdfs` acquires the three ignored publisher PDFs from explicit
@@ -96,6 +93,13 @@ first, then whole-paper ONNX retrieval fills any unused context slots. A paper
 with no exact match is still searched across the whole paper; it is never
 silently classified as negative.
 
+Embedded PDF text needs no extra packages. To allow the optional OCR fallback,
+install its Python dependencies and the system `pdftoppm`/Tesseract programs:
+
+```bash
+uv sync --extra ocr
+```
+
 ## PDF download behavior
 
 Downloads use ordinary sequential HTTP by default. A candidate is written only
@@ -108,8 +112,8 @@ are deduplicated in `manual_downloads.jsonl` and retried on later runs. If direc
 HTTP is insufficient, install and explicitly request the browser fallback:
 
 ```bash
-pip install -e ".[browser]"
-iris-papers download data/metadata/2025.jsonl --browser-fallback
+uv sync --extra browser
+uv run iris-papers download data/metadata/2025.jsonl --browser-fallback
 ```
 
 Selenium is not imported or started during an ordinary download.
@@ -161,18 +165,12 @@ schema, refusal, and evidence-validation problems are stored as
 ## Development checks
 
 ```bash
-ruff check .
-ruff format --check .
-PYTHONPATH=src python tests/test_download.py
-PYTHONPATH=src python tests/test_cli.py
+uv run ruff check .
+uv run ruff format --check .
+uv run python tests/test_download.py
+uv run python tests/test_cli.py
 ```
 
 The CLI test uses real tracked scientific PDFs with a fake local ranker/API
-response, so it is deterministic, offline, and free of API charges.
-
-## Legacy fallback
-
-The FastAPI/Celery/Redis/Compose application remains temporarily for rollback
-only. It uses the older YAML/LangChain prompt pipeline and is not the supported
-classification path. Phase 8 removes that application after the CLI migration
-gate is complete; see [`TODO.md`](TODO.md) for the removal checklist.
+response, so it is deterministic, offline, and free of API charges. No Docker,
+Redis, browser, or local HTTP service is needed for the default workflow.

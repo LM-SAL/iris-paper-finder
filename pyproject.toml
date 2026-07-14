@@ -32,8 +32,6 @@ dependencies = [
     "requests",
     "tiktoken",
     "tokenizers",
-    "thefuzz",
-    "langchain",
 ]
 
 [project.scripts]
@@ -47,23 +45,16 @@ scrape = [
 browser = [
     "selenium",
 ]
-webapp = [
-    "celery[redis]",
-    "fastapi[all]",
-    "flower@git+https://github.com/mher/flower.git",
-    "langchain-community",
-    "langchain-core",
-    "langchain-openai",
-    "langchain-text-splitters",
+ocr = [
     "pdf2image",
-    "pi_heif",
     "pytesseract",
-    "pyyaml",
-    "slowapi",
-    "spacy",
-    "unstructured-inference",
-    "unstructured",
-    "uvicorn",
+]
+
+[dependency-groups]
+dev = [
+    "beautifulsoup4",
+    "ruff",
+    "tqdm",
 ]
 
 [tool.setuptools.packages.find]
