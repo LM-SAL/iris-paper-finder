@@ -1,5 +1,4 @@
 import os
-import re
 import json
 from typing import Any
 from pathlib import Path
@@ -161,26 +160,6 @@ def validate_pdfs(dir_loc, min_size: int = 8 * 1024) -> None:
             with failed_bibcodes_file.open("a") as f:
                 f.write(f"{bibcode}\n")
             (dir_loc / invalid_file).unlink(missing_ok=True)
-
-
-def clean_collection_name_for_chroma(input_string):
-    # Convert the input string to lowercase
-    input_string = input_string.lower()
-    # Remove invalid characters
-    cleaned_string = re.sub(r"[^a-z0-9._-]", "", input_string)
-    # Remove consecutive periods
-    cleaned_string = re.sub(r"\.{2,}", ".", cleaned_string)
-    # Trim string length to fit the 3-63 characters limit
-    cleaned_string = cleaned_string[:63]
-    # Ensure the string starts and ends with an alphanumeric character
-    cleaned_string = re.sub(r"^[^a-z0-9]+", "", cleaned_string)
-    cleaned_string = re.sub(r"[^a-z0-9]+$", "", cleaned_string)
-    # Replace periods with underscores
-    cleaned_string = re.sub(r"\.", "_", cleaned_string)
-    # If the string is still shorter than 3 characters, pad with 'a's
-    while len(cleaned_string) < 3:
-        cleaned_string += "a"
-    return cleaned_string
 
 
 def load_bibcodes_list(infile):

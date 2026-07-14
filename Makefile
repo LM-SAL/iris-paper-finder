@@ -78,17 +78,16 @@ transform_links: ## Transform URLs for PDF access
 pdfs: ## Download PDFs from transformed links
 	$(MAKE) $(iris_search_pdfs) $(iris_library_pdfs)
 
-# Download ONNX models for embeddings
-ONNX_URL=https://chroma-onnx-models.s3.amazonaws.com/all-MiniLM-L6-v2/onnx.tar.gz
-onnx: ## Get onnx models
-	cd models/ && \
-	wget $(ONNX_URL) && \
-	tar -xzvf onnx.tar.gz
+onnx: ## Download and checksum the pinned ONNX model
+	python scripts/setup_onnx.py
+
+onnx-check: ## Verify the local ONNX model checksums
+	python scripts/setup_onnx.py --check
 
 clean: ## Clean generated data files
 	rm -rf data/bibcodes data/metadata data/links data/pdfs
 
-.PHONY: bibcodes metadata transform_links pdfs onnx clean
+.PHONY: bibcodes metadata transform_links pdfs onnx onnx-check clean
 .DEFAULT_GOAL := help
 
 help: ## Show this help message

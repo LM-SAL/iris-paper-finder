@@ -2,7 +2,6 @@
 Used in the web app.
 """
 
-import uuid
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -10,7 +9,7 @@ from pathlib import Path
 import spacy
 from langchain_core.documents import Document
 
-from paper_data_linking.process.embedders import ChromaEmbedder, Embedder
+from paper_data_linking.process.embedders import ONNXEmbedder, Embedder
 from paper_data_linking.process.plugins import Plugin, ZeroShotClassifier, is_soho_related
 from paper_data_linking.process.splitters import PyMuPDFTokenSplitter, Splitter
 from paper_data_linking.utils import ContentAnalyzerRecord, PluginRecord, get_stage_message
@@ -172,7 +171,7 @@ def get_splitter(name):
 
 def get_embedder(name):
     embedders = {
-        "chroma": ChromaEmbedder,
+        "onnx": ONNXEmbedder,
     }
     return embedders[name]
 
@@ -186,7 +185,7 @@ def get_plugin(name):
 
 def get_analyzer(config_paths, update_progress=None):
     splitter = PyMuPDFTokenSplitter(update_progress=update_progress)
-    embedder = ChromaEmbedder(collection_name=str(uuid.uuid4()))
+    embedder = ONNXEmbedder()
     plugins = [ZeroShotClassifier.from_yaml(config_path) for config_path in config_paths]
 
     return MyContentAnalyzer(

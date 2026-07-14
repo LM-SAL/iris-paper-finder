@@ -23,8 +23,14 @@ classifiers = [
     "Topic :: Text Processing",
 ]
 dependencies = [
+    "numpy",
+    "onnxruntime",
+    "openai",
+    "PyMuPDF",
     "python-dotenv",
+    "pydantic",
     "tiktoken",
+    "tokenizers",
     "thefuzz",
     "langchain",
 ]
@@ -35,8 +41,6 @@ scrape = [
     "aiofiles",
     "aiohttp",
     "beautifulsoup4",
-    "numpy",
-    "pydantic",
     "pypdf",
     "selenium",
     "tqdm",
@@ -44,17 +48,14 @@ scrape = [
 ]
 webapp = [
     "celery[redis]",
-    "chromadb",
     "fastapi[all]",
     "flower@git+https://github.com/mher/flower.git",
     "langchain-community",
     "langchain-core",
     "langchain-openai",
     "langchain-text-splitters",
-    "openai",
     "pdf2image",
     "pi_heif",
-    "PyMuPDF",
     "pytesseract",
     "pyyaml",
     "slowapi",

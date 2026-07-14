@@ -77,8 +77,5 @@ WORKDIR /code
 COPY --from=builder /src /code
 COPY --from=builder --chmod=0755 /src/entrypoint.sh /code/entrypoint.sh
 
-# ONNX models: copy the model only
-COPY --chmod=777 models/onnx /root/.cache/chroma/onnx_models/all-MiniLM-L6-v2/onnx
-
 WORKDIR /code/src/paper_data_linking/web_app/
 ENTRYPOINT ["/code/entrypoint.sh"]
