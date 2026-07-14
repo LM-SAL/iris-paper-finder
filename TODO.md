@@ -306,19 +306,28 @@ embedding hashes differed, so the frozen comparison artifact was not rewritten.
 
 ## Phase 10: minimal offline verification and final documentation
 
-- [ ] Add one end-to-end offline test using a fake embedder and fake OpenAI
+- [x] Add one end-to-end offline test using a fake embedder and fake OpenAI
   client.
-- [ ] Verify selected chunks, page IDs, structured classification, and JSONL
+- [x] Verify selected chunks, page IDs, structured classification, and JSONL
   checkpointing in that test.
-- [ ] Verify overall-label derivation and that processing failure is never
+- [x] Verify overall-label derivation and that processing failure is never
   serialized as `NO`.
-- [ ] Keep gold-corpus evaluation separate because it uses real PDFs, ONNX, and
+- [x] Keep gold-corpus evaluation separate because it uses real PDFs, ONNX, and
   optionally OpenAI.
-- [ ] Run syntax, Ruff, formatting, classifier self-check, retrieval self-check,
+- [x] Run syntax, Ruff, formatting, classifier self-check, retrieval self-check,
   ONNX checksum check, and the offline test.
-- [ ] Document setup, search/download, one-paper classification, corpus resume,
+- [x] Document setup, search/download, one-paper classification, corpus resume,
   evaluation, browser fallback, and the manual-download queue.
-- [ ] Confirm every documented command is executable from a clean checkout.
+- [x] Confirm every documented command is executable from a clean checkout.
+
+Implementation note (2026-07-14): the existing real-PDF CLI check was extended
+into the single offline pipeline test rather than adding another harness. It
+now validates retrieved page/chunk provenance, Pydantic output, per-paper
+checkpointing, resume, overall-label derivation, and explicit failure records
+with a fake embedder and fake OpenAI client. The locked offline install and all
+documented development commands pass; each CLI subcommand also accepts its
+documented arguments. Credentialed ADS/OpenAI runs and the real-ONNX gold
+corpus remain separate operational checks.
 
 ## Next commits
 
@@ -334,9 +343,9 @@ Keep the remaining work independently reviewable:
 5. [x] `refactor: simplify PDF acquisition` (`0832eec`)
 6. [x] `feat: add iris-papers CLI` (`268112b`)
 7. [x] `refactor: remove web application` (`4675d11`)
-8. [ ] `refactor: delete legacy pipeline code`
-9. [ ] `test: add offline pipeline smoke test`
-10. [ ] `docs: document the local workflow`
+8. [x] `refactor: delete legacy pipeline code` (`ec2ac1e`)
+9. [x] `test: add offline pipeline smoke test` (`3ad013f`)
+10. [x] `docs: document the local workflow`
 
 ## Definition of complete
 

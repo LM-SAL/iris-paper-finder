@@ -68,14 +68,18 @@ existing PDF.
 The checksum-bearing manifest contains 13 manually reviewed cases:
 
 ```bash
-uv run iris-papers evaluate data/eval/reviewed_cases.jsonl --prepare-pdfs
+uv run iris-papers evaluate data/eval/reviewed_cases.jsonl \
+  --output data/eval/classification_results.jsonl --prepare-pdfs
 ```
 
 `--prepare-pdfs` acquires the three ignored publisher PDFs from explicit
 open-access sources and verifies their frozen SHA-256 checksums. Publisher PDFs
 remain local and are not committed. The other ten PDFs are tracked test data.
 Evaluation uses the same extraction, retrieval, classification, checkpoint,
-and report functions as ordinary runs.
+and report functions as ordinary runs. Rerun the same command after an
+interruption to skip matching successful records and continue from the JSONL
+checkpoint. This gold-corpus evaluation is separate from the offline developer
+checks: it uses real PDFs and ONNX, and new classifications call OpenAI.
 
 Useful controls shared by `classify`, `evaluate`, and `run` are:
 
@@ -165,12 +169,20 @@ schema, refusal, and evidence-validation problems are stored as
 ## Development checks
 
 ```bash
+uv lock --check
+uv run python -m compileall -q src scripts tests
 uv run ruff check .
 uv run ruff format --check .
+uv run python -m paper_data_linking.models
+uv run python -m paper_data_linking.classify
+uv run python -m paper_data_linking.retrieval --self-check
+uv run python scripts/setup_onnx.py --check
 uv run python tests/test_download.py
 uv run python tests/test_cli.py
 ```
 
-The CLI test uses real tracked scientific PDFs with a fake local ranker/API
-response, so it is deterministic, offline, and free of API charges. No Docker,
-Redis, browser, or local HTTP service is needed for the default workflow.
+The pipeline test uses real tracked scientific PDFs with a fake local ranker
+and fake API response. It verifies selected page/chunk provenance, structured
+classification, failure semantics, checkpointing, and resume without network
+access or API charges. No Docker, Redis, browser, or local HTTP service is
+needed for the default workflow.
