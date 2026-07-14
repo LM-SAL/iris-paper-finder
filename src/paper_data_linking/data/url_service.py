@@ -1,18 +1,21 @@
-import re
-import json
 import argparse
-from pathlib import Path
+import json
+import re
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from paper_data_linking import logger
-from paper_data_linking.data.headers import build_headers
 from paper_data_linking.data.models import BasicMetadataRecord
+from paper_data_linking.download import USER_AGENT
 
-HEADERS = build_headers()
+HEADERS = {
+    "User-Agent": USER_AGENT,
+    "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.1",
+}
 
 
 class URLTransformationService:
@@ -21,7 +24,7 @@ class URLTransformationService:
         for url in urls:
             transformed_url = self._transform_single_url(url)
             transformed_urls.append(transformed_url)
-        return self._prioritize_urls(list(set(transformed_urls)))
+        return self._prioritize_urls(list(dict.fromkeys(transformed_urls)))
 
     def _transform_single_url(self, url):  # NOQA: PLR0911
         # Transformations for various URL types go here:
@@ -149,7 +152,9 @@ class MetadataTransformer:
             return ""
         record_dict = json.loads(line)
         record = BasicMetadataRecord.from_dict(record_dict)
-        transformed_urls = []
+        open_access_urls = self._filter_open_access(record.links_data)
+        open_access_urls = self._omit_unwanted_urls(open_access_urls)
+        transformed_urls = self.transformation_service.transform(open_access_urls)
         try:
             response = requests.get(
                 f"https://ui.adsabs.harvard.edu/link_gateway/{record.bibcode}/ESOURCE",
@@ -166,10 +171,7 @@ class MetadataTransformer:
         except requests.exceptions.RequestException as e:
             logger.warning(f"Failed to get transformed URLs for {record.bibcode} because {e}")
             logger.warning("Falling back to links_data processing.")
-            open_access_urls = self._filter_open_access(record.links_data)
-            open_access_urls = self._omit_unwanted_urls(open_access_urls)
-            transformed_urls = transformed_urls.append(self.transformation_service.transform(open_access_urls))
-        record.pdf_links = transformed_urls
+        record.pdf_links = self.transformation_service._prioritize_urls(list(dict.fromkeys(transformed_urls)))
         return json.dumps(record.to_dict())
 
     def export_transformed_links(self, input_file, output_file, max_workers):

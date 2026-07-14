@@ -1,13 +1,10 @@
-import os
 import json
 from typing import Any
 from pathlib import Path
 from datetime import UTC, datetime
 
-import aiofiles
 from langchain_core.documents import Document
 from pydantic import BaseModel
-from pypdf import PdfReader
 from thefuzz import fuzz, process
 
 INSTRUMENT_DOI_DICT = {
@@ -86,80 +83,9 @@ def to_jsonlines(docs, outfile):
     return outfile
 
 
-async def write_pdf(content: bytes, dir_loc: Path, bibcode: str) -> None:
-    dir_loc = Path(dir_loc)
-    dir_loc.mkdir(parents=True, exist_ok=True)
-    path = dir_loc / f"{bibcode}.pdf"
-    async with aiofiles.open(path, "wb") as f:
-        await f.write(content)
-        return 1
-    return 0
-
-
-async def append_failed_bibcode(path: Path, bibcode: str) -> None:
-    async with aiofiles.open(path, "a") as f:
-        await f.write(f"{bibcode}\n")
-
-
 def read_local_pdf(file_path):
     with open(file_path, "rb") as f:
         return f.read()
-
-
-def validate_pdfs(dir_loc, min_size: int = 8 * 1024) -> None:
-    dir_loc = Path(dir_loc)
-    pdf_files = list(dir_loc.glob("*.pdf"))
-    valid_count = 0
-    invalid_files: list[str] = []
-
-    def _is_valid_pdf(path: Path) -> bool:  # NOQA:PLR0911
-        size = path.stat().st_size
-        if size < min_size:
-            return False
-        with path.open("rb") as f:
-            header = f.read(8)
-            if not header.startswith(b"%PDF-"):
-                return False
-            tail_size = min(2048, size)
-            try:
-                f.seek(-tail_size, os.SEEK_END)
-            except OSError:
-                f.seek(0)
-            tail = f.read()
-            if b"%%EOF" not in tail:
-                return False
-        try:
-            with path.open("rb") as f:
-                reader = PdfReader(f, strict=False)
-                # Require at least 2 pages
-                if len(reader.pages) < 2:
-                    return False
-                text = ""
-                for page in reader.pages[:2]:
-                    page_text = page.extract_text() or ""
-                    text += page_text.lower()
-
-                if "abstract" not in text and "references" not in text:
-                    return False
-        except Exception:
-            return False
-        return True
-
-    for pdf_file in pdf_files:
-        try:
-            if _is_valid_pdf(pdf_file):
-                valid_count += 1
-            else:
-                invalid_files.append(pdf_file.name)
-        except Exception:
-            invalid_files.append(pdf_file.name)
-    if invalid_files:
-        failed_bibcodes_file = dir_loc / "failed_bibcodes.txt"
-        for invalid_file in invalid_files:
-            bibcode = invalid_file.split(".pdf")[0]
-            with failed_bibcodes_file.open("a") as f:
-                f.write(f"{bibcode}\n")
-            (dir_loc / invalid_file).unlink(missing_ok=True)
 
 
 def load_bibcodes_list(infile):

@@ -125,9 +125,6 @@ Evidence:
   - `2025ApJ...982..147M.pdf`
 - The old Phase 0 freeze check reports expected implementation-hash drift after
   Phases 1-4. Do not rewrite the historical manifest to hide that drift.
-- Full-repository Ruff has one known legacy `ASYNC240` finding in
-  `src/paper_data_linking/data/pdf_download_service.py`; that module is replaced
-  in Phase 6.
 
 ## Phase 5: finish the reliable classification path
 
@@ -167,34 +164,41 @@ successful case without an API call. LangChain removal remains gated on Phase 8.
 
 ## Phase 6: simplify ADS and PDF acquisition
 
-- [ ] Fix the URL fallback that assigns the return value of `list.append()`.
-- [ ] Reuse the existing ADS search/metadata behavior behind ordinary callable
-  functions; remove source-edited queries and year ranges.
-- [ ] Prefer ADS-provided, clearly open-access PDF links.
-- [ ] Replace the asynchronous downloader hierarchy with one direct HTTP path.
-- [ ] Download to a temporary file and validate:
+- [x] Fix the URL fallback that assigns the return value of `list.append()`.
+- [x] Keep ADS search and metadata behind ordinary callable services, with the
+  token validated at the call or CLI boundary rather than during import.
+- [x] Prefer ADS-provided, clearly open-access PDF links.
+- [x] Replace the asynchronous downloader hierarchy with one direct HTTP path.
+- [x] Download to a temporary file and validate:
 
-  - [ ] successful HTTP status;
-  - [ ] plausible content type;
-  - [ ] PDF signature;
-  - [ ] at least one readable page;
-  - [ ] expected checksum when one is supplied.
-- [ ] Rename atomically only after validation.
-- [ ] Never overwrite or delete an existing valid PDF.
-- [ ] Record attempted URLs, useful errors, and transient/permanent categories.
-- [ ] Retry transient failures on later runs and deduplicate failure records.
-- [ ] Write unresolved papers to a manual-download JSONL queue.
-- [ ] Do not reject a PDF merely because it has one page or no early `abstract`.
-- [ ] Replace NumPy used only for infinity in ADS pagination with `math.inf`.
-- [ ] Remove randomized browser headers and Selenium from the default path.
-- [ ] Add `--browser-fallback` as a separate pass over direct-download failures.
-- [ ] Keep one browser driver lifecycle and never reuse a closed driver.
-- [ ] Add one URL-fallback regression check and one local-file download smoke
+  - [x] successful HTTP status;
+  - [x] plausible content type;
+  - [x] PDF signature;
+  - [x] at least one readable page;
+  - [x] expected checksum when one is supplied.
+- [x] Rename atomically only after validation.
+- [x] Never overwrite or delete an existing valid PDF.
+- [x] Record attempted URLs, useful errors, and transient/permanent categories.
+- [x] Retry transient failures on later runs and deduplicate failure records.
+- [x] Write unresolved papers to a manual-download JSONL queue.
+- [x] Do not reject a PDF merely because it has one page or no early `abstract`.
+- [x] Replace NumPy used only for infinity in ADS pagination with `math.inf`.
+- [x] Remove randomized browser headers and Selenium from the default path.
+- [x] Add `--browser-fallback` as a separate pass over direct-download failures.
+- [x] Keep one browser driver lifecycle and never reuse a closed driver.
+- [x] Add one URL-fallback regression check and one local-file download smoke
   check; neither may use ADS or a publisher network.
 
 Done when rerunning downloads touches only missing/retryable papers, direct
 downloads never import Selenium, and every unresolved paper has a useful manual
 queue record.
+
+Implementation note (2026-07-14): `download.py` now owns sequential direct
+downloads, structural/checksum validation, atomic replacement of invalid files,
+attempt history, and a deduplicated manual queue. The old async hierarchy and
+randomized headers were deleted. The legacy download script delegates to this
+path until Phase 7 replaces Make. Its query/year options move into the unified
+CLI rather than adding another temporary Make interface.
 
 ## Phase 7: add the sole supported CLI
 

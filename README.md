@@ -58,9 +58,26 @@ will provide you the targets and the order of the commands for normal use.
 The queries to the ADS are fixed and one should modify the Makefile.
 Currently it will fetch the IRIS ADS library and do a query for all papers which have cited the IRIS instrument paper.
 
-Typically when downloading the papers, you will hit bot procetions.
-Within `src/paper_data_linking/data/headers.py` is the code which creates the request headers.
-This might need updating or the bot protection is too advanced to bypass which means you will need to manually download those papers.
+PDF downloads use ordinary HTTP and do not start a browser:
+
+```bash
+python src/paper_data_linking/data/pdf_download_service.py \
+  --input data/links/iris_search_transformed_links.jsonl \
+  --output-dir data/pdfs/iris_search
+```
+
+Each attempted URL is appended to `download_attempts.jsonl`. Papers that still
+need attention are deduplicated in `manual_downloads.jsonl` and are retried on a
+later run. To make a separate browser pass over direct-download failures,
+install the optional dependency and opt in explicitly:
+
+```bash
+pip install -e ".[scrape,browser]"
+python src/paper_data_linking/data/pdf_download_service.py \
+  --input data/links/iris_search_transformed_links.jsonl \
+  --output-dir data/pdfs/iris_search \
+  --browser-fallback
+```
 
 When you have them all downloaded, you can precede with the rest of the readme.
 

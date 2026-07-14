@@ -29,6 +29,7 @@ dependencies = [
     "PyMuPDF",
     "python-dotenv",
     "pydantic",
+    "requests",
     "tiktoken",
     "tokenizers",
     "thefuzz",
@@ -38,13 +39,11 @@ dependencies = [
 [project.optional-dependencies]
 scrape = [
     "ads",
-    "aiofiles",
-    "aiohttp",
     "beautifulsoup4",
-    "pypdf",
-    "selenium",
     "tqdm",
-    "webdriver-manager",
+]
+browser = [
+    "selenium",
 ]
 webapp = [
     "celery[redis]",

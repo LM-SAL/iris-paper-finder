@@ -1,17 +1,12 @@
-import json
 import argparse
+import math
 from pathlib import Path
 
 import ads
-import numpy as np
 import requests
 
 from paper_data_linking import logger
 from paper_data_linking.settings import ADS_TOKEN
-
-if ADS_TOKEN is None:
-    msg = "Must set ADS_TOKEN. Add ADS_TOKEN to .env file."
-    raise Exception(msg)
 
 
 class BibcodeService:
@@ -22,8 +17,10 @@ class BibcodeService:
         Args:
             api_token (str): API token for accessing ADS.
         """
+        if not api_token:
+            msg = "ADS API token is required"
+            raise ValueError(msg)
         self.api_token = api_token
-        self.start = 0
         ads.config.token = self.api_token
 
     def get_bibcodes_from_library(self, library_id: str) -> list[str]:
@@ -39,16 +36,18 @@ class BibcodeService:
         """
         headers = {"Authorization": "Bearer " + self.api_token}
         rows = 2000
-        num_found = np.inf
+        start = 0
+        num_found = math.inf
         bibcodes = []
-        while self.start <= num_found:
-            url = f"https://api.adsabs.harvard.edu/v1/biblib/libraries/{library_id}?rows={rows}&start={self.start}"
+        while start < num_found:
+            url = f"https://api.adsabs.harvard.edu/v1/biblib/libraries/{library_id}?rows={rows}&start={start}"
             response = requests.get(url, headers=headers, timeout=360)
-            data = json.loads(response.content)
+            response.raise_for_status()
+            data = response.json()
             num_found = data["solr"]["response"]["numFound"]
             bibcodes_chunk = data["documents"]
-            logger.info(f"Extracted: {self.start + len(bibcodes_chunk)}/{num_found}")
-            self.start += rows  # Update start but don't save it as a token
+            logger.info(f"Extracted: {start + len(bibcodes_chunk)}/{num_found}")
+            start += rows
             bibcodes.extend(bibcodes_chunk)
         return bibcodes
 
@@ -68,10 +67,12 @@ class BibcodeService:
         return [paper.bibcode for paper in search_query]
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Fetch bibcodes from ADS and save them to a file.")
-    parser.add_argument("--api_token", default=ADS_TOKEN, help="API token for accessing ADS.")
-    parser.add_argument("--output", help="Path to the output file where all bibcodes will be saved.", type=Path)
+    parser.add_argument("--api-token", "--api_token", default=ADS_TOKEN, help="API token for accessing ADS.")
+    parser.add_argument(
+        "--output", required=True, help="Path to the output file where all bibcodes will be saved.", type=Path
+    )
     parser.add_argument(
         "--num_records",
         type=int,
@@ -82,6 +83,8 @@ def main():
     group.add_argument("--library_id", help="Library ID for ADS.")
     group.add_argument("--query", help="Search query for fetching bibcodes.")
     args = parser.parse_args()
+    if not args.api_token:
+        parser.error("ADS_TOKEN or --api-token is required")
     bibcode_service = BibcodeService(
         api_token=args.api_token,
     )
