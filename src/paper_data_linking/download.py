@@ -1,10 +1,7 @@
 """Validated, resumable PDF downloads with an optional browser fallback."""
 
-# ruff: noqa: T201
-
 from __future__ import annotations
 
-import argparse
 import hashlib
 import json
 import logging
@@ -461,32 +458,3 @@ def download_records(
         "failed": len(pending) + conflicts,
         "manual_queue": len(manual),
     }
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--input", required=True, type=Path, help="Metadata JSONL containing bibcodes and links.")
-    parser.add_argument("--output-dir", required=True, type=Path, help="Directory for PDFs and download records.")
-    parser.add_argument("--headers", type=Path, help="Optional JSON object of direct-download HTTP headers.")
-    parser.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT_SECONDS)
-    parser.add_argument("--browser-fallback", action="store_true")
-    parser.add_argument("--browser-wait", type=float, default=DEFAULT_BROWSER_WAIT_SECONDS)
-    args = parser.parse_args()
-    headers = DEFAULT_HEADERS if args.headers is None else json.loads(args.headers.read_text(encoding="utf-8"))
-    if not isinstance(headers, dict) or not all(
-        isinstance(key, str) and isinstance(value, str) for key, value in headers.items()
-    ):
-        parser.error("--headers must contain a JSON object with string keys and values")
-    summary = download_records(
-        read_jsonl(args.input),
-        args.output_dir,
-        headers=headers,
-        timeout=args.timeout,
-        browser_fallback=args.browser_fallback,
-        browser_wait=args.browser_wait,
-    )
-    print(json.dumps(summary, sort_keys=True))
-
-
-if __name__ == "__main__":
-    main()

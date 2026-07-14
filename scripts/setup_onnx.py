@@ -2,9 +2,9 @@
 
 # ruff: noqa: S310, T201
 
-import tarfile
-import hashlib
 import argparse
+import hashlib
+import tarfile
 import tempfile
 import urllib.request
 from pathlib import Path

@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-import argparse
-import json
 import re
 from dataclasses import dataclass
 from functools import cache
@@ -424,41 +422,5 @@ def _self_check() -> None:
     assert distances == [0.0, 1.0]
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("pdf", type=Path, nargs="?")
-    parser.add_argument("--chunk-size", type=int, default=DEFAULT_CHUNK_SIZE)
-    parser.add_argument("--chunk-overlap", type=int, default=DEFAULT_CHUNK_OVERLAP)
-    parser.add_argument("--top-k", type=int, default=DEFAULT_TOP_K)
-    parser.add_argument("--retrieval-mode", choices=RetrievalMode, default=RetrievalMode.AUTO, type=RetrievalMode)
-    parser.add_argument("--no-ocr", action="store_true")
-    parser.add_argument("--self-check", action="store_true")
-    args = parser.parse_args()
-    if args.self_check:
-        _self_check()
-        return
-    if args.pdf is None:
-        parser.error("pdf is required unless --self-check is used")
-    chunks, used_ocr = chunk_pdf(
-        args.pdf,
-        chunk_size=args.chunk_size,
-        chunk_overlap=args.chunk_overlap,
-        ocr_fallback=not args.no_ocr,
-    )
-    result = retrieve_chunks(
-        chunks,
-        mode=args.retrieval_mode,
-        top_k=args.top_k,
-        chunk_size=args.chunk_size,
-        chunk_overlap=args.chunk_overlap,
-    )
-    print(  # noqa: T201
-        json.dumps(
-            {"pdf": str(args.pdf), "used_ocr": used_ocr, "retrieval": result.model_dump(mode="json")},
-            indent=2,
-        )
-    )
-
-
 if __name__ == "__main__":
-    main()
+    _self_check()

@@ -175,7 +175,7 @@ uv run ruff check .
 uv run ruff format --check .
 uv run python -m paper_data_linking.models
 uv run python -m paper_data_linking.classify
-uv run python -m paper_data_linking.retrieval --self-check
+uv run python -m paper_data_linking.retrieval
 uv run python scripts/setup_onnx.py --check
 uv run python tests/test_download.py
 uv run python tests/test_cli.py

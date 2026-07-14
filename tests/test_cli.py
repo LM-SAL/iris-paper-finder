@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 # ruff: noqa: S101
-
 import hashlib
 import json
 import shutil
@@ -21,8 +20,8 @@ from paper_data_linking.models import (
     IRISAspect,
     IRISClassification,
     PaperResult,
-    RetrievalMode,
     ResultStatus,
+    RetrievalMode,
     SyntheticConnection,
 )
 

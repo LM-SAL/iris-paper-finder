@@ -8,6 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "paper-data-linking"
 version = "0.1.0"
 description = "Identify and extract data references in heliophysics research papers."
+license = "MIT"
 authors = [
     {name = "Anthony Buonomo", email = "anthony.r.buonomo@gmail.com"}
 ]
@@ -16,7 +17,6 @@ requires-python = ">=3.13"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering",

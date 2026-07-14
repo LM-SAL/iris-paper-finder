@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 # ruff: noqa: S101
-
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
