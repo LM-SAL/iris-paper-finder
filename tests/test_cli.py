@@ -20,7 +20,9 @@ from paper_data_linking.models import (
     Evidence,
     IRISAspect,
     IRISClassification,
+    PaperResult,
     RetrievalMode,
+    ResultStatus,
     SyntheticConnection,
 )
 
@@ -100,7 +102,14 @@ class FakeResponses:
         )
 
 
-def test_one_pdf_and_directory_resume() -> None:
+class FailingResponses:
+    @staticmethod
+    def parse(**_kwargs: object) -> object:
+        msg = "offline API failure"
+        raise RuntimeError(msg)
+
+
+def test_offline_pipeline_checkpoint_and_resume() -> None:
     client = SimpleNamespace(responses=FakeResponses())
     repository = Path(__file__).resolve().parents[1]
     first = repository / "test_pdfs/positive/iris_obs_paper.pdf"
@@ -115,11 +124,34 @@ def test_one_pdf_and_directory_resume() -> None:
 
         with patch("tiktoken.get_encoding", return_value=CharacterEncoding()):
             first_summary = classify_paths(first, output, client=client, embedder=FakeEmbedder())
+            assert len(output.read_text().splitlines()) == 1
             directory_summary = classify_paths(pdfs, output, client=client, embedder=FakeEmbedder())
+
+            failed_output = root / "failed.jsonl"
+            failed_summary = classify_paths(
+                first,
+                failed_output,
+                client=SimpleNamespace(responses=FailingResponses()),
+                embedder=FakeEmbedder(),
+            )
 
         assert first_summary == {"positive": 1, "negative": 0, "uncertain": 0, "failed": 0, "skipped": 0}
         assert directory_summary == {"positive": 1, "negative": 0, "uncertain": 0, "failed": 0, "skipped": 1}
-        assert len(output.read_text().splitlines()) == 2
+        records = [json.loads(line) for line in output.read_text().splitlines()]
+        assert len(records) == 2
+        sent = records[0]["retrieval"]["sent"]
+        result = PaperResult.model_validate(records[0]["result"])
+        assert sent
+        assert result.status == ResultStatus.CLASSIFIED
+        assert result.classification is not None
+        assert result.classification.overall == Decision.YES
+        evidence = result.classification.observational_evidence[0]
+        assert (evidence.chunk_id, evidence.page) == (sent[0]["chunk_id"], sent[0]["page"])
+
+        assert failed_summary == {"positive": 0, "negative": 0, "uncertain": 0, "failed": 1, "skipped": 0}
+        failed = PaperResult.model_validate(json.loads(failed_output.read_text())["result"])
+        assert failed.status == ResultStatus.PROCESSING_FAILED
+        assert failed.classification is None
         report = write_report(
             output,
             model=DEFAULT_MODEL,
@@ -183,7 +215,7 @@ def test_ads_metadata_normalizes_link_records() -> None:
 
 
 if __name__ == "__main__":
-    test_one_pdf_and_directory_resume()
+    test_offline_pipeline_checkpoint_and_resume()
     test_reviewed_pdf_preparation_uses_manifest_checksum()
     test_standard_query_is_scoped_to_year()
     test_ads_metadata_normalizes_link_records()
