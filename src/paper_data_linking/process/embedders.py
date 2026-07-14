@@ -24,7 +24,7 @@ class MiniLMModel:
         tokenizer_path = model_dir / "tokenizer.json"
         missing = [str(path) for path in (model_path, tokenizer_path) if not path.is_file()]
         if missing:
-            msg = f"Missing ONNX model files: {', '.join(missing)}. Run `make onnx`."
+            msg = f"Missing ONNX model files: {', '.join(missing)}. Run `python scripts/setup_onnx.py`."
             raise FileNotFoundError(msg)
 
         self.tokenizer = Tokenizer.from_file(str(tokenizer_path))

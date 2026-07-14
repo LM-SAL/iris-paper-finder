@@ -212,36 +212,43 @@ iris-papers evaluate data/eval/reviewed_cases.jsonl
 iris-papers run --year 2025
 ```
 
-- [ ] Add `src/paper_data_linking/cli.py` and a small `__main__.py` delegate.
-- [ ] Register `iris-papers = "paper_data_linking.cli:main"` in
+- [x] Add `src/paper_data_linking/cli.py` and a small `__main__.py` delegate.
+- [x] Register `iris-papers = "paper_data_linking.cli:main"` in
   `pyproject.toml`.
-- [ ] Make commands call shared stage functions; do not duplicate pipeline
+- [x] Make commands call shared stage functions; do not duplicate pipeline
   logic inside argument handlers.
-- [ ] Preserve the current JSONL formats during migration.
-- [ ] Expose query/year, `--limit`, `--force`, `--model`,
+- [x] Preserve the current JSONL formats during migration.
+- [x] Expose query/year, `--limit`, `--force`, `--model`,
   `--retrieval-mode auto|heuristic|all`, and `--browser-fallback` only where
   relevant.
-- [ ] Make `run` compose the same search, download, classify, and evaluate
+- [x] Make `run` compose the same search, download, classify, and evaluate
   functions used by individual commands.
-- [ ] Print final classified-positive, negative, uncertain, failed, skipped,
+- [x] Print final classified-positive, negative, uncertain, failed, skipped,
   downloaded, and manual-download counts.
-- [ ] Use the checksum-bearing reviewed-case manifest to acquire the three
+- [x] Use the checksum-bearing reviewed-case manifest to acquire the three
   missing evaluation PDFs. Do not commit another copy of publisher PDFs.
-- [ ] Prove a clean checkout can prepare and run all 13 reviewed cases.
-- [ ] Put the CLI installation and one-paper example first in `README.md`.
+- [x] Prove a clean checkout can prepare and run all 13 reviewed cases.
+- [x] Put the CLI installation and one-paper example first in `README.md`.
 
 Done when one paper, a directory, and the 13-paper evaluation run without the
 web app or Docker and resume from their durable JSONL artifacts.
+
+Implementation note (2026-07-14): the CLI and compatibility script share one
+set of stage functions. Offline tests exercised one real tracked PDF, directory
+resume, reports, and checksum-aware acquisition. A fresh temporary cache
+downloaded all three ignored reviewed PDFs with exact manifest hashes. The CLI
+then consumed the retained Phase 4 JSONL, skipped all 13 matching successes
+without an API client, and regenerated the 13/13 evaluation report.
 
 ## Phase 8: remove the web application and legacy runtime
 
 Removal gate:
 
-- [ ] CLI exposes the prompt/model/retrieval choices people use.
-- [ ] CLI results retain classifications, evidence, provenance, errors, and
+- [x] CLI exposes the prompt/model/retrieval choices people use.
+- [x] CLI results retain classifications, evidence, provenance, errors, and
   review output.
 - [ ] Direct download and explicit browser fallback both work.
-- [ ] One stopped-and-resumed corpus run has been verified.
+- [x] One stopped-and-resumed corpus run has been verified.
 
 After the gate passes:
 
@@ -308,8 +315,8 @@ The first three commits already exist:
 
 Keep the remaining work independently reviewable:
 
-4. [ ] `fix: bound OpenAI requests`
-5. [ ] `refactor: simplify PDF acquisition`
+4. [x] `fix: bound OpenAI requests` (`71dc258`)
+5. [x] `refactor: simplify PDF acquisition` (`0832eec`)
 6. [ ] `feat: add iris-papers CLI`
 7. [ ] `refactor: remove web application`
 8. [ ] `refactor: delete legacy pipeline code`

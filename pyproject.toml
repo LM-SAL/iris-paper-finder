@@ -36,9 +36,11 @@ dependencies = [
     "langchain",
 ]
 
+[project.scripts]
+iris-papers = "paper_data_linking.cli:main"
+
 [project.optional-dependencies]
 scrape = [
-    "ads",
     "beautifulsoup4",
     "tqdm",
 ]
@@ -65,6 +67,7 @@ webapp = [
 ]
 
 [tool.setuptools.packages.find]
+where = ["src"]
 include = ["paper_data_linking*"]
 
 [tool.setuptools.package-dir]

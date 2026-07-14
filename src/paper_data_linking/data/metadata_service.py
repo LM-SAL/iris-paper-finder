@@ -1,4 +1,5 @@
 import argparse
+import json
 from pathlib import Path
 
 import requests
@@ -6,7 +7,6 @@ import requests
 from paper_data_linking import logger
 from paper_data_linking.data.models import BasicMetadataRecord
 from paper_data_linking.settings import ADS_TOKEN
-from paper_data_linking.utils import load_bibcodes_list, to_jsonlines
 
 
 class MetadataService:
@@ -66,12 +66,14 @@ def main() -> None:
     if not args.api_token:
         parser.error("ADS_TOKEN or --api-token is required")
     service = MetadataService(args.api_token)
-    bibcodes = load_bibcodes_list(args.bibcodes_file)
+    bibcodes = [line.strip() for line in Path(args.bibcodes_file).read_text().splitlines() if line.strip()]
     records = service.get_metadata_for_bibcodes(bibcodes)
-    docs = [record.to_dict() for record in records]
     output_path = Path(args.output_file)
-    outfile = to_jsonlines(docs, output_path)
-    logger.info(f"Wrote metadata records to {outfile}")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with output_path.open("w", encoding="utf-8") as stream:
+        for record in records:
+            stream.write(json.dumps(record.to_dict(), separators=(",", ":")) + "\n")
+    logger.info(f"Wrote metadata records to {output_path}")
 
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@ import argparse
 import math
 from pathlib import Path
 
-import ads
 import requests
 
 from paper_data_linking import logger
@@ -21,7 +20,6 @@ class BibcodeService:
             msg = "ADS API token is required"
             raise ValueError(msg)
         self.api_token = api_token
-        ads.config.token = self.api_token
 
     def get_bibcodes_from_library(self, library_id: str) -> list[str]:
         """
@@ -63,8 +61,14 @@ class BibcodeService:
         -------
             List[str]: List of fetched bibcodes.
         """
-        search_query = ads.SearchQuery(q=query, rows=rows)
-        return [paper.bibcode for paper in search_query]
+        response = requests.get(
+            "https://api.adsabs.harvard.edu/v1/search/query",
+            params={"q": query, "fl": "bibcode", "rows": rows},
+            headers={"Authorization": "Bearer " + self.api_token},
+            timeout=60,
+        )
+        response.raise_for_status()
+        return [document["bibcode"] for document in response.json()["response"]["docs"]]
 
 
 def main() -> None:
