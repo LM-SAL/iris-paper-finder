@@ -26,7 +26,9 @@ if TYPE_CHECKING:
 
 IRIS_PROMPT_VERSION = "iris-v3.2"
 PIPELINE_VERSION = "phase4"
-DEFAULT_MODEL = "gpt-5-mini"
+DEFAULT_MODEL = "gpt-5-mini-2025-08-07"
+OPENAI_TIMEOUT_SECONDS = 300.0
+OPENAI_MAX_RETRIES = 2
 
 
 def _observable_coverage() -> str:
@@ -173,7 +175,7 @@ def classify_paper(
         if client is None:
             from openai import OpenAI  # noqa: PLC0415
 
-            client = OpenAI()
+            client = OpenAI(timeout=OPENAI_TIMEOUT_SECONDS, max_retries=OPENAI_MAX_RETRIES)
         response = client.responses.parse(
             model=model,
             input=[

@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
-import json
-import hashlib
 import argparse
+import hashlib
+import json
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-from paper_data_linking.classify import IRIS_PROMPT_SHA256, PIPELINE_VERSION, classify_paper
+from paper_data_linking.classify import DEFAULT_MODEL, IRIS_PROMPT_SHA256, PIPELINE_VERSION, classify_paper
 from paper_data_linking.models import PaperResult, ResultStatus, RetrievalMode
 from paper_data_linking.retrieval import (
     DEFAULT_CHUNK_OVERLAP,
@@ -24,7 +24,6 @@ from paper_data_linking.retrieval import (
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "data/eval/reviewed_cases.jsonl"
 DEFAULT_OUTPUT = ROOT / "data/eval/classification_results.jsonl"
-DEFAULT_MODEL = "gpt-5-mini-2025-08-07"
 
 
 def load_cases() -> list[dict]:

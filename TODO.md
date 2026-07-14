@@ -1,60 +1,56 @@
-# IRIS Paper LLM simplification plan
+# IRIS Paper LLM roadmap
 
-This document turns the code and prompt review into an implementation plan. It
-is intentionally ordered so that classification behavior is measured before
-components are replaced or deleted.
+Last reconciled with the repository: 2026-07-14.
 
-## Agreed direction
+This is the active implementation plan. Completed experimental detail lives in
+`data/eval/`; this file tracks the decisions that must remain true and the work
+that is still actionable.
 
-- Keep local PDF text extraction and local ONNX retrieval as the default
-  pipeline. It reduces the text sent to the OpenAI API and keeps retrieval
-  inspectable.
+## Fixed product decisions
+
+- Keep page-aware PDF extraction and local ONNX retrieval before the OpenAI API.
 - Count every synthetic observable within an IRIS-observable passband or
-  spectral line, even when the paper does not mention IRIS. Flag whether the
-  connection is explicit or inferred from the passband/line.
-- Treat the manually curated ADS IRIS library as immutable positive ground
-  truth. Papers outside it remain unlabeled until reviewed.
-- Replace brittle Markdown parsing with schema-validated structured output.
-- Make one Python CLI the sole workflow interface.
-- Remove the web application and its supporting services after the command-line
-  workflow covers the required behavior.
-- Remove Chroma's temporary per-PDF database if direct in-memory ranking with
-  the existing ONNX embeddings is equivalent.
-- Use sequential OpenAI requests with per-paper checkpoints and resumption.
-- Use ordinary HTTP PDF downloads by default and retain Selenium only as an
-  explicit retry fallback.
-- Remove Make, Docker, and Compose rather than maintaining parallel ways to run
-  the same local workflow.
-- Keep OCR as a fallback for papers without usable embedded text.
-- Preserve JSONL artifacts so interrupted runs can resume and results remain
-  easy to inspect.
+  spectral line, even when the paper does not mention IRIS.
+- Record synthetic connections as `EXPLICIT` or `PASSBAND_ONLY`, and record
+  mission mention independently.
+- Count observational IRIS use only when the paper's authors analyze the data.
+  Data availability, a coincidental observation, or a slit that missed the
+  relevant place or time does not count.
+- Treat the manually curated ADS IRIS library as append-only positive ground
+  truth. Absence from the library is unlabeled, not negative.
+- Use schema-validated structured output. Never infer a negative result from a
+  processing failure or parse prose with divider strings.
+- Process OpenAI requests sequentially and checkpoint every paper to JSONL.
+- Use direct HTTP for PDFs. Keep Selenium only as an explicit fallback pass.
+- Make one Python CLI the only supported workflow.
+- Remove the web application, Make, Docker, Compose, Redis, Celery, and Chroma.
+- Keep the historical v2 prompt and results as frozen evaluation artifacts, not
+  as a second live pipeline.
+- Do not add Batch API support, a database, distributed workers, a plugin
+  framework, or a corpus-wide vector store without measured need.
 
 ## Target workflow
 
 ```text
-ADS query
+ADS search
   -> metadata and open-access links
-  -> local PDF cache / manual-download queue
+  -> validated local PDF cache or manual-download queue
   -> page-aware text extraction
-  -> paragraph or token chunks
-  -> exact-match candidates plus neighboring chunks
-  -> local ONNX embeddings and in-memory top-k ranking
-  -> whole-paper ONNX fallback when exact matches are insufficient
+  -> deterministic exact matches and neighboring chunks
+  -> local ONNX/NumPy ranking with whole-paper fallback
+  -> top-20 labeled passages
   -> OpenAI structured classification
-  -> versioned JSONL results
+  -> checkpointed JSONL results
   -> JSON/CSV/Markdown evaluation report
 ```
 
-The exact-match stage is a cheap selector, not a classifier or negative filter.
-In the default `auto` mode, ONNX fills any unused context slots from the whole
-paper, including when there are no exact matches. The OpenAI model receives the
-selected passages with their page and chunk identifiers so every positive or
-uncertain result can cite its evidence.
+The exact-match stage is a context selector, never a classifier. In `auto`
+mode, ONNX fills unused context slots from the whole paper. No exact matches
+must still produce whole-paper candidates rather than an automatic `NO`.
 
-## Proposed final repository structure
+## Target repository structure
 
-This is a target, not a requirement to create every file immediately. Combine
-files when that remains clearer.
+Keep the final package flat unless a file becomes genuinely hard to navigate:
 
 ```text
 .
@@ -63,528 +59,268 @@ files when that remains clearer.
 ├── pyproject.toml
 ├── uv.lock
 ├── data/
-│   ├── bibcodes/
-│   ├── metadata/
-│   ├── links/
-│   ├── pdfs/
-│   ├── results/
-│   └── eval/
+│   ├── eval/                 # tracked labels, manifests, and reports
+│   ├── metadata/             # generated ADS records
+│   ├── pdfs/                 # ignored local cache
+│   └── results/              # generated checkpointed output
+├── models/
+│   └── onnx/                 # ignored model cache, checksum-verified setup
 ├── src/paper_data_linking/
 │   ├── __init__.py
 │   ├── __main__.py
-│   ├── cli.py
-│   ├── ads.py
-│   ├── download.py
-│   ├── evaluate.py
-│   ├── models.py
-│   ├── pipeline.py
-│   └── classify.py
+│   ├── cli.py                # argparse and output only
+│   ├── ads.py                # ADS search and link discovery
+│   ├── download.py           # direct HTTP and optional browser fallback
+│   ├── iris.py               # canonical IRIS observable definitions
+│   ├── models.py             # shared Pydantic records
+│   ├── retrieval.py          # extraction, chunks, and local ONNX ranking
+│   ├── classify.py           # prompt, OpenAI call, and corpus checkpoints
+│   └── evaluate.py           # reviewed-corpus reports
 └── tests/
-    └── test_pipeline.py
+    └── test_pipeline.py      # small offline end-to-end check
 ```
 
-Expected responsibilities:
+This is a deletion target, not a request to create empty modules. Combine files
+when doing so leaves a shorter, clearer live path.
 
-- `cli.py`: user-facing `search`, `download`, `classify`, `evaluate`, and `run`
-  commands. It delegates rather than containing pipeline logic.
-- `ads.py`: ADS query, library, metadata, and link discovery operations.
-- `download.py`: ordinary HTTP downloading, validation, retry policy, and the
-  optional browser fallback.
-- `evaluate.py`: reports against a versioned ADS-library snapshot and reviewed
-  labels.
-- `models.py`: Pydantic records shared by the pipeline, result writer, and
-  evaluator.
-- `pipeline.py`: PDF extraction, chunking, exact-match selection, ONNX
-  retrieval, and resumable directory processing. Split this file only if it
-  becomes difficult to navigate.
-- `classify.py`: the short versioned IRIS prompt and direct structured OpenAI
-  call. The response schema stays in `models.py`, where it can be validated.
+## Current status
 
-Do not create a module merely to match this diagram. Combine responsibilities
-when the result is easier to follow.
+### Phases 0-4: complete
 
-## Phase 0: Freeze a trustworthy baseline
+- [x] Frozen, versioned Phase 0 baseline and reviewed 13-paper corpus.
+- [x] Append-only ADS-library evaluation semantics.
+- [x] Strict Pydantic classification, provenance, evidence, and failure models.
+- [x] Prompt `iris-v3.2` with the agreed observational and synthetic rules.
+- [x] Page-aware chunks with stable IDs and exact evidence mapping.
+- [x] Retrieval modes `auto`, `heuristic`, and `all`; top 20 is the accepted
+  default.
+- [x] Direct ONNX/tokenizer inference and NumPy cosine ranking.
+- [x] Removed Chroma from the active path and dependencies.
+- [x] Checksum-verified ONNX model setup with no silent analysis-time download.
+- [x] Verified direct ranking against Chroma on all 13 papers: identical
+  embeddings and top-20 ordering; maximum converted distance difference
+  `2.384185791015625e-07`.
+- [x] Verified structured classification on all 13 reviewed papers. The current
+  retained report is 13/13 correct for overall, observational, synthetic,
+  connection, and review-only fields.
+- [x] Verified resume behavior skips all 13 matching successful records without
+  an API call.
 
-Do this before changing retrieval, prompts, or models.
+Evidence:
 
-- [x] Define a synthetic positive as any synthetic observable within an
-  IRIS-observable passband or spectral line.
-  - [x] Do not require the paper to mention IRIS.
-  - [x] Distinguish an explicit IRIS connection from a connection inferred only
-    from the passband or line.
-  - [x] Define canonical spectrograph windows and slit-jaw channels once in
-    `src/paper_data_linking/iris.py` from the IRIS instrument paper.
-  - [x] Reuse those Python values in the Phase 2 prompt.
-  - [x] Reuse those Python values in exact-match retrieval during Phase 3.
-  - [x] Write the agreed definition in the README.
-  - [x] Supersede the historical v2 prompt with the same definition in Phase 2;
-    keep the v2 file frozen as a reproducible fallback.
-- [x] Keep the current rule that instrument, calibration, or software papers
-  without observational or synthetic data use are not positives.
-- [x] Treat every paper in the manually curated ADS IRIS library as positive
-  ground truth. The library is append-only: evaluation never removes a paper.
-- [x] Snapshot the library bibcodes and snapshot date for every evaluation so
-  an append-only library remains reproducible.
-- [x] Create a versioned library snapshot plus
-  `data/eval/reviewed_cases.jsonl`; do not duplicate all 756 library labels in
-  another JSONL file.
-  - [x] Include clear observational-data positives.
-  - [x] Include clear synthetic-data positives.
-  - [x] Include explicit synthetic connections.
-  - [x] Add a reviewed `PASSBAND_ONLY` synthetic paper.
-  - [x] Include papers that only cite or describe IRIS.
-  - [x] Include unrelated uses of the acronym IRIS.
-  - [x] Include a review-only paper.
-  - [x] Search for a genuinely uncertain paper; do not invent one when every
-    local candidate can be resolved from its full text.
-  - [x] Include difficult spectral-line cases such as Si IV and Mg II without
-    an explicit IRIS connection.
-  - [x] Record the expected label and a short human evidence note.
-- [x] Preserve every available v2 result and record absent results explicitly;
-  do not spend API credits trying to recreate missing historical output.
-- [x] Record baseline configuration:
-  - [x] PDF checksum.
-  - [x] prompt/config filename and checksum.
-  - [x] model name, including that the historical run used an unpinned alias.
-  - [x] chunk size, overlap, heuristic threshold/config checksum, and top-k.
-  - [x] Record that selected chunk IDs and retrieval scores were not persisted
-    and cannot be recovered from the saved output.
-- [x] Report available confusion counts separately for observational,
-  synthetic, review,
-  and overall classification.
-- [x] Evaluate library members as follows:
-  - [x] predicted `YES`: recovered positive.
-  - [x] predicted `NO`: false negative.
-  - [x] predicted `UNCERTAIN`: unresolved positive.
-  - [x] missing result: pipeline failure.
-- [x] Treat papers outside the library as unlabeled, not negative. Queue
-  predicted `YES` papers for manual review and possible addition to the library.
+- `data/eval/phase3_retrieval_report.md`
+- `data/eval/phase3_top20_results.md`
+- `data/eval/phase4_report.md`
+- `data/eval/phase4_top20_results.jsonl`
 
-Acceptance criteria:
+### Known migration gaps
 
-- A second person can read the gold JSONL and understand why each paper has its
-  label.
-- The evaluation report identifies the exact ADS-library snapshot used.
-- A baseline run can be repeated without the web application.
-- Later phases can show whether accuracy changed rather than relying on a few
-  anecdotes.
+- The new classification path works, but the old web/LangChain path remains as
+  the temporary fallback.
+- A clean clone has 10 of the 13 reviewed PDFs. These checksum-recorded PDFs
+  currently exist only in ignored local data:
 
-## Phase 1: Define one structured result
+  - `2025SSRv..221...50H.pdf`
+  - `2025ApJ...978...27D.pdf`
+  - `2025ApJ...982..147M.pdf`
+- The old Phase 0 freeze check reports expected implementation-hash drift after
+  Phases 1-4. Do not rewrite the historical manifest to hide that drift.
+- Full-repository Ruff has one known legacy `ASYNC240` finding in
+  `src/paper_data_linking/data/pdf_download_service.py`; that module is replaced
+  in Phase 6.
 
-- [x] Add Pydantic enums/models for:
-  - [x] `YES`, `NO`, and `UNCERTAIN` decisions.
-  - [x] observational IRIS data use.
-  - [x] synthetic IRIS observable use.
-  - [x] synthetic connection: `EXPLICIT`, `PASSBAND_ONLY`, `NOT_APPLICABLE`,
-    or `UNCERTAIN`.
-  - [x] whether the target IRIS mission is mentioned anywhere in the paper,
-    independently of how the synthetic observable is connected to IRIS.
-  - [x] review-only status.
-  - [x] IRIS aspects: telescope, spectrograph, and slit-jaw imager.
-  - [x] evidence containing page/chunk ID and a short reason.
-  - [x] pipeline provenance and errors.
-- [x] Derive the overall classification in Python:
-  - `YES` when observational or synthetic use is `YES`.
-  - `NO` when both are `NO`.
-  - `UNCERTAIN` otherwise.
-- [x] Require a positive synthetic result to record the connection basis and,
-  separately, whether the paper mentions the target IRIS mission.
-- [x] Enforce synthetic-connection consistency:
-  - `synthetic_use=YES` with an explicit IRIS relationship uses `EXPLICIT`.
-  - `synthetic_use=YES` based only on an observable IRIS could measure uses
-    `PASSBAND_ONLY`, even if IRIS is mentioned elsewhere in the paper.
-  - `synthetic_use=NO` uses `NOT_APPLICABLE`.
-  - unresolved evidence uses `UNCERTAIN`.
-- [x] Validate that aspects are empty when neither observational nor synthetic
-  use is positive.
-- [x] Store all aspects rather than only the first one.
-- [ ] Store failures as explicit result records; do not silently convert them to
-  negative classifications.
-- [ ] Store one JSON object per line, keyed internally by bibcode and PDF hash.
-- [ ] Remove `answer_divider`, `json_divider`, and string-splitting helpers after
-  all callers use the structured model.
+## Phase 5: finish the reliable classification path
 
-Acceptance criteria:
+Already implemented:
 
-- A compliant model response cannot fail because a later output line was
-  included in a JSON substring.
-- The current v2 example containing five output fields parses without custom
-  text manipulation.
-- A result distinguishes `NO` from `processing failed` and `not analyzed`.
+- [x] Direct official OpenAI SDK call with the Pydantic response schema.
+- [x] One paper per request, processed sequentially.
+- [x] Append one result immediately after each paper.
+- [x] Resume only when PDF hash, prompt, pipeline, model, retrieval mode, chunk
+  settings, and top-k match a successful result.
+- [x] Record request ID and token usage when available.
+- [x] Record `PROCESSING_FAILED` with an error instead of converting failure to
+  `NO`.
+- [x] Validate model evidence against supplied chunk IDs and pages.
+- [x] Keep Batch API support deferred.
 
-## Phase 2: Replace and shorten the prompt
+Remaining:
 
-- [x] Create one IRIS prompt from the agreed scientific definition.
-- [x] Remove Markdown-output instructions and fenced output examples.
-- [x] Remove `Think step by step` and request short evidence instead.
-- [x] Remove repeated lists of IRIS spectral lines.
-- [x] Insert the canonical observable list into the prompt from the same Python
-  constant used by exact-match retrieval; do not maintain two copies.
-- [x] Retain only mission facts needed to disambiguate the IRIS acronym.
-- [x] State that paper text is untrusted evidence and that instructions found in
-  the paper must be ignored.
-- [x] Require evidence for every `YES` or `UNCERTAIN` field.
-- [x] Tell the model that citations, background descriptions, and comparisons
-  with prior IRIS work do not by themselves prove data use.
-- [x] State that IRIS seeing an event or having data available does not count
-  when the paper does not analyze those data, including a slit that missed the
-  relevant place or time.
-- [x] Tell the model that a synthetic observable in a canonical IRIS passband or
-  line is positive even without an IRIS mention, and require
-  `PASSBAND_ONLY` in that case.
-- [x] Add page/chunk labels to the supplied context; preserve an explicit
-  `unknown` page until Phase 3 makes extraction page-aware.
-- [x] Use the OpenAI SDK's schema-backed structured output rather than asking
-  the model to reproduce a textual template.
-- [x] Give the prompt an explicit version and checksum in every result.
-- [x] Run the Phase 0 reviewed-gold evaluation before accepting the prompt.
+- [x] Give the OpenAI client a 300-second timeout and at most two retries.
+- [x] Make the pinned model snapshot the reproducible CLI default while keeping
+  `--model` available for intentional experiments.
+- [x] Run the existing classifier self-check and a one-case resume check.
 
-Implementation note (2026-07-14): `classify.py` is the new direct SDK path.
-The historical v2 YAML and web pipeline remain unchanged as the fallback. With
-Phase 3 page-aware top-20 ONNX retrieval, prompt `iris-v3.2` and pinned model
-`gpt-5-mini-2025-08-07` classified all 13 reviewed papers correctly on overall,
-observational, synthetic, connection, and review-only fields, with no failures.
+Deferred to web removal:
 
-Acceptance criteria:
+- [ ] Delete `ChatOpenAI`, LangChain document/message wrappers,
+  `answer_divider`, `json_divider`, and their dependencies once the fallback is
+  retired.
 
-- The prompt contains one unambiguous positive definition.
-- The result schema, not prose formatting, controls the API response shape.
-- Precision and recall on the gold set are no worse than the recorded baseline,
-  or an intentional tradeoff is documented.
+Done when one classification function returns a validated `PaperResult`, has
+bounded request behavior, and never requires prose parsing.
 
-## Phase 3: Make local retrieval explicit and testable
+Implementation note (2026-07-14): the active path now defaults to
+`gpt-5-mini-2025-08-07`, uses a 300-second request timeout with at most two SDK
+retries, passes the offline classifier self-check, and skips an unchanged
+successful case without an API call. LangChain removal remains gated on Phase 8.
 
-Preserve the current ONNX behavior first; simplify it second.
-
-- [x] Extract text page by page so chunks retain page numbers.
-- [x] Fix reference removal to recognize a references-section heading rather
-  than the last occurrence of broad words such as `sources` or `citations`.
-- [x] Capture the current 500-token, 50-token-overlap, top-10 output as the
-  comparison baseline.
-- [x] Use 20 deduplicated chunks as the new default, subject to the gold-set
-  evaluation below.
-- [x] Make chunk size, overlap, and top-k visible CLI options, with 500, 50, and
-  20 as defaults; do not create a general configuration framework.
-- [x] Separate the two retrieval stages in code and output:
-  - [x] deterministic exact-match candidate selection.
-  - [x] ONNX semantic ranking.
-- [x] Match case-insensitively against the IRIS name/acronym, instrument and
-  channel aliases, and wavelengths in the canonical passband windows.
-- [x] Remove generic selectors such as `solar chromosphere`, `transition
-  region`, `UV imaging`, bare `spectrograph`, and similar domain-wide terms.
-- [x] Avoid fuzzy matching for short scientific terms.
-- [x] Add the immediate neighboring chunks around exact matches, then
-  deduplicate overlaps before ranking.
-- [x] Support three deliberately small retrieval modes:
-  - [x] `--retrieval-mode auto` (default): rank exact matches and neighbors,
-    then fill unused top-k slots from whole-paper ONNX ranking.
-  - [x] `--retrieval-mode heuristic`: rank only exact matches and neighbors,
-    with no global fill.
-  - [x] `--retrieval-mode all`: rank the whole paper directly.
-- [x] In `auto`, use whole-paper ranking for all top-k slots when there are no
-  exact matches. A failed or empty selector must never imply a negative paper.
-- [x] Record each selected chunk's reason as `heuristic_match`,
-  `adjacent_context`, or `global_fallback`.
-- [x] Record which chunks were excluded, selected, and sent to the API.
-- [x] Compare at least:
-  - [x] current top 10.
-  - [x] deduplicated top 20.
-  - [x] deduplicated top 30.
-  - [x] all exact-match and neighboring chunks within a token ceiling.
-  - [x] full locally extracted text as a diagnostic baseline.
-- [x] Confirm that the selected context includes evidence from methods/results,
-  not only introductions and citations.
-- [x] Keep OCR fallback isolated so normal searchable PDFs do not import or run
-  OCR machinery.
-
-Implementation note (2026-07-14): the legacy artifact contains all 13 reviewed
-papers and exposes one old heuristic early exit. The page-aware comparison is
-deterministic across two complete runs; `auto` returned context for every paper.
-The final structured-classification evaluation was correct on all 13 reviewed
-papers and all evaluated component fields, so top 20 remains the default. See
-`data/eval/phase3_retrieval_report.md` and
-`data/eval/phase3_top20_results.md`.
-
-Acceptance criteria:
-
-- Retrieval is deterministic for a fixed PDF, model, and configuration.
-- Every selected chunk maps back to a page and chunk position.
-- No paper is classified `NO` merely because exact-match selection found
-  nothing.
-- The gold-set evaluation validates or changes the provisional top-20 default.
-
-## Phase 4: Replace temporary Chroma collections with in-memory ranking
-
-Do not mix this change with prompt changes.
-
-- [x] Preserve Chroma while capturing baseline embeddings, similarity scores,
-  ordering, and selected chunk IDs for representative papers.
-- [x] Call the existing local ONNX embedding model directly for candidate chunks
-  and the retrieval query.
-- [x] Normalize vectors and rank with NumPy dot products/cosine similarity.
-- [x] Keep stable chunk IDs rather than generating random UUIDs.
-- [x] Verify that selected chunks and ordering match the Chroma baseline within
-  expected floating-point behavior.
-- [x] Run the Phase 0 evaluation before and after the replacement.
-- [x] Remove collection-name cleaning and Chroma client lifecycle code.
-- [x] Remove Chroma only after identifying the smallest supported way to run the
-  existing ONNX model.
-  - [x] Prefer the current model/tokenizer files and the minimum direct
-    `onnxruntime` and tokenizer dependencies; declare every direct import.
-  - [x] Do not add a larger embedding framework merely to delete Chroma.
-  - [x] Keep the direct wrapper limited to tokenization, inference, pooling,
-    normalization, and ranking; no embedding framework was added.
-- [x] Replace `make onnx` with an explicit, checksum-verified model setup or a
-  documented model cache step.
-
-Implementation note (2026-07-14): the direct implementation produced identical
-document/query embeddings and identical top-20 ordering for all 13 reviewed
-papers. After converting Chroma's squared L2 scores to cosine distance, the
-largest difference was `2.384185791015625e-07`. The full structured evaluation
-remained 13/13 correct overall; one secondary connection field varied on the
-first request and returned the expected value on one unchanged targeted repeat.
-Both outcomes are retained. See `data/eval/phase4_report.md`.
-
-Acceptance criteria:
-
-- No vector database or per-PDF collection is created.
-- Retrieval quality matches or improves on the gold set.
-- The local model remains reproducible and does not download silently during an
-  analysis run.
-
-## Phase 5: Use the OpenAI SDK directly
-
-- [ ] Replace `ChatOpenAI` and LangChain message/document wrappers with the
-  official OpenAI Python SDK and the Phase 1 Pydantic schema.
-- [x] Use ordinary sequential requests for both single-paper and corpus runs.
-- [ ] Process one paper at a time and checkpoint its validated result before
-  starting the next paper.
-- [ ] Defer Batch API support; add it only when measured corpus cost or volume
-  justifies another execution path.
-- [ ] Pin a model snapshot for evaluation and reproducible production runs.
-- [ ] Set request timeouts and bounded retries for transient API failures.
-- [ ] Write the result after every paper so a stopped run resumes safely.
-- [ ] Skip an existing successful result only when PDF hash, prompt version,
-  model snapshot, and retrieval configuration all match.
-- [ ] Record token usage and request IDs when the API provides them.
-- [ ] Do not log API keys, full request headers, or unnecessary paper text.
-- [ ] Remove LangChain dependencies after no imports remain.
-
-Acceptance criteria:
-
-- One function accepts selected chunks and returns a validated result model.
-- No application code parses model prose.
-- Directory processing resumes without re-running unchanged successful papers.
-- A failure stops or records only the affected paper, not the completed corpus.
-
-## Phase 6: Simplify ADS and PDF acquisition
+## Phase 6: simplify ADS and PDF acquisition
 
 - [ ] Fix the URL fallback that assigns the return value of `list.append()`.
-- [ ] Prefer ADS-provided and clearly open-access PDF links.
-- [ ] Replace the asynchronous downloader hierarchy with an ordinary HTTP
-  session unless real concurrent downloading is added and measured.
-- [x] Keep Selenium only as an explicit browser fallback.
-- [ ] Remove Selenium and randomized browser headers from the default path.
-- [ ] Make `--browser-fallback` a separate retry pass over direct-download
-  failures, with browser dependencies documented as optional.
-- [ ] Give the browser pass one obvious driver lifecycle; never reuse a driver
-  after its context has closed.
-- [ ] Put papers still blocked after the enabled download methods into a
-  manual-download queue.
-- [ ] Distinguish permanent failures from transient failures.
-- [ ] Retry transient failures on later runs; do not permanently blacklist them
-  after one request failure.
-- [ ] Download to a temporary file, inspect HTTP status/content type, validate
-  the PDF signature and a minimally readable page, then rename atomically.
+- [ ] Reuse the existing ADS search/metadata behavior behind ordinary callable
+  functions; remove source-edited queries and year ranges.
+- [ ] Prefer ADS-provided, clearly open-access PDF links.
+- [ ] Replace the asynchronous downloader hierarchy with one direct HTTP path.
+- [ ] Download to a temporary file and validate:
+
+  - [ ] successful HTTP status;
+  - [ ] plausible content type;
+  - [ ] PDF signature;
+  - [ ] at least one readable page;
+  - [ ] expected checksum when one is supplied.
+- [ ] Rename atomically only after validation.
 - [ ] Never overwrite or delete an existing valid PDF.
-- [ ] Record every attempted URL, failure category, and useful error message.
-- [ ] Do not delete a PDF solely because it has one page or lacks the word
-  `abstract` in its first two pages.
-- [ ] Deduplicate failed-bibcode records.
-- [ ] Replace NumPy's use as an infinity constant in ADS pagination with the
-  standard library.
-- [ ] Add progress and summaries without introducing another task system.
+- [ ] Record attempted URLs, useful errors, and transient/permanent categories.
+- [ ] Retry transient failures on later runs and deduplicate failure records.
+- [ ] Write unresolved papers to a manual-download JSONL queue.
+- [ ] Do not reject a PDF merely because it has one page or no early `abstract`.
+- [ ] Replace NumPy used only for infinity in ADS pagination with `math.inf`.
+- [ ] Remove randomized browser headers and Selenium from the default path.
+- [ ] Add `--browser-fallback` as a separate pass over direct-download failures.
+- [ ] Keep one browser driver lifecycle and never reuse a closed driver.
+- [ ] Add one URL-fallback regression check and one local-file download smoke
+  check; neither may use ADS or a publisher network.
 
-Acceptance criteria:
+Done when rerunning downloads touches only missing/retryable papers, direct
+downloads never import Selenium, and every unresolved paper has a useful manual
+queue record.
 
-- A rerun downloads only missing or retryable papers.
-- A failed automatic download produces a useful manual-work record.
-- Direct downloads do not import or start Selenium.
-- Browser fallback has one obvious resource lifecycle and no closed-driver
-  reuse.
+## Phase 7: add the sole supported CLI
 
-## Phase 7: Build the primary CLI and corpus workflow
+Provide one stdlib `argparse` entry point:
 
-- [ ] Provide one documented entry point, for example:
+```text
+iris-papers search --year 2025
+iris-papers download data/metadata/2025.jsonl
+iris-papers classify data/pdfs/2025 --output data/results/2025.jsonl
+iris-papers evaluate data/eval/reviewed_cases.jsonl
+iris-papers run --year 2025
+```
 
-  ```text
-  iris-papers search --year 2025
-  iris-papers download data/metadata/2025.jsonl
-  iris-papers classify data/pdfs/2025 --output data/results/2025.jsonl
-  iris-papers evaluate data/eval/iris_gold.jsonl
-  iris-papers run --year 2025
-  ```
-
+- [ ] Add `src/paper_data_linking/cli.py` and a small `__main__.py` delegate.
 - [ ] Register `iris-papers = "paper_data_linking.cli:main"` in
   `pyproject.toml`.
-- [ ] Reuse the existing JSONL artifacts during migration.
-- [x] Make the Python CLI the sole orchestration layer; remove Make rather than
-  maintaining two workflows.
-- [ ] Keep query strings and year ranges as command arguments rather than source
-  edits.
-- [ ] Make `run` compose the same `search`, `download`, `classify`, and
-  `evaluate` functions used by the individual commands.
-- [ ] Make every stage read and update durable manifests so interrupted runs
-  resume without hidden task state.
-- [ ] Provide `--limit` and `--force` for small experiments and intentional
-  reruns.
-- [ ] Expose `--retrieval-mode auto|heuristic|all` and `--browser-fallback`
-  without creating a general plugin/configuration layer.
-- [ ] Print a final count of successful, negative, uncertain, failed, skipped,
-  and manual-download papers.
-- [ ] Update the README so the non-web workflow is the first and default usage.
+- [ ] Make commands call shared stage functions; do not duplicate pipeline
+  logic inside argument handlers.
+- [ ] Preserve the current JSONL formats during migration.
+- [ ] Expose query/year, `--limit`, `--force`, `--model`,
+  `--retrieval-mode auto|heuristic|all`, and `--browser-fallback` only where
+  relevant.
+- [ ] Make `run` compose the same search, download, classify, and evaluate
+  functions used by individual commands.
+- [ ] Print final classified-positive, negative, uncertain, failed, skipped,
+  downloaded, and manual-download counts.
+- [ ] Use the checksum-bearing reviewed-case manifest to acquire the three
+  missing evaluation PDFs. Do not commit another copy of publisher PDFs.
+- [ ] Prove a clean checkout can prepare and run all 13 reviewed cases.
+- [ ] Put the CLI installation and one-paper example first in `README.md`.
 
-Acceptance criteria:
+Done when one paper, a directory, and the 13-paper evaluation run without the
+web app or Docker and resume from their durable JSONL artifacts.
 
-- A new user can run one paper and a directory without Docker.
-- The documented commands match executable entry points.
-- Corpus processing writes durable output as each paper finishes.
-- The end-to-end command and individual stage commands produce the same
-  artifacts.
+## Phase 8: remove the web application and legacy runtime
 
-## Phase 8: Remove the web application
+Removal gate:
 
-Delete instead of repairing web-only bugs that disappear with the web layer.
+- [ ] CLI exposes the prompt/model/retrieval choices people use.
+- [ ] CLI results retain classifications, evidence, provenance, errors, and
+  review output.
+- [ ] Direct download and explicit browser fallback both work.
+- [ ] One stopped-and-resumed corpus run has been verified.
 
-- [x] Confirm that nobody requires shared remote uploads or browser PDF
-  highlighting.
-- [ ] Confirm that the CLI exposes the prompt selection and result information
-  people actually use.
-- [ ] Remove `src/paper_data_linking/web_app/`.
-- [ ] Remove web-only code from processing modules:
-  - [ ] Celery progress callbacks and stage-message formatting.
-  - [ ] HTML generation and raw highlight spans.
-  - [ ] rectangle/highlight helpers.
-  - [ ] frontend serialization wrappers.
-- [x] Decide that no CLI container is retained without a demonstrated
-  deployment requirement.
-- [ ] Remove `Makefile`.
-- [ ] Remove `docker-compose.yaml`, `Dockerfile`, `.dockerignore`, `nginx/`, and
-  `entrypoint.sh`.
-- [ ] Remove web-only dependencies:
-  - [ ] FastAPI and Uvicorn.
-  - [ ] Celery and Redis.
-  - [ ] Flower.
-  - [ ] SlowAPI.
-  - [ ] Jinja2/frontend extras.
-  - [ ] PDF.js, D3, jQuery, Bootstrap, Axios, Marked, and JSON viewer assets.
-- [ ] Remove the no-op upload endpoint and polling client.
-- [ ] Remove dead time-range visualization code.
-- [ ] Replace the hand-pinned `requirements.txt` with `uv.lock` generated from
-  the reduced `pyproject.toml`; document `uv sync` as the single installation
-  path.
-- [ ] Remove README instructions for Docker, Nginx, and the browser UI.
-- [ ] Provide a small CLI-generated JSON, CSV, or Markdown review report instead
-  of preserving a server for result viewing.
-- [ ] Preserve screenshots or historical documentation only if they have
-  research-report value; do not retain executable dead code for history.
+After the gate passes:
 
-Acceptance criteria:
+- [ ] Move the frozen v2 prompt/config into evaluation history if necessary.
+- [ ] Delete `src/paper_data_linking/web_app/`.
+- [ ] Delete web-only Celery callbacks, HTML/highlight generation, rectangle
+  helpers, and frontend serialization code.
+- [ ] Delete `Makefile`, `Dockerfile`, `docker-compose.yaml`, `.dockerignore`,
+  `entrypoint.sh`, and `nginx/`.
+- [ ] Remove FastAPI/Uvicorn, Celery/Redis/Flower, SlowAPI, frontend, OCR-web,
+  and LangChain dependencies that have no CLI caller.
+- [ ] Remove the legacy YAML-divider classification path.
+- [ ] Remove Docker, Nginx, browser UI, and Make instructions from `README.md`.
+- [ ] Generate `uv.lock` from the reduced `pyproject.toml` and document
+  `uv sync` as the single installation path.
+- [ ] Confirm the default workflow needs no Docker, Redis, browser, or local
+  HTTP server.
 
-- The default workflow requires no Docker, Redis, browser, or local HTTP
-  request; only the explicit Selenium fallback requires a browser.
-- No web-only dependency remains in the lock file.
-- The same PDFs can be analyzed and evaluated through the CLI.
-- There is one documented installation path and one workflow interface.
+Git history and retained evaluation artifacts are the fallback after this
+phase; dead executable web code is not.
 
-## Phase 9: Delete remaining dead abstractions
+## Phase 9: delete remaining dead abstractions
 
-Perform this after the primary pipeline works without web imports.
-
-- [ ] Remove unused `parsers.py` functions or merge the one retained PDF reader
-  into `pipeline.py`.
-- [ ] Remove unused `UnstructuredSplitter` and `PyMuPDFSplitter` variants.
+- [ ] Follow every module from the CLI and delete files with no live caller.
+- [ ] Remove unused parser and splitter variants.
 - [ ] Remove the unused SOHO stepwise classifier.
-- [ ] Remove splitter/embedder/plugin factories with only one implementation.
-- [ ] Remove abstract base classes with one concrete implementation and no
-  external extension requirement.
-- [ ] Remove duplicate junk-PDF detection implementations.
-- [ ] Remove unused settings such as `DATA_DIR_NAME`, `CHROMEDRIVER_PATH`, and
-  web database paths.
-- [ ] Remove unused metadata models and constants.
-- [ ] Consolidate duplicate environment loading and logging configuration.
-- [ ] Lower the minimum Python version if no Python 3.13-only behavior is used
-  and broader installation support is useful.
+- [ ] Remove factories and abstract base classes with one implementation.
+- [ ] Replace LangChain `Document` with the existing `PaperChunk` or a plain
+  local record.
+- [ ] Keep one PDF reader and one junk/valid-PDF check.
+- [ ] Remove unused settings, metadata models, constants, environment loading,
+  and logging setup.
+- [ ] Remove migration-only scripts whose evidence is already frozen under
+  `data/eval/`; retain only scripts needed to reproduce recorded comparisons.
+- [ ] Decide whether Python 3.13 is genuinely required; lower it only if useful
+  and verified.
 
-Acceptance criteria:
+Done when the package can be understood by following the CLI into one pipeline,
+and every retained module has a live caller.
 
-- Every retained module has a live caller.
-- The package can be understood by following the CLI into one pipeline.
-- No new framework or plugin system replaces the deleted one.
+## Phase 10: minimal offline verification and final documentation
 
-## Phase 10: Minimal verification suite
+- [ ] Add one end-to-end offline test using a fake embedder and fake OpenAI
+  client.
+- [ ] Verify selected chunks, page IDs, structured classification, and JSONL
+  checkpointing in that test.
+- [ ] Verify overall-label derivation and that processing failure is never
+  serialized as `NO`.
+- [ ] Keep gold-corpus evaluation separate because it uses real PDFs, ONNX, and
+  optionally OpenAI.
+- [ ] Run syntax, Ruff, formatting, classifier self-check, retrieval self-check,
+  ONNX checksum check, and the offline test.
+- [ ] Document setup, search/download, one-paper classification, corpus resume,
+  evaluation, browser fallback, and the manual-download queue.
+- [ ] Confirm every documented command is executable from a clean checkout.
 
-- [ ] Add one small pipeline test using a fake embedder and fake OpenAI client.
-- [ ] Verify that the highest-ranked chunks, page identifiers, and structured
-  result survive the full local flow.
-- [ ] Add a regression test for the URL fallback.
-- [ ] Add a regression test for overall-label derivation.
-- [ ] Add a regression test showing a processing failure is not saved as `NO`.
-- [ ] Run the gold-set evaluator as a separate, explicit quality check rather
-  than making network/model calls part of normal unit tests.
-- [ ] Keep syntax, Ruff, and formatting checks.
-- [ ] Add a smoke command that classifies one local text fixture without
-  Docker.
+## Next commits
 
-Acceptance criteria:
+The first three commits already exist:
 
-- A code regression fails locally without calling ADS or OpenAI.
-- A prompt, model, or retrieval change produces an evaluation comparison before
-  it is accepted.
+1. [x] `test: add IRIS classification baseline` (`c0f344f`)
+2. [x] `feat: add local IRIS classification pipeline` (`b03e2a3`)
+3. [x] `docs: record retrieval evaluation` (`aa8f86e`)
 
-## Suggested implementation/commit order
+Keep the remaining work independently reviewable:
 
-Keep commits independently reviewable and avoid mixing behavioral changes with
-deletions.
+4. [ ] `fix: bound OpenAI requests`
+5. [ ] `refactor: simplify PDF acquisition`
+6. [ ] `feat: add iris-papers CLI`
+7. [ ] `refactor: remove web application`
+8. [ ] `refactor: delete legacy pipeline code`
+9. [ ] `test: add offline pipeline smoke test`
+10. [ ] `docs: document the local workflow`
 
-1. `test: add IRIS classification baseline`
-2. `feat: add structured classification result`
-3. `refactor: call OpenAI with structured output`
-4. `refactor: make retrieval page-aware`
-5. `refactor: rank ONNX embeddings in memory`
-6. `fix: simplify PDF acquisition failures`
-7. `feat: add local classification CLI`
-8. `refactor: remove web application`
-9. `refactor: delete unused pipeline code`
-10. `docs: document the local corpus workflow`
+## Definition of complete
 
-## Resolved decision log
-
-| Decision | Agreed outcome |
-| --- | --- |
-| What qualifies as synthetic IRIS data? | Every synthetic observable within an IRIS-observable passband/line is positive. Record `EXPLICIT` or `PASSBAND_ONLY`. |
-| Is the ADS IRIS library ground truth? | Yes. It is immutable positive ground truth and append-only; absence remains unlabeled. |
-| Default retrieval count | Top 20, deduplicated; accepted after comparing 10/20/30 and passing the reviewed corpus. |
-| Keep heuristic filtering? | Use deterministic exact matches plus neighbors, with whole-paper ONNX fill in default `auto` mode. |
-| Remove Chroma? | Done. Direct ONNX/NumPy ranking passed embedding, ordering, and classification checks. |
-| Sequential or Batch API? | Sequential per-paper requests with immediate checkpoints. Defer Batch API support. |
-| Keep Selenium fallback? | Yes, only as an explicit retry pass after direct HTTP failures. |
-| Keep Make? | No. The Python CLI is the sole workflow interface. |
-| Keep any web UI? | No. Remove it after CLI parity is verified. |
-| Keep Docker for reproducibility? | No. Use `pyproject.toml` plus `uv.lock`; add deployment packaging only for a real deployment. |
-
-## Deferred unless evidence requires it
-
-- Persistent vector search across the entire paper corpus.
-- OpenAI Batch API execution.
-- A plugin framework for multiple missions or classifiers.
-- A relational database.
-- Distributed workers or a task queue.
-- Browser PDF highlighting.
-- A remote multi-user service.
-- Docker or other deployment packaging.
-- Fine-tuning.
-- Automated publisher-login or bot-protection bypasses.
-
-Add these only when a demonstrated workflow cannot be handled by the local CLI,
-JSONL state, and current retrieval/classification pipeline.
+- A clean checkout installs with `uv sync` and prepares the checksum-verified
+  local ONNX model explicitly.
+- `iris-papers run` searches ADS, downloads what it can, records manual work,
+  classifies each paper, checkpoints results, and resumes safely.
+- Every positive or uncertain field cites a supplied page/chunk.
+- The reviewed corpus remains reproducible and quality changes are reported.
+- No active code imports Chroma, LangChain, FastAPI, Celery, Redis, or Selenium
+  unless the explicit browser-download extra is requested.
+- The repository has one documented interface and no web application,
+  container stack, Make orchestration, or hidden task state.
