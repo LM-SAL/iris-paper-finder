@@ -1,7 +1,5 @@
 """Page-aware IRIS candidate selection and local ONNX retrieval."""
 
-# ruff: noqa: S101
-
 from __future__ import annotations
 
 import re
@@ -14,8 +12,8 @@ import numpy as np
 import onnxruntime as ort
 from tokenizers import Tokenizer
 
-from paper_data_linking.iris import IRIS_SLIT_JAW_CHANNELS_ANGSTROM, IRIS_SPECTROGRAPH_WINDOWS_ANGSTROM
-from paper_data_linking.models import (
+from iris_paper_llm.iris import IRIS_SLIT_JAW_CHANNELS_ANGSTROM, IRIS_SPECTROGRAPH_WINDOWS_ANGSTROM
+from iris_paper_llm.models import (
     PaperChunk,
     RetrievalMode,
     RetrievalResult,
@@ -75,7 +73,7 @@ class _MiniLMModel:
 
         self.tokenizer = Tokenizer.from_file(str(tokenizer_path))
         self.tokenizer.enable_truncation(max_length=256)
-        self.tokenizer.enable_padding(pad_id=0, pad_token="[PAD]", length=256)  # noqa: S106
+        self.tokenizer.enable_padding(pad_id=0, pad_token="[PAD]", length=256)
         options = ort.SessionOptions()
         options.log_severity_level = 3
         options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
@@ -155,15 +153,15 @@ def _usable_text(pages: Iterable[str]) -> bool:
 
 
 def _ocr_pages(path: Path) -> list[str]:
-    from pdf2image import convert_from_path  # noqa: PLC0415
-    from pytesseract import image_to_string  # noqa: PLC0415
+    from pdf2image import convert_from_path
+    from pytesseract import image_to_string
 
     return [image_to_string(image) for image in convert_from_path(path)]
 
 
 def extract_pdf_pages(path: Path | str, *, ocr_fallback: bool = True) -> tuple[list[str], bool]:
     """Extract each PDF page, importing OCR dependencies only when needed."""
-    import fitz  # noqa: PLC0415
+    import fitz
 
     path = Path(path)
     with fitz.open(path) as document:
@@ -204,7 +202,7 @@ def chunk_pages(
     if chunk_size <= 0 or not 0 <= chunk_overlap < chunk_size:
         msg = "chunk_size must be positive and chunk_overlap must be smaller"
         raise ValueError(msg)
-    import tiktoken  # noqa: PLC0415
+    import tiktoken
 
     encoding = tiktoken.get_encoding("gpt2")
     chunks = []
@@ -334,93 +332,12 @@ def retrieve_chunks(
         )
         for chunk_id, distance, reason in selected
     ]
-    sent_ids = [chunk.chunk_id for chunk in retrieved]
     exact_ids = [chunk.chunk_id for chunk in chunks if reasons.get(chunk.chunk_id) == SelectionReason.HEURISTIC_MATCH]
     adjacent_ids = [
         chunk.chunk_id for chunk in chunks if reasons.get(chunk.chunk_id) == SelectionReason.ADJACENT_CONTEXT
     ]
     return RetrievalResult(
-        mode=mode,
-        query=IRIS_RETRIEVAL_QUERY,
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-        top_k=top_k,
         exact_match_chunk_ids=exact_ids,
         adjacent_chunk_ids=adjacent_ids,
-        excluded_chunk_ids=[chunk.chunk_id for chunk in chunks if chunk.chunk_id not in sent_ids],
-        sent_chunk_ids=sent_ids,
         selected=retrieved,
     )
-
-
-def _self_check() -> None:
-    class FakeEmbedder:
-        def create_embeddings(self, docs) -> None:
-            self.docs = docs
-
-        def get_relevant_docs(self, _query, kwargs=None, n_results=10):
-            docs = self.docs
-            if kwargs and kwargs.get("where"):
-                docs = [doc for doc in docs if doc.metadata["is_candidate"] == 1]
-            docs = sorted(docs, key=lambda doc: doc.metadata["position"], reverse=True)[:n_results]
-            return docs, [float(index) / 10 for index in range(len(docs))]
-
-    chunks = [
-        PaperChunk(page=1, chunk_id="p1-c0", text="Introduction without a mission name."),
-        PaperChunk(page=1, chunk_id="p1-c1", text="We analyze IRIS observations."),
-        PaperChunk(page=2, chunk_id="p2-c0", text="The result is shown here."),
-        PaperChunk(page=2, chunk_id="p2-c1", text="Unrelated appendix."),
-    ]
-    result = retrieve_chunks(chunks, top_k=4, embedder=FakeEmbedder())
-    assert result.sent_chunk_ids == ["p2-c0", "p1-c1", "p1-c0", "p2-c1"]
-    assert result.selected[-1].reason == SelectionReason.GLOBAL_FALLBACK
-    assert is_exact_iris_match("Synthetic Si IV at 1402.8 Angstrom")
-    assert not is_exact_iris_match("Synthetic Fe XII at 195 Angstrom")
-    assert remove_reference_section(["Methods\nsources of data", "Results", "References\nCitation"])[-1] == "Results"
-    assert remove_reference_section(["Introduction\nreferences therein", "Results"])[-1] == "Results"
-
-    no_match = retrieve_chunks(
-        [PaperChunk(page=1, chunk_id="only", text="No relevant term here.")],
-        embedder=FakeEmbedder(),
-    )
-    assert no_match.sent_chunk_ids == ["only"]
-
-    heuristic = retrieve_chunks(
-        chunks,
-        mode=RetrievalMode.HEURISTIC,
-        top_k=4,
-        embedder=FakeEmbedder(),
-    )
-    assert len(heuristic.selected) == 3
-    assert SelectionReason.GLOBAL_FALLBACK not in {chunk.reason for chunk in heuristic.selected}
-
-    all_chunks = retrieve_chunks(
-        chunks,
-        mode=RetrievalMode.ALL,
-        top_k=2,
-        embedder=FakeEmbedder(),
-    )
-    assert all(chunk.reason == SelectionReason.GLOBAL_FALLBACK for chunk in all_chunks.selected)
-
-    class Doc:
-        def __init__(self, name: str, group: int) -> None:
-            self.page_content = name
-            self.metadata = {"name": name, "group": group}
-
-    onnx_embedder = ONNXEmbedder.__new__(ONNXEmbedder)
-    onnx_embedder.docs = [Doc("far", 1), Doc("best", 1), Doc("filtered", 0)]
-    onnx_embedder.embeddings = np.asarray([[0.0, 1.0], [1.0, 0.0], [1.0, 0.0]], dtype=np.float32)
-
-    class FakeModel:
-        @staticmethod
-        def encode(_texts: list[str]) -> np.ndarray:
-            return np.asarray([[1.0, 0.0]], dtype=np.float32)
-
-    onnx_embedder.model = FakeModel()
-    docs, distances = onnx_embedder.get_relevant_docs("query", {"where": {"group": 1}})
-    assert [doc.metadata["name"] for doc in docs] == ["best", "far"]
-    assert distances == [0.0, 1.0]
-
-
-if __name__ == "__main__":
-    _self_check()

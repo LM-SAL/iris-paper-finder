@@ -1,7 +1,5 @@
 """Download or verify the pinned local all-MiniLM-L6-v2 ONNX model."""
 
-# ruff: noqa: S310, T201
-
 import argparse
 import hashlib
 import tarfile

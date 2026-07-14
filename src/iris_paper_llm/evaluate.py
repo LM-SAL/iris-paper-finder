@@ -7,7 +7,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from paper_data_linking.classify import (
+from iris_paper_llm.classify import (
     DEFAULT_MODEL,
     IRIS_PROMPT_SHA256,
     append_record,
@@ -17,9 +17,9 @@ from paper_data_linking.classify import (
     load_successful_keys,
     pdf_sha256,
 )
-from paper_data_linking.download import download_records
-from paper_data_linking.models import Decision, PaperResult, RetrievalMode
-from paper_data_linking.retrieval import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, DEFAULT_TOP_K
+from iris_paper_llm.download import download_records
+from iris_paper_llm.models import Decision, PaperResult, RetrievalMode
+from iris_paper_llm.retrieval import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, DEFAULT_TOP_K
 
 if TYPE_CHECKING:
     from collections.abc import Iterable

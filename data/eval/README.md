@@ -11,8 +11,9 @@ candidates. The removed v2 runtime and migration evidence remain available in
 Git history.
 
 The accepted structured evaluation is `reference_results.jsonl` with its
-human-readable decision record in `evaluation_report.md`. It preserves the full
-schema-validated results, request provenance, and observed model variance.
+human-readable decision record in `direct_onnx_evaluation.md`. It preserves
+the full schema-validated results, request provenance, and observed model
+variance.
 
 The frozen Chroma ranking baseline remains as a full-corpus regression check
 for the direct ONNX/NumPy implementation:

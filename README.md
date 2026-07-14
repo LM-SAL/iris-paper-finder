@@ -75,6 +75,7 @@ uv run iris-papers evaluate data/eval/reviewed_cases.jsonl \
 `--prepare-pdfs` acquires the three ignored publisher PDFs from explicit
 open-access sources and verifies their frozen SHA-256 checksums. Publisher PDFs
 remain local and are not committed. The other ten PDFs are tracked test data.
+They live under `tests/data/pdfs/` and use the reviewed-case IDs as filenames.
 Evaluation uses the same extraction, retrieval, classification, checkpoint,
 and report functions as ordinary runs. Rerun the same command after an
 interruption to skip matching successful records and continue from the JSONL
@@ -151,7 +152,7 @@ Canonical coverage, following the
 - slit-jaw channels: 1330, 1400, 2796, and 2832 Å.
 
 The machine-readable values are in
-[`src/paper_data_linking/iris.py`](src/paper_data_linking/iris.py). The manually
+[`src/iris_paper_llm/iris.py`](src/iris_paper_llm/iris.py). The manually
 curated ADS IRIS library is append-only positive ground truth: membership is
 positive, while absence is unlabeled rather than negative.
 
@@ -173,12 +174,12 @@ uv lock --check
 uv run python -m compileall -q src scripts tests
 uv run ruff check .
 uv run ruff format --check .
-uv run python -m paper_data_linking.models
-uv run python -m paper_data_linking.classify
-uv run python -m paper_data_linking.retrieval
 uv run python scripts/setup_onnx.py --check
+uv run python tests/test_models.py
+uv run python tests/test_classify.py
+uv run python tests/test_retrieval.py
 uv run python tests/test_download.py
-uv run python tests/test_cli.py
+uv run python tests/test_workflow.py
 ```
 
 The pipeline test uses real tracked scientific PDFs with a fake local ranker

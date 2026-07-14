@@ -433,7 +433,7 @@ wheels = [
 ]
 
 [[package]]
-name = "paper-data-linking"
+name = "iris-paper-llm"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

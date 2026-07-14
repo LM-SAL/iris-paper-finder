@@ -252,7 +252,7 @@ def browser_attempts(jobs: Iterable[dict], wait_seconds: float) -> Iterator[tupl
     """Try direct-download failures with one lazily created browser driver."""
     jobs = list(jobs)
     try:
-        from selenium import webdriver  # noqa: PLC0415
+        from selenium import webdriver
     except ImportError as error:
         for job in jobs:
             attempt = _attempt(

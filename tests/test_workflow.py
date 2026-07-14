@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-# ruff: noqa: S101
 import hashlib
 import json
 import shutil
@@ -11,10 +10,10 @@ from unittest.mock import patch
 
 import fitz
 
-from paper_data_linking.ads import _metadata_for_bibcodes, iris_query
-from paper_data_linking.classify import DEFAULT_MODEL, classify_paths
-from paper_data_linking.evaluate import prepare_case_pdfs, write_report
-from paper_data_linking.models import (
+from iris_paper_llm.ads import _metadata_for_bibcodes, iris_query
+from iris_paper_llm.classify import DEFAULT_MODEL, classify_paths
+from iris_paper_llm.evaluate import prepare_case_pdfs, write_report
+from iris_paper_llm.models import (
     Decision,
     Evidence,
     IRISAspect,
@@ -111,8 +110,8 @@ class FailingResponses:
 def test_offline_pipeline_checkpoint_and_resume() -> None:
     client = SimpleNamespace(responses=FakeResponses())
     repository = Path(__file__).resolve().parents[1]
-    first = repository / "test_pdfs/positive/iris_obs_paper.pdf"
-    second = repository / "test_pdfs/negative/talks_about_iris_only.pdf"
+    first = repository / "tests/data/pdfs/observational_filament_flows.pdf"
+    second = repository / "tests/data/pdfs/instrument_description_only.pdf"
     with TemporaryDirectory() as directory:
         root = Path(directory)
         pdfs = root / "pdfs"
@@ -202,7 +201,7 @@ def test_ads_metadata_normalizes_link_records() -> None:
             }
         },
     )
-    with patch("paper_data_linking.ads.requests.post", return_value=response):
+    with patch("iris_paper_llm.ads.requests.post", return_value=response):
         records = _metadata_for_bibcodes(["TEST"], "token")
     assert records == [
         {

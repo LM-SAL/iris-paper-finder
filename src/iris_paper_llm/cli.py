@@ -1,7 +1,5 @@
 """Command-line workflow for finding and classifying IRIS papers."""
 
-# ruff: noqa: T201
-
 from __future__ import annotations
 
 import argparse
@@ -13,23 +11,23 @@ from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
-from paper_data_linking.ads import iris_query, search_papers
-from paper_data_linking.classify import DEFAULT_MODEL, classify_paths
-from paper_data_linking.download import (
+from iris_paper_llm.ads import iris_query, search_papers
+from iris_paper_llm.classify import DEFAULT_MODEL, classify_paths
+from iris_paper_llm.download import (
     DEFAULT_BROWSER_WAIT_SECONDS,
     DEFAULT_TIMEOUT_SECONDS,
     download_records,
     read_jsonl,
 )
-from paper_data_linking.evaluate import (
+from iris_paper_llm.evaluate import (
     DEFAULT_CASES,
     DEFAULT_OUTPUT,
     classify_cases,
     prepare_case_pdfs,
     write_report,
 )
-from paper_data_linking.models import RetrievalMode
-from paper_data_linking.retrieval import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, DEFAULT_TOP_K
+from iris_paper_llm.models import RetrievalMode
+from iris_paper_llm.retrieval import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, DEFAULT_TOP_K
 
 
 def _add_classification_options(parser: argparse.ArgumentParser) -> None:

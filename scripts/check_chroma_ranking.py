@@ -1,15 +1,13 @@
 """Compare direct ONNX/NumPy ranking with the frozen Chroma baseline."""
 
-# ruff: noqa: T201
-
 import hashlib
 import json
 from pathlib import Path
 
 import numpy as np
 
-from paper_data_linking.models import RetrievalMode
-from paper_data_linking.retrieval import IRIS_RETRIEVAL_QUERY, ONNXEmbedder, chunk_pdf, retrieve_chunks
+from iris_paper_llm.models import RetrievalMode
+from iris_paper_llm.retrieval import IRIS_RETRIEVAL_QUERY, ONNXEmbedder, chunk_pdf, retrieve_chunks
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "data/eval/reviewed_cases.jsonl"
@@ -67,7 +65,7 @@ def main() -> None:
     if not comparison["passed"]:
         msg = "Direct ONNX ranking differs from the Chroma baseline"
         raise SystemExit(msg)
-    print("Phase 4 ranking comparison passed.")
+    print("Direct ONNX ranking comparison passed.")
 
 
 if __name__ == "__main__":

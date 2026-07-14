@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-# ruff: noqa: S101
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
 import fitz
 
-from paper_data_linking.download import candidate_pdf_urls, download_records, read_jsonl, validate_pdf
+from iris_paper_llm.download import candidate_pdf_urls, download_records, read_jsonl, validate_pdf
 
 
 def one_page_pdf() -> bytes:

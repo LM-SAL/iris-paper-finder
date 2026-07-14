@@ -5,9 +5,9 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "paper-data-linking"
+name = "iris-paper-llm"
 version = "0.1.0"
-description = "Identify and extract data references in heliophysics research papers."
+description = "Classify IRIS observations and synthetic observables in scientific papers."
 license = "MIT"
 authors = [
     {name = "Anthony Buonomo", email = "anthony.r.buonomo@gmail.com"}
@@ -35,7 +35,7 @@ dependencies = [
 ]
 
 [project.scripts]
-iris-papers = "paper_data_linking.cli:main"
+iris-papers = "iris_paper_llm.cli:main"
 
 [project.optional-dependencies]
 browser = [
@@ -53,7 +53,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["paper_data_linking*"]
+include = ["iris_paper_llm*"]
 
 [tool.setuptools.package-dir]
 "" = "src"

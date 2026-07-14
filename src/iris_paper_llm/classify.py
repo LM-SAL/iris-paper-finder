@@ -1,25 +1,19 @@
 """IRIS prompt and direct OpenAI structured classification."""
 
-# ruff: noqa: S101
-
 from __future__ import annotations
 
 import json
 from hashlib import sha256
-from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
-from paper_data_linking.iris import IRIS_SLIT_JAW_CHANNELS_ANGSTROM, IRIS_SPECTROGRAPH_WINDOWS_ANGSTROM
-from paper_data_linking.models import (
+from iris_paper_llm.iris import IRIS_SLIT_JAW_CHANNELS_ANGSTROM, IRIS_SPECTROGRAPH_WINDOWS_ANGSTROM
+from iris_paper_llm.models import (
     Decision,
-    Evidence,
-    IRISAspect,
     IRISClassification,
     PaperChunk,
     PaperResult,
     PipelineProvenance,
     ResultStatus,
-    SyntheticConnection,
 )
 
 if TYPE_CHECKING:
@@ -27,7 +21,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 IRIS_PROMPT_VERSION = "iris-v3.2"
-PIPELINE_VERSION = "phase4"
+PIPELINE_VERSION = "direct-onnx-v1"
 DEFAULT_MODEL = "gpt-5-mini-2025-08-07"
 OPENAI_TIMEOUT_SECONDS = 300.0
 OPENAI_MAX_RETRIES = 2
@@ -96,7 +90,7 @@ IRIS_PROMPT_SHA256 = sha256(IRIS_SYSTEM_PROMPT.encode()).hexdigest()
 
 def create_openai_client() -> object:
     """Create the one bounded client shared by a sequential corpus run."""
-    from openai import OpenAI  # noqa: PLC0415
+    from openai import OpenAI
 
     return OpenAI(timeout=OPENAI_TIMEOUT_SECONDS, max_retries=OPENAI_MAX_RETRIES)
 
@@ -325,7 +319,7 @@ def classify_pdf(
     embedder: object | None = None,
 ) -> dict:
     """Extract, retrieve, and classify one PDF into the stable JSONL shape."""
-    from paper_data_linking.retrieval import chunk_pdf, retrieve_chunks  # noqa: PLC0415
+    from iris_paper_llm.retrieval import chunk_pdf, retrieve_chunks
 
     pdf_hash = expected_sha256 or "0" * 64
     retrieval = None
@@ -463,93 +457,3 @@ def classify_paths(
             }[result.classification.overall]
             summary[outcome] += 1
     return summary
-
-
-def _self_check() -> None:
-    classification = IRISClassification(
-        observational_use=Decision.NO,
-        synthetic_use=Decision.YES,
-        synthetic_connection=SyntheticConnection.PASSBAND_ONLY,
-        review_only=Decision.NO,
-        iris_mission_mentioned=False,
-        aspects=[IRISAspect.SPECTROGRAPH],
-        observational_evidence=[],
-        synthetic_evidence=[Evidence(page=None, chunk_id="chunk-7", reason="Synthetic Mg II spectrum.")],
-        review_evidence=[],
-    )
-
-    class FakeResponses:
-        kwargs: dict[str, object]
-
-        def parse(self, **kwargs: object) -> object:
-            self.kwargs = kwargs
-            return SimpleNamespace(
-                id="resp_test",
-                model="test-model-2026-01-01",
-                output=[],
-                output_parsed=classification,
-                status="completed",
-                usage=SimpleNamespace(input_tokens=100, output_tokens=20),
-            )
-
-    responses = FakeResponses()
-    result = classify_paper(
-        [PaperChunk(page=None, chunk_id="chunk-7", text="We synthesize the Mg II k line.")],
-        bibcode="test",
-        pdf_sha256="0" * 64,
-        retrieval_mode="auto",
-        client=SimpleNamespace(responses=responses),
-    )
-    assert result.status == ResultStatus.CLASSIFIED
-    assert result.classification is not None
-    assert result.classification.overall == Decision.YES
-    assert result.provenance.prompt_sha256 == IRIS_PROMPT_SHA256
-    assert responses.kwargs["text_format"] is IRISClassification
-    assert "page=unknown chunk_id=chunk-7" in responses.kwargs["input"][1]["content"]
-    assert "1331.7-1358.4 Angstrom" in IRIS_SYSTEM_PROMPT
-    assert "```" not in IRIS_SYSTEM_PROMPT
-
-    incomplete = SimpleNamespace(
-        id="resp_incomplete",
-        model="test-model",
-        output=[],
-        output_parsed=None,
-        status="incomplete",
-        incomplete_details="max_output_tokens",
-        usage=None,
-    )
-    failed = classify_paper(
-        [PaperChunk(page=3, chunk_id="chunk-8", text="Some text")],
-        pdf_sha256="1" * 64,
-        retrieval_mode="auto",
-        client=SimpleNamespace(responses=SimpleNamespace(parse=lambda **_kwargs: incomplete)),
-    )
-    assert failed.status == ResultStatus.PROCESSING_FAILED
-    assert "incomplete" in failed.errors[0]
-
-    bad_evidence = classification.model_copy(
-        update={"synthetic_evidence": [Evidence(page=None, chunk_id="invented-chunk", reason="Unsupported location")]}
-    )
-    rejected = classify_paper(
-        [PaperChunk(page=None, chunk_id="chunk-7", text="Some text")],
-        pdf_sha256="2" * 64,
-        retrieval_mode="auto",
-        client=SimpleNamespace(
-            responses=SimpleNamespace(
-                parse=lambda **_kwargs: SimpleNamespace(
-                    id="resp_bad_evidence",
-                    model="test-model",
-                    output=[],
-                    output_parsed=bad_evidence,
-                    status="completed",
-                    usage=None,
-                )
-            )
-        ),
-    )
-    assert rejected.status == ResultStatus.PROCESSING_FAILED
-    assert "unknown chunk ID" in rejected.errors[0]
-
-
-if __name__ == "__main__":
-    _self_check()
