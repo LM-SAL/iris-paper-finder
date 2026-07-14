@@ -1,59 +1,34 @@
 # Evaluation data
 
-`reviewed_cases.jsonl` contains the existing manually sorted PDF fixtures plus
-one review-only paper. `review_status=RESOLVED` means the expected fields can be
-used as gold labels. `NEEDS_SCOPE_REVIEW` keeps a disputed fixture visible but
-excludes it from metrics until a human resolves it.
+`reviewed_cases.jsonl` is the active 13-paper gold corpus. It contains the
+manually assigned labels, evidence notes, PDF locations, and checksums used by
+`iris-papers evaluate`.
 
-`phase0_v2_2025/` is a frozen historical snapshot. Its original YAML prompt is
-retained as `iris_config_v2.yaml`; the removed web/LangChain runtime is
-available in Git history rather than as a second executable pipeline. The
-snapshot records the append-only ADS IRIS library as positive ground truth.
-Candidate papers outside that library remain `UNLABELED`; a predicted `YES`
-outside the library is a manual-review candidate, never an automatic false
-positive.
+`legacy_v2_2025/ads_iris_library_2026-01-07.txt` preserves the append-only ADS
+IRIS library snapshot used as positive ground truth. Absence from that library
+is unlabeled, never negative. `report.md` records the legacy baseline summary,
+and `outside_library_review_queue.txt` retains the three unresolved candidates.
+The removed v2 runtime and raw migration artifacts remain available in Git
+history.
 
-The baseline is deliberately historical. It preserves the current v2 output,
-including missing results and known parsing losses, without calling ADS or
-OpenAI again.
+The accepted structured evaluation is `reference_results.jsonl` with its
+human-readable decision record in `evaluation_report.md`. It preserves the full
+schema-validated results, request provenance, and observed model variance.
 
-Phase 3 retrieval artifacts are generated without OpenAI calls:
+The frozen Chroma ranking baseline remains as a full-corpus regression check
+for the direct ONNX/NumPy implementation:
 
 ```bash
-uv run python scripts/compare_retrieval.py
+uv run python scripts/check_chroma_ranking.py
 ```
 
-- `phase3_legacy_retrieval.json` freezes the old Chroma/ONNX top-10 behavior;
-  regenerating it requires the frozen pre-Phase-4 environment.
-- `phase3_retrieval_comparison.json` records page-aware `auto` retrieval at
-  top-k 10, 20, and 30, plus exact/neighbor and full-text diagnostics.
-- `phase3_retrieval_report.md` summarizes the comparison and current decision.
+The check requires identical selected-chunk order and cosine distance within
+tolerance. Bitwise embedding hashes remain diagnostic because floating-point
+output can vary across ONNX platforms.
 
-The checkpointed structured evaluation is run with:
+Run or resume the gold corpus with:
 
 ```bash
 uv run iris-papers evaluate data/eval/reviewed_cases.jsonl \
-  --output data/eval/phase4_top20_results.jsonl
+  --output data/eval/classification_results.jsonl
 ```
-
-`phase3_top20_results.jsonl` retains every prompt iteration and request
-provenance. `phase3_top20_results.md` reports only the current prompt/model/
-retrieval configuration; the accepted `iris-v3.2` run was correct on all 13
-reviewed papers.
-
-Phase 4 freezes the last Chroma run and compares it with direct ONNX/NumPy
-ranking:
-
-```bash
-uv run python scripts/compare_phase4_ranking.py --check
-```
-
-The Chroma baseline is a historical artifact from the removed legacy
-environment. The comparison requires identical selected-chunk order and cosine
-distance within tolerance; bitwise embedding hashes remain diagnostic because
-floating-point output can vary across ONNX platforms.
-
-- `phase4_chroma_baseline.json` stores the final Chroma embeddings and ranking.
-- `phase4_ranking_comparison.json` proves direct embedding/order equivalence.
-- `phase4_top20_results.jsonl` checkpoints the post-replacement API evaluation.
-- `phase4_report.md` records the result and the one repeated model-variance case.

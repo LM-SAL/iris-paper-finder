@@ -1,4 +1,4 @@
-# Phase 0 v2 baseline report
+# Legacy v2 baseline report
 
 Created 2026-07-14 from the saved 2025 run. No ADS or OpenAI
 request was made while creating this snapshot.

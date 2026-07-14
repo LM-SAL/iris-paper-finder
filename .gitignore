@@ -15,5 +15,7 @@ dist/
 data/*
 !data/eval/
 !data/eval/**
+data/eval/classification_results.jsonl
+data/eval/classification_results.md
 models/*
 scripts/*.json

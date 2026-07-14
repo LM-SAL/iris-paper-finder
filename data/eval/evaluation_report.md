@@ -1,4 +1,4 @@
-# Phase 4 direct ONNX ranking
+# Direct ONNX evaluation
 
 ## Equivalence
 
@@ -32,5 +32,5 @@ unique request IDs.
 
 Use direct all-MiniLM-L6-v2 ONNX inference and in-memory NumPy cosine ranking.
 Chroma is no longer an application dependency and no collection is created.
-`make onnx` explicitly downloads and verifies the pinned model; analysis never
-downloads model files.
+`uv run python scripts/setup_onnx.py` explicitly downloads and verifies the
+pinned model; analysis never downloads model files.

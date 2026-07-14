@@ -2,7 +2,6 @@
 
 # ruff: noqa: T201
 
-import argparse
 import hashlib
 import json
 from pathlib import Path
@@ -14,8 +13,7 @@ from paper_data_linking.retrieval import IRIS_RETRIEVAL_QUERY, ONNXEmbedder, chu
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "data/eval/reviewed_cases.jsonl"
-BASELINE_PATH = ROOT / "data/eval/phase4_chroma_baseline.json"
-DEFAULT_OUTPUT = ROOT / "data/eval/phase4_ranking_comparison.json"
+BASELINE_PATH = ROOT / "data/eval/chroma_ranking_baseline.json"
 DISTANCE_TOLERANCE = 2e-5
 
 
@@ -65,16 +63,7 @@ def build_comparison() -> dict:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
-    parser.add_argument("--check", action="store_true")
-    args = parser.parse_args()
     comparison = build_comparison()
-    rendered = json.dumps(comparison, indent=2, sort_keys=True) + "\n"
-    if not args.check:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(rendered)
-        print(f"Wrote {args.output}")
     if not comparison["passed"]:
         msg = "Direct ONNX ranking differs from the Chroma baseline"
         raise SystemExit(msg)
