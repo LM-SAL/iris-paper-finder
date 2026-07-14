@@ -1,0 +1,177 @@
+{
+  "baseline_id": "phase0_v2_2025",
+  "configuration": {
+    "chunk_overlap_tokens": 50,
+    "chunk_size_tokens": 500,
+    "config": {
+      "path": "src/paper_data_linking/web_app/config/iris_config_v2.yaml",
+      "sha256": "e179af0ee8a3a432d2c3df1058c042762f694ab453049bdaed0e33607cfae11f"
+    },
+    "embedder": "Chroma DefaultEmbeddingFunction (all-MiniLM-L6-v2 ONNX)",
+    "embedder_filter": {
+      "passed_iris_heuristic": 1
+    },
+    "heuristic_threshold": 80,
+    "implementation_files": [
+      {
+        "path": "Makefile",
+        "sha256": "48332c4d832f80f706b92d00f755f20a0d99fdbf771cd45975e5c80454a63ccc"
+      },
+      {
+        "path": "scripts/query_api.py",
+        "sha256": "6ecfb3259a4bafb3e2a33182b7fb18f448384c952d8ca62c7ed9c4760d37d1b3"
+      },
+      {
+        "path": "src/paper_data_linking/process/analyzer.py",
+        "sha256": "249346999397e8d57a163632726650e8d67e9553bb22b41c648cd34387055078"
+      },
+      {
+        "path": "src/paper_data_linking/process/embedders.py",
+        "sha256": "17c05d4f42e8ad01b14a0d774635ee4334ff02daecfef82142063c844df9f80a"
+      },
+      {
+        "path": "src/paper_data_linking/process/plugins.py",
+        "sha256": "d25d6832e6d44801ee1fe5a985ef7ed2d43f6a7d685a63fbd9b8177028b1368b"
+      },
+      {
+        "path": "src/paper_data_linking/process/splitters.py",
+        "sha256": "2306f491db3e947c426c121db21dd6a8afb9b738ba147b8f7b9d0453971f248d"
+      }
+    ],
+    "model_name": "gpt-5-mini",
+    "model_snapshot_pinned": false,
+    "onnx_files": [
+      {
+        "path": "models/onnx/config.json",
+        "sha256": "b567c7d5a55b636c95186aaf993f9a8920842b7e05a9e703e68b23cab2c3a670"
+      },
+      {
+        "path": "models/onnx/model.onnx",
+        "sha256": "4f148ba8ae9c2c7fbee4af2b132db8d06c6a6545b47fc83bbb98c3d22b8393e6"
+      },
+      {
+        "path": "models/onnx/special_tokens_map.json",
+        "sha256": "b6d346be366a7d1d48332dbc9fdf3bf8960b5d879522b7799ddba59e76237ee3"
+      },
+      {
+        "path": "models/onnx/tokenizer.json",
+        "sha256": "da0e79933b9ed51798a3ae27893d3c5fa4a201126cef75586296df9b4d2c62a0"
+      },
+      {
+        "path": "models/onnx/tokenizer_config.json",
+        "sha256": "7702051bbc4953b94d47fa1d61b42ed4cbb3c71b501a8dd7183a823f8bea1f20"
+      },
+      {
+        "path": "models/onnx/vocab.txt",
+        "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      }
+    ],
+    "retrieval_count": 10,
+    "splitter": "PyMuPDFTokenSplitter",
+    "temperature": 0
+  },
+  "counts": {
+    "candidates": 123,
+    "classified": 117,
+    "download_failures": 6,
+    "library_evaluation": {
+      "false_negative": 3,
+      "pipeline_failure": 1,
+      "recovered_positive": 41,
+      "unresolved_positive": 0
+    },
+    "library_in_candidate_scope": 45,
+    "library_snapshot": 756,
+    "missing_results": 6,
+    "outside_library_pending_review": 3,
+    "outside_library_predicted_yes": 4,
+    "outside_library_reviewed_negative": 1,
+    "predictions": {
+      "NO": 67,
+      "UNCERTAIN": 5,
+      "YES": 45
+    }
+  },
+  "created_on": "2026-07-14",
+  "known_limitations": [
+    "The saved result writer discarded all but the first aspect, and the v2 parser failed to preserve aspects.",
+    "Selected chunk IDs, similarity scores, token usage, and request IDs were not persisted and cannot be reconstructed from saved output.",
+    "Existing results did not persist per-paper prompt/model provenance; the v2 config is the reported run configuration, not cryptographically linked to each response.",
+    "gpt-5-mini was recorded as a moving alias rather than a pinned model snapshot.",
+    "The ADS library supplies positive labels only; candidates outside it are unlabeled until reviewed.",
+    "No genuinely uncertain paper was found in the local corpus; full-text review resolved every candidate considered."
+  ],
+  "outside_library_review_queue": [
+    "2025A&A...703A.145X",
+    "2025ApJ...995..182F",
+    "2025SoPh..300..152R"
+  ],
+  "outside_library_reviewed_negative": [
+    "2025ApJ...981..178B"
+  ],
+  "pending_scope_review": [],
+  "reviewed_case_evaluation": {
+    "observational": {
+      "cases": 3,
+      "correct": 3,
+      "incorrect": 0,
+      "missing_baseline": 0,
+      "with_baseline": 3
+    },
+    "overall": {
+      "cases": 13,
+      "correct": 5,
+      "incorrect": 4,
+      "missing_baseline": 4,
+      "with_baseline": 9
+    },
+    "review_only": {
+      "cases": 1,
+      "correct": 0,
+      "incorrect": 1,
+      "missing_baseline": 0,
+      "with_baseline": 1
+    },
+    "synthetic": {
+      "cases": 5,
+      "correct": 3,
+      "incorrect": 2,
+      "missing_baseline": 0,
+      "with_baseline": 5
+    }
+  },
+  "schema_version": 1,
+  "scope": {
+    "ads_library_id": "30bDOCvOTJiAgacWhJxkmA",
+    "ads_library_snapshot_date": "2026-01-07",
+    "candidate_period": "2025-01 through 2025-12",
+    "ground_truth_rule": "ADS library membership is positive; absence is unlabeled.",
+    "search_query": "=full:\"Interface Region Imaging Spectrograph\" OR citations(bibcode:2014SoPh..289.2733D) + property:refereed + doctype:\"Article\" + pubdate:[2025-01 TO 2025-12]"
+  },
+  "source_artifacts": [
+    {
+      "path": "data/bibcodes/iris_library_bibcodes.txt",
+      "sha256": "4389bbd3a617b8a1ea85813769889a7d8a5af866c0236e9b765b06574e2b0c1c"
+    },
+    {
+      "path": "data/bibcodes/iris_search_bibcodes.txt",
+      "sha256": "dba91653185c770131cf5e9ef07e232d013231ad4fea8126b184d3cde87ba61c"
+    },
+    {
+      "path": "data/pdfs/iris_search/failed_bibcodes.txt",
+      "sha256": "1a8d90f05acf7bb4cecf6226dce21673b534fe329dc6d6fedfd5ed952ebb91e4"
+    },
+    {
+      "path": "scripts/iris_search_results.json",
+      "sha256": "8cb3d621607c489e63d70256e92459839f045dc01fdf68fc12e829672327717e"
+    },
+    {
+      "path": "data/eval/reviewed_cases.jsonl",
+      "sha256": "64a827fcab1dab9414e0028d8f0eedb097af7f440889c6f7a32b466e3f087b43"
+    },
+    {
+      "path": "scripts/freeze_baseline.py",
+      "sha256": "da6c5e8a705f514cb60443a58fe92d08494aeb202f923370f80a818887732c64"
+    }
+  ]
+}

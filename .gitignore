@@ -8,6 +8,8 @@ reports/*
 data/*
 misc/*
 !data/.gitkeep
+!data/eval/
+!data/eval/**
 media/*
 app/db/*
 !app/db/.gitkeep
