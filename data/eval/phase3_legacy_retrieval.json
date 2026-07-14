@@ -1,0 +1,868 @@
+{
+  "baseline_id": "phase3_legacy_chroma_top10",
+  "configuration": {
+    "chunk_overlap_tokens": 50,
+    "chunk_size_tokens": 500,
+    "embedder": "Chroma DefaultEmbeddingFunction (all-MiniLM-L6-v2 ONNX)",
+    "filter_threshold": 80,
+    "query": "Does this paper use observational or synthetic data associated with the IRIS spacecraft or its instruments?",
+    "retrieval_count": 10,
+    "source_sha256": {
+      "src/paper_data_linking/process/embedders.py": "17c05d4f42e8ad01b14a0d774635ee4334ff02daecfef82142063c844df9f80a",
+      "src/paper_data_linking/process/plugins.py": "d25d6832e6d44801ee1fe5a985ef7ed2d43f6a7d685a63fbd9b8177028b1368b",
+      "src/paper_data_linking/process/splitters.py": "2306f491db3e947c426c121db21dd6a8afb9b738ba147b8f7b9d0453971f248d",
+      "src/paper_data_linking/web_app/config/iris_config_v2.yaml": "e179af0ee8a3a432d2c3df1058c042762f694ab453049bdaed0e33607cfae11f"
+    }
+  },
+  "papers": [
+    {
+      "bibcode": "2025ApJ...985...27U",
+      "chunk_count": 66,
+      "expected_overall": "YES",
+      "heuristic_match_count": 22,
+      "id": "synthetic_explicit_flux_emergence",
+      "ocr": false,
+      "path": "test_pdfs/positive/was_false_with_new_config.pdf",
+      "pdf_sha256": "ff07e20cb32569c89c858ad53b81431f3685dc52de6734ed75f9d122111e7912",
+      "selected": [
+        {
+          "distance": 1.3401074409484863,
+          "position": 7,
+          "rank": 1,
+          "text_excerpt": "and line widths. Thus, CHs and QS, two regions that been seen farther lower in the atmosphere. P. Kayshap et al.are similarly low in the solar atmosphere, differentiate into (2018) found intensity reduction in CH over QS in the Mg II hregio",
+          "text_sha256": "b12a1b8825622b4fb90d979a95349b18eade0176febc43668a9b2d167bbea9ee"
+        },
+        {
+          "distance": 1.4507017135620117,
+          "position": 96,
+          "rank": 2,
+          "text_excerpt": "cool due to high density. 55 Mm. This intensity reduction can be seen from the In Figure 10, we show the vertical velocity, with the same animation CH2, associated with Figure 8 to be just after scheme as in Section 3.1.3, with plasma movin",
+          "text_sha256": "dd889b0a5c494bc705a33c48ee6a93e4c894fe17ddf8a818c2bb569264f09b93"
+        },
+        {
+          "distance": 1.45457923412323,
+          "position": 97,
+          "rank": 3,
+          "text_excerpt": "not grow The bright regions, on the other hand, correspond to the surge similar to model_QS. However, note that the initial model and underlying short loops as seen in Figure 8. O IV shows a atmosphere has the transition region at twice the",
+          "text_sha256": "078f9022aaea30e6446b584415f8db106aa6c5951afd6b126928bd2181e56ab8"
+        },
+        {
+          "distance": 1.494087815284729,
+          "position": 86,
+          "rank": 4,
+          "text_excerpt": "Upendran et al. Figure 3. Intensity in Fe XV 284 \u00c5, Fe IX 171 \u00c5, Ne VIII 770 \u00c5, O V 630 \u00c5, O IV 1401 \u00c5, and Si IV 1394 \u00c5 for model_QS snapshot at t = 2260 s displayed in the middle panels in Figure 2. We also refer the reader to the online,",
+          "text_sha256": "eb8c060c04006efbf4993fdc1b5e54d0200bfc4142d42e4b28c9b21f5fa600fd"
+        },
+        {
+          "distance": 1.5043076276779175,
+          "position": 116,
+          "rank": 5,
+          "text_excerpt": "Black color corresponds to model_CH, and orange to model_QS. We display the Pearson correlation between the binned Si IV velocity and the mean velocity per bin of the other lines for model_QS (as \u03c1QS) and model_CH (as \u03c1CH), in the inset for",
+          "text_sha256": "999be61199ba26a1b5e7447a631c92ad44496d413dabbc14eb68f95674de704e"
+        },
+        {
+          "distance": 1.5382380485534668,
+          "position": 93,
+          "rank": 6,
+          "text_excerpt": "the strongest among all the lines and loops. Bright regions with enhanced emission are seen in O IV and does not show any strong plasmoid signatures when and O V, e.g., near x \u224870 Mm. These bright regions are compared to model_QS. As discus",
+          "text_sha256": "f3c261aaefa05234172afbce5d222181b5fb9a7a0a0f6bb88558c7e825b12670"
+        },
+        {
+          "distance": 1.553763747215271,
+          "position": 8,
+          "rank": 7,
+          "text_excerpt": "of the Creative Commons Attribution 4.0 licence. Any further V. Upendran & D. Tripathi (2022; henceforth Paper II). These distribution of this work must maintain attribution to the author(s) and the title authors further found that CHs show",
+          "text_sha256": "8bd14b25b6c1c80003dbe7d558b0744f58b0409c47c868e6d3b33c28e2d0fd7d"
+        },
+        {
+          "distance": 1.5560245513916016,
+          "position": 80,
+          "rank": 8,
+          "text_excerpt": "for Fe XV 284 \u00c5, Fe IX 171 \u00c5, Ne VIII 770 \u00c5, O V 630 \u00c5, O IV moments de\ufb01ned in Equation (16) are analyzed to understand 1401 \u00c5, and Si IV 1394 \u00c5 as labeled. the observable properties of this \ufb02ux emergence interaction. We note the following ",
+          "text_sha256": "9b7ce027bef89187ca9bc419453e9829eb345913a705497ea2a52ec10e0cd895"
+        },
+        {
+          "distance": 1.5689716339111328,
+          "position": 125,
+          "rank": 9,
+          "text_excerpt": "similar dependence with down\ufb02ow with Si IV down\ufb02ow in model_CH). The |Bz,phot| in Figure 12. Paper I and Paper II however also \ufb01nd the general lack of correlation is however evident in the CH intensities to be lower than QS intensities when",
+          "text_sha256": "aedf7d701d5cf7581e96b4b47577c5a35d8476387f74ca8e7a03c5bd215b4eda"
+        },
+        {
+          "distance": 1.5695950984954834,
+          "position": 128,
+          "rank": 10,
+          "text_excerpt": "\ufb02ows in These are seen as down\ufb02ows in the hot lines in Figure 10. the transition region lines. We \ufb01nd mild correlations between However, the motion of the surge \u201ccleared out\u201d some of the down\ufb02ows in Si IV and up\ufb02ows in other lines, and \ufb01nd ",
+          "text_sha256": "2a9ae1d5410a4e63db1741cb87cc5e357dfbb292d83c72f291a0a4cc3626ec39"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025A&A...702A.231D",
+      "chunk_count": 26,
+      "expected_overall": "YES",
+      "heuristic_match_count": 11,
+      "id": "synthetic_explicit_si_iv",
+      "ocr": false,
+      "path": "test_pdfs/positive/iris_line_form_paper.pdf",
+      "pdf_sha256": "8b897888ce57f7ddf8ceca6b07d540fd0cb628cc7cb052b7accac9238f0d6c2b",
+      "selected": [
+        {
+          "distance": 1.3325740098953247,
+          "position": 15,
+          "rank": 1,
+          "text_excerpt": "we selected six models to show the e\ufb00ect of changing of the 2. Model beam parameters on Siiv abundance and line emission. The heating of low-lying solar atmospheric levels from the chro- mosphere to the transition region during solar \ufb02ares ",
+          "text_sha256": "d80384609afe9030b62bcc31e56482f76c720f8d0a3cf6db8f9bb4ae7051080c"
+        },
+        {
+          "distance": 1.539057970046997,
+          "position": 5,
+          "rank": 2,
+          "text_excerpt": "that a particular location within the \ufb02aring chromosphere has for observations of the Siiv doublet lines at 1393.75 \u00c5 and variable (and short-duration) energy deposition. 1402.77 \u00c5 (see De Pontieu et al. 2014; Dud\u00edk et al. 2014a) as Further",
+          "text_sha256": "45c0a9a75b0cd2cb6f2f369a993261e402a2fdc5dcde7db4322509113417fb3e"
+        },
+        {
+          "distance": 1.556545376777649,
+          "position": 35,
+          "rank": 3,
+          "text_excerpt": "visible in Fig. 6e). This behav- For Siiv lines 1402.8 \u00c5 and 1393.75 \u00c5, the relative popu- ior of hot bubbles is consistent with RADYN simulations for lations of the upper levels (Nk,i/Nk,j) are lower than 10\u22124 and, short-duration energy de",
+          "text_sha256": "6af3572fa82dd6892fa8d76b8061ec5b3d9ed68ae41db7b53fc849a5c4681288"
+        },
+        {
+          "distance": 1.5583149194717407,
+          "position": 41,
+          "rank": 4,
+          "text_excerpt": "Suppression of dielectronic recombination colored Gaussians in Fig. 12. The e\ufb00ect of the suppression of the dielectronic recombination The evolution of the total integrated Siiv line intensities is is shown in Fig. 10. The green and violet ",
+          "text_sha256": "13127d1cb69da4403e5130b22db7e1169df088099b57a33fe8bb5c096027d52e"
+        },
+        {
+          "distance": 1.5930142402648926,
+          "position": 20,
+          "rank": 5,
+          "text_excerpt": "The published DR rates are usually calculated only in In all studied cases, the velocities, 3, are relatively low in the limit of electron density being close to zero; that is, no suppression is present. However, already Burgess & Summersth",
+          "text_sha256": "4d6d25a9d6193e41192919fced7026ee9ff4a18b0d3c27ed97339131c9835f13"
+        },
+        {
+          "distance": 1.6372061967849731,
+          "position": 32,
+          "rank": 6,
+          "text_excerpt": ",in the energythebeinghot bubbledepositedis alsohigherformedin theat atmo-larger 4\u03c0 giNk, j heights (see Figs. 3 and 4). Longer beam durations or higher where Bij is Einstein coe\ufb03cient for absorption, \u03a6(\u03bd) is an \u03b4 result in more extensive h",
+          "text_sha256": "539834f7bdcb8d46e59514497371fcd8a10d962c24751ba02949c980c74b1dcb"
+        },
+        {
+          "distance": 1.6373236179351807,
+          "position": 48,
+          "rank": 7,
+          "text_excerpt": "we assumed three di\ufb00erent line widths: the thermal line about two times higher than that of the 1402.77 \u00c5 line. This dif- width, as well as the widths of 0.1 \u00c5 and 0.5 \u00c5 (see the discus- ference in the optical thickness of these two lines c",
+          "text_sha256": "b8604cbeab371c46e49c85dec8916dea04bcacaa97a15d2722007f6bd91aa0bf"
+        },
+        {
+          "distance": 1.6690267324447632,
+          "position": 3,
+          "rank": 8,
+          "text_excerpt": "2012; Knuth & Glesener 2020) while the \ufb02aring chromosphere from the solar corona to the lower atmosphere. The energy is and transition region are also known to be heated by rela- thought to be transported mainly by an accelerated electron b",
+          "text_sha256": "eb785916d833730e237c90d07c6e945509f7c88dfef2cc932340c418c2ec1684"
+        },
+        {
+          "distance": 1.701952338218689,
+          "position": 1,
+          "rank": 9,
+          "text_excerpt": "FLARIX was used to model the properties of plasma in solar \ufb02are ribbons. Energy was deposited via short-duration electron beams with a triangular pro\ufb01le in time, peaking at 1, 3, or 5 s, and with an energy \ufb02ux ranging from 1 to 9 \u00d7 1010 cm\u2212",
+          "text_sha256": "3116c424706aa6df667a1ff2099243345739392e508d33c08a0c4d02fb36af34"
+        },
+        {
+          "distance": 1.7043191194534302,
+          "position": 2,
+          "rank": 10,
+          "text_excerpt": "the maximum of the emissivity corresponds to the position of the hot bubble. Key words. Sun: activity \u2013 Sun: chromosphere \u2013 Sun: \ufb02ares \u2013 Sun: transition region \u2013 Sun: UV radiation 1. Introduction 2022a). The fast response of the transition ",
+          "text_sha256": "158b98ec59a2b58830c0d589a2e44cce0efe5f485941966b8481238a9fd73915"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025SoPh..300...89S",
+      "chunk_count": 29,
+      "expected_overall": "YES",
+      "heuristic_match_count": 9,
+      "id": "observational_iris_mosaic",
+      "ocr": false,
+      "path": "test_pdfs/positive/uses_iris_moasic_data.pdf",
+      "pdf_sha256": "d2a684b847a3901fff4ee7ef44060504326ffff61e3c1a1740668080404bca61",
+      "selected": [
+        {
+          "distance": 1.0782556533813477,
+          "position": 8,
+          "rank": 1,
+          "text_excerpt": "SOLA: manuscript.tex; 4 July 2025; 0:15; p. 4 SPACE-SUIT IRIS contains a spectrograph and a slit-jaw imager, and performs observations in near ultraviolet (NUV) and far ultraviolet (FUV) regimes. The spectroscopy is performed in three windo",
+          "text_sha256": "f510e7741d36639455f31d0774c518730480e65b5d422a4a63f85e961614bd92"
+        },
+        {
+          "distance": 1.3355525732040405,
+          "position": 53,
+          "rank": 2,
+          "text_excerpt": "Marcel and Rodriguez, 2010), seaborn (Waskom et al., 2017), ultralytics (Jocher, Chaurasia, and Qiu, 2023; Wang, Yeh, and Liao, 2024), astropy (Price-Whelan et al., 2018), scipy (Virtanen et al., 2020), sunpy (Mumford et al., 2020), matplot",
+          "text_sha256": "c345019d175c0128a4f8ebedbe746ce939c3410a6286fd00a55b74620fa3359c"
+        },
+        {
+          "distance": 1.3770569562911987,
+          "position": 11,
+          "rank": 3,
+          "text_excerpt": "inverse thresholding. (b) The corresponding inpainted images. (c) The inpainted images after convolution with the SUIT NB3 PSF and rebinning to a resolution of 0.7\u201d per pixel. (d) The final mock SUIT images after further binning to a resolu",
+          "text_sha256": "a060127f64c107bbbcc96247ea9d18a03ed6c3d30130d699ff8b65340e135667"
+        },
+        {
+          "distance": 1.39276123046875,
+          "position": 5,
+          "rank": 4,
+          "text_excerpt": ", including spectrometers, plasma an- alyzers, and spectral imagers. The Solar Ultraviolet Imaging Telescope (SUIT) (Tripathi et al., 2017) is a spectral photoimager onboard Aditya-L1, observing the solar atmosphere in the 2000 \u2013 4000 \u02daA wa",
+          "text_sha256": "424222e424eb9f61cb738abcc51e56413e78447b2e50a3d1191ac4cf3d88c28b"
+        },
+        {
+          "distance": 1.39658784866333,
+          "position": 3,
+          "rank": 5,
+          "text_excerpt": "Seth et al. Abstract The Solar Ultraviolet Imaging Telescope (SUIT) onboard Aditya-L1 is an imager that observes the solar photosphere and chromosphere through observations in the wavelength range of 200 \u2013400 nm. A comprehensive under- stan",
+          "text_sha256": "d64546f171a6af603203a5211132887404f5028c0d197dfd2ddd192388ff7943"
+        },
+        {
+          "distance": 1.4150978326797485,
+          "position": 7,
+          "rank": 6,
+          "text_excerpt": "Seth et al. pre-flare signatures (\u02c7Simberov\u00b4a, Karlick\u00b4y, and Suk, 2014). Similarly, texture- based features, including Tamura directionality and contrast, which have been widely utilized for solar image analysis, have shown significant pot",
+          "text_sha256": "a096a1d64c559229f71db6b1cc2daa3a62d82aca63cfb05f0dbfcb8333bf4d9a"
+        },
+        {
+          "distance": 1.421207308769226,
+          "position": 9,
+          "rank": 7,
+          "text_excerpt": "and summed across all wavelength bins. Two examples of wavelength-summed IRIS Mg II k mosaics are shown in Figure 2b. These two images will serve as our test bed for demonstrating various cleaning operations and mock-SUIT image generation p",
+          "text_sha256": "4982005a2edafce7ff95d9bf31dd4322429932eafb7dffec5d20bc1a9cd2e558"
+        },
+        {
+          "distance": 1.4634959697723389,
+          "position": 4,
+          "rank": 8,
+          "text_excerpt": "ing validation in the absence of a labeled ground truth. This work hence not only develops a chromospheric feature extractor, but it also demonstrates the effectiveness of statistical metrics and Tamura features in differentiating chromosph",
+          "text_sha256": "1e835454d01efd55ebd00427e20b1ccd978fca1a456e3449b4a7e670b0e7ddfb"
+        },
+        {
+          "distance": 1.5301496982574463,
+          "position": 48,
+          "rank": 9,
+          "text_excerpt": "of the images. Essentially, the energy reflects the concentration of certain intensity values. We find off-limb and filaments to have higher energy. However, this is flipped in the SUIT images, with sunspots showing as an outlier distributi",
+          "text_sha256": "067ca12c83e0cbe5a4063dd9a4cad3e370258d0063c460a339ad9680f3a916d2"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025ApJ...990..195G",
+      "chunk_count": 45,
+      "expected_overall": "YES",
+      "heuristic_match_count": 16,
+      "id": "observational_bifrost_comparison",
+      "ocr": false,
+      "path": "test_pdfs/positive/iris_sim_paper.pdf",
+      "pdf_sha256": "eb858cf5cf8c0c548263da6bf48f5630850a334d4746784624056151f0faa79b",
+      "selected": [
+        {
+          "distance": 1.196418285369873,
+          "position": 21,
+          "rank": 1,
+          "text_excerpt": "on the other hand, to some 52 Mm above. The computational box is split into a grid shows weaker fields and granular size loops. A summary of the consisting of 720 \u00d7 720 \u00d7 1120 zones, giving a resolution of observational sequences is provide",
+          "text_sha256": "e2c7dd3c4a208766e397a983b555332af6dffb859a94db5b3df90247a2bea85e"
+        },
+        {
+          "distance": 1.2255287170410156,
+          "position": 23,
+          "rank": 2,
+          "text_excerpt": "3 G is rotation. Slit-jaw images were taken using filters: C II 1335 \u00c5 continually injected in regions of inflow, while in regions of (SJI 1330), Si IV 1400 \u00c5 (SJI 1400), Mg II k 2796 \u00c5 (SJI outflow, the field is allowed to exit the computa",
+          "text_sha256": "15ac60b22b475db99612c7b88ae42553e1e1b0ed1589856e6d317bb095e5ada8"
+        },
+        {
+          "distance": 1.2515075206756592,
+          "position": 9,
+          "rank": 3,
+          "text_excerpt": "smallest temporal and spatial scales are the IN fields, utilized in our future studies as part of this project. The models which are small, weak, and short-lived magnetic concentra- display multiple events of emerging flux, which we compare",
+          "text_sha256": "75b089d0e3de64cb2c2d641f2436bd0831055b245927d9400fab6a07f449ab6a"
+        },
+        {
+          "distance": 1.2779511213302612,
+          "position": 32,
+          "rank": 4,
+          "text_excerpt": "see Section 4.1 for details). These using the PyMilne6 code (J. de la Cruz Rodr\u00edguez 2019). The maps represent the vertical component of the emerging fields, ME method assumes that atmospheric parameters remain i.e., the footpoints of the e",
+          "text_sha256": "cc79023233de49d34576f6784b9a8fb98a1d3ecfdd363497815f9564a78391b4"
+        },
+        {
+          "distance": 1.286192774772644,
+          "position": 72,
+          "rank": 5,
+          "text_excerpt": "the values derived from the entire FOV analysis. fields. 13 The Astrophysical Journal, 990:195 (17pp), 2025 September 10 Go\u0161i\u0107 et al. Figure 16. Mg II k and Mg II 2799 \u00c5 line profiles in the Bifrost 1 region and along the dashed green line ",
+          "text_sha256": "c0195ed328c995b2c4c1b7c71976a5e39039759f64144a9084ca0014270d9353"
+        },
+        {
+          "distance": 1.3881797790527344,
+          "position": 1,
+          "rank": 6,
+          "text_excerpt": "Center for Solar Physics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway 4 Institute of Theoretical Astrophysics, University of Oslo, P.O. Box 1029 Blindern, N-0315 Oslo, Norway Received 2025 May 30; revised 2025 July 9; ac",
+          "text_sha256": "527da566d9cdbf6b48beeab8e481c34bf6dd643c087ed8806c7f4bc74fda0b67"
+        },
+        {
+          "distance": 1.3926119804382324,
+          "position": 33,
+          "rank": 7,
+          "text_excerpt": "profiles were then interpolated to match the wavelength 5 G by computing the standard deviation of the flux density in sampling of the SST measurements. We selected only the a region without clear solar signals. The identification method wa",
+          "text_sha256": "6c40e7e25e65bcd85988b3f553f8e88d770490c0dbeeb789cb4aeae1c3bc90a3"
+        },
+        {
+          "distance": 1.394423484802246,
+          "position": 70,
+          "rank": 8,
+          "text_excerpt": "of (11\u2033, 5\u2033) and shown with the orange arrow in Figure 19. fragmentation and merging. Despite the fact that the Bifrost fields are generally larger and stronger than those detected in the SST data, the emerging 6. Discussion and Conclusions",
+          "text_sha256": "ce7965b4b3d28e489bfe5ba68216963f7c3a5ec230798beef582580fd4b612d4"
+        },
+        {
+          "distance": 1.3994420766830444,
+          "position": 76,
+          "rank": 9,
+          "text_excerpt": "the largest emerging bipole detected in the SST15 data set, where many loop-like structures are observed to connect the footpoints and heat the upper solar atmosphere. The orange arrow points at a jet-like eruption. flux elements seem well ",
+          "text_sha256": "73512d10182a8b584a7f004a990b55d83920454bf21c55444838c73e3ba3548c"
+        },
+        {
+          "distance": 1.500810146331787,
+          "position": 31,
+          "rank": 10,
+          "text_excerpt": "Magnetic elements that fragment from the footpoints are We detected and tracked all the magnetic elements in the classified as cluster members. Flux patches that merge with the SST15 and SST16 observations, to study their spatiotemporal foo",
+          "text_sha256": "f88767a68f1b260cca6918a736b7b0549fe707b5e6021a7fb0300e5871b4bd63"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025ApJ...992...37L",
+      "chunk_count": 28,
+      "expected_overall": "YES",
+      "heuristic_match_count": 15,
+      "id": "observational_filament_flows",
+      "ocr": false,
+      "path": "test_pdfs/positive/iris_obs_paper.pdf",
+      "pdf_sha256": "148bc2ebb97b1bb37d7c6879417bf3a857d04b8b9938e65f0de98680587fe538",
+      "selected": [
+        {
+          "distance": 1.2492897510528564,
+          "position": 40,
+          "rank": 1,
+          "text_excerpt": "6 The Astrophysical Journal, 992:37 (12pp), 2025 October 10 Li et al. Figure 3. Interface Region Imaging Spectrograph (IRIS) spectroscopic observations of the forming filament during 02:45 to 03:34 UT. (a)\u2013(c): The peak intensity, line widt",
+          "text_sha256": "affe8e4d2a2b247632cfeb2c13c1826933be16ed836ab5bdd4af236f246b14d6"
+        },
+        {
+          "distance": 1.312293291091919,
+          "position": 19,
+          "rank": 2,
+          "text_excerpt": "velocity of these downflows/upflows detected in Figure 2 is into a typical AR filament. Note that on November 13, the \u221218 and 16 km s\u22121, respectively. The velocities of these target presented as a collection of chromospheric dark threads do",
+          "text_sha256": "d0c3df92e53cd75ae16a8a713d3d62f7bb198c1c93e7c29ffb29a66f89c882a8"
+        },
+        {
+          "distance": 1.3181415796279907,
+          "position": 35,
+          "rank": 3,
+          "text_excerpt": "yellow arrows in extracted from the NF and SF regions of the filament (see red Figure 3(a). These small-scale upflows, known as network jets, and blue boxes in circles). Compared with the reference were first reported by H. Tian et al. (201",
+          "text_sha256": "4edbd996fb1ef0329a48b7db8a0f43a480b0ca7070e5c95ffb05af5eac7a441e"
+        },
+        {
+          "distance": 1.3227335214614868,
+          "position": 41,
+          "rank": 4,
+          "text_excerpt": "small-scale jets, representing threadlike upflows along the forming filament. The white arrow pair in panel (g) indicates mass flows within the forming filament, with a distinct brightening region at its south footpoint. Green arrows in pan",
+          "text_sha256": "fac4bd520aae91bc486d484e32eef653cab2462b9d2d9f553dfa3dd21b7aa77f"
+        },
+        {
+          "distance": 1.336711049079895,
+          "position": 14,
+          "rank": 5,
+          "text_excerpt": "red and blue wing data nence/filament often demonstrate quite complex mass motion following the equation: D = (IB \u2212IR)/(IR + IB), where IR and patterns. For instance, Y. Shen et al. (2015) reported that IB represent the absolute pixel inten",
+          "text_sha256": "fa941f8ef8aa460ed80b65260f296bd1b25f480199b3e0a68cd3c9ae2411d9b8"
+        },
+        {
+          "distance": 1.3846001625061035,
+          "position": 34,
+          "rank": 6,
+          "text_excerpt": "29 km s\u22121 in H\u03b1 passband and 44 km s\u22121 in EUV/EUV passbands. of 32\u201370 km s\u22121. Combined with the NVST observations, brightenings were also detected in AIA EUV 304 \u00c5 this result indicates counterstreaming flows in the forming observations (Fi",
+          "text_sha256": "f53b502c03889466fd5bf09a383129018bb3448056bc1a8988b4c104494df6a6"
+        },
+        {
+          "distance": 1.4254648685455322,
+          "position": 42,
+          "rank": 7,
+          "text_excerpt": "The Astrophysical Journal, 992:37 (12pp), 2025 October 10 Li et al. Figure 4. Multitemperature nature of a selected episode of small-scale jets observed at the south footpoint of the forming filament. Panels (a), (b), and (c) give the NVST ",
+          "text_sha256": "12908b5257b79184c500ac6ebc45e2fe05e5639262c42a1d01a03d8d2d819619"
+        },
+        {
+          "distance": 1.44986891746521,
+          "position": 39,
+          "rank": 8,
+          "text_excerpt": "Zwaan 1987, mately 10 Mm, at the same location prior to the EUV and its references) Extensive observations reveal that flux 5 The Astrophysical Journal, 992:37 (12pp), 2025 October 10 Li et al. Figure 2. The mass flows in the forming filame",
+          "text_sha256": "c66b7290045517b9dc390514c38f4bb48bcd2991053b779a4f5eeb9d5402a7f7"
+        },
+        {
+          "distance": 1.472878336906433,
+          "position": 17,
+          "rank": 9,
+          "text_excerpt": "05:45 UT. To characterize these H\u03b1 resolution of 0.6 pixel\u22121 and a temporal cadence of 12 s, component upflows and downflows, two time\u2013distance plots provided by the Atmospheric Imaging Assembly (AIA; were generated along slices AB and CD i",
+          "text_sha256": "6f47f47e1944482e7b203ed9e1d7d37c1399e54f5251b44df3f3ded945c96223"
+        },
+        {
+          "distance": 1.5479627847671509,
+          "position": 1,
+          "rank": 10,
+          "text_excerpt": "of Sciences, Kunming 650216, People\u2019s Republic of China Received 2025 April 30; revised 2025 July 3; accepted 2025 August 11; published 2025 October 3 Abstract Utilizing high-resolution imaging and spectroscopic observations from the New Va",
+          "text_sha256": "71dcdaf9e90505cb4b90b8638134e2209df1608029911c4ca73802800ba54202"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025ApJ...981..178B",
+      "chunk_count": 35,
+      "expected_overall": "NO",
+      "heuristic_match_count": 5,
+      "id": "iris_seen_but_not_used",
+      "ocr": false,
+      "path": "test_pdfs/negative/false_postive_with_new_config.pdf",
+      "pdf_sha256": "05df825d5aa42730ed0b6a74f6f143a847cd546794d639655e21e2614b83f41c",
+      "selected": [
+        {
+          "distance": 1.3368406295776367,
+          "position": 27,
+          "rank": 1,
+          "text_excerpt": "ld of view (165 \u00d7 175 arcsec2) in Si IV 1400 \u00c5 and spatially averaged over the rectangular region around the Mg II k 2796 \u00c5 slit-jaw UV images. However, spectra cannot source (shown as a white box in Figure 8). The region was be obtained ar",
+          "text_sha256": "f067495d33d2b723a369a3d67370a7adee67b29438bf6eaf373ffa08a7c8b4bb"
+        },
+        {
+          "distance": 1.3483972549438477,
+          "position": 10,
+          "rank": 2,
+          "text_excerpt": "a nearby 3He-rich SEP source \ufb02are is located. We note et al. 2012) high-resolution observations. The Solar Orbiter that the IMF azimuthal angles on Solar Orbiter were between Extreme-Ultraviolet Imager (P. Rochus et al. 2020) high-resolutio",
+          "text_sha256": "75ad6902322b57295200c26c3448f9c8d8fb2bc237403493e2ed7102c45e398d"
+        },
+        {
+          "distance": 1.4151322841644287,
+          "position": 6,
+          "rank": 3,
+          "text_excerpt": "1978) and I. Roth & extreme-ultraviolet (EUV) jets (e.g., R. Bu\u010d\u00edk 2020, and M. Temerin (1997). references therein), indicating acceleration at magnetic recon- nection sites involving \ufb01eld lines open to interplanetary space (D. V. Reames 20",
+          "text_sha256": "5a433f9b03fff0a910f2d09e396531c683d1062f9b27c9a28f4cbe7412efd7b8"
+        },
+        {
+          "distance": 1.4517908096313477,
+          "position": 26,
+          "rank": 4,
+          "text_excerpt": "(2011). We created an Figure 7(b) shows a weak straight jet that has a size similar to isothermal spectrum using the latest CHIANTI version its base. Previous studies have reported the eruption of a (K. P. Dere et al. 2019), the electron nu",
+          "text_sha256": "4d81f136be65d063ed7a4f716a3b2c3d55e1023d9cb64fd4b34e80ea7ded14a3"
+        },
+        {
+          "distance": 1.5885848999023438,
+          "position": 9,
+          "rank": 5,
+          "text_excerpt": "Explorer (ACE), and STEREO-A magnetic footpoints at the source surface (set at 2.5 Re from Sun center), respectively. The star marks the SEP source \ufb02are. (antisunward) to the west of the spacecraft\u2013Sun line. We also (PFSS) coronal \ufb01eld mode",
+          "text_sha256": "7ce444b230ed1ff04cf424ce717334d89983af65b8f2d3efee014a326c62f934"
+        }
+      ]
+    },
+    {
+      "bibcode": "2015ApJ...808..133R",
+      "chunk_count": 24,
+      "expected_overall": "NO",
+      "heuristic_match_count": 8,
+      "id": "mention_previous_iris_work",
+      "ocr": false,
+      "path": "test_pdfs/negative/false_postive_with_older_config.pdf",
+      "pdf_sha256": "83189b3cb93d5a4396ca28d9969f5acb2e3ddde64e8de0c8ad7b971f1c608f39",
+      "selected": [
+        {
+          "distance": 1.0976817607879639,
+          "position": 30,
+          "rank": 1,
+          "text_excerpt": "cloud at the centers of Na I D1 and Mg I b2 in Figure 2 European Union\u2019s Seventh Framework Programme (FP7/2007- may represent hot EB aftermaths analogous to those found in 2013)/ ERC grant agreement No. 291058. The SST is operated the IRIS ",
+          "text_sha256": "0552adc3eeaa20c47bc2320277e929568ce7783b3a21c652b2adf383ed1127b2"
+        },
+        {
+          "distance": 1.1644341945648193,
+          "position": 10,
+          "rank": 2,
+          "text_excerpt": "are well observable in this diagnostic (Paper II). The round, (Scharmer et al. 2003) on La Palma. These conditions and the bright features show good correspondence with the H\u03b1 EBs, presence of an emerging active region toward the limb were ",
+          "text_sha256": "4656933b23e10efe3ac8b6268944fd3a2d8e7785de510bb475cccc5ac9427c1e"
+        },
+        {
+          "distance": 1.3356876373291016,
+          "position": 9,
+          "rank": 3,
+          "text_excerpt": "MI are too poor to resolve the cancelation of In Section 2 we describe the SST observations taken for this small opposite-polarity patches that characteristically occurs at analysis and in Section 3 the results, including comparison with EB",
+          "text_sha256": "2a252f3ba947c4b843b0df5de6b101f603cee41017a82683236ccce1c1f9fce6"
+        },
+        {
+          "distance": 1.3580453395843506,
+          "position": 29,
+          "rank": 4,
+          "text_excerpt": "5. 6 The Astrophysical Journal, 808:133 (7pp), 2015 August 1 Rutten et al. actually started already an hour before and that it peaked at The challenge for EB modeling is to meet the wide set of Dt = - 40 minutes. diverse constraints posed b",
+          "text_sha256": "19ed40507c5ecf1dfe57f1cde2275c97b06a04479219ebef718a6e4cabeaeca6"
+        },
+        {
+          "distance": 1.368780493736267,
+          "position": 4,
+          "rank": 5,
+          "text_excerpt": "layer assumption taken by the the Interface Region Imaging Spectrograph (IRIS; De Pontieu other authors but instead performing 2D H\u03b1 synthesis for et al. 2014). imposed EB perturbations embedded within a standard model In this installment w",
+          "text_sha256": "fbf9a120d52fff217d3e123e17e66207c66d76a934fbc8765f2602991ff68b43"
+        },
+        {
+          "distance": 1.374223232269287,
+          "position": 27,
+          "rank": 6,
+          "text_excerpt": "5 The Astrophysical Journal, 808:133 (7pp), 2015 August 1 Rutten et al. Figure 6. Scatter diagrams of Na I D1 (upper panel) and Mg I b2 (lower panel) wing intensities against H\u03b1 wing intensity for the full \ufb01eld of view (Figure 1). To avoid ",
+          "text_sha256": "e4ff255bc6e711431e3bd6ec5f55ba4b9d8da42609e4bdd3686cc2e8bfada387"
+        },
+        {
+          "distance": 1.3858158588409424,
+          "position": 3,
+          "rank": 7,
+          "text_excerpt": "like increase of about 3000 K in the upper photosphere would Rutten et al. (2013). explain their measurements. In the preceding EB studies of this series we used high- In a similar analysis Berlicki & Heinzel (2014) used another quality ima",
+          "text_sha256": "f8f78b13cc67252d6a3dd199ca57799d979d6ee4c566ad9723a98a47dcf642e9"
+        },
+        {
+          "distance": 1.3892847299575806,
+          "position": 26,
+          "rank": 8,
+          "text_excerpt": "Hot EB aftermaths\u2014When we viewed our data as movies Na I D1 and Mg I b2 cores (Leenaarts et al. 2010; Rutten notwithstanding the bad-seeing moments, we noted a general et al. 2011). The lower parts of EBs may be shielded by presence of diff",
+          "text_sha256": "7a28e24fad2e5b0546faf3933826fdd41ea8f9e72eec46fad4694907ab7fec91"
+        }
+      ]
+    },
+    {
+      "bibcode": null,
+      "chunk_count": 46,
+      "expected_overall": "NO",
+      "heuristic_match_count": 7,
+      "id": "citation_only_psp_sources",
+      "ocr": false,
+      "path": "test_pdfs/negative/nothing_iris_but_cites_paper.pdf",
+      "pdf_sha256": "b35e61643f89904864cdaa7abb70083a860c0e4e7f898a68a6dc00e9f1293892",
+      "selected": [
+        {
+          "distance": 1.2984817028045654,
+          "position": 18,
+          "rank": 1,
+          "text_excerpt": "on 2021/11/15). A cyan dashed curve shows the same solar limb contour in both panels allowing the panels to be related to each other. \u20138\u2013 manuscript submitted to JGR: Space Physics Figure 3. Summary of footpoint predictions for PSP Encounte",
+          "text_sha256": "c930a288eba0bc0949a66b552b046d429c9578227c55e5f59eddba3fea7164b9"
+        },
+        {
+          "distance": 1.3772149085998535,
+          "position": 5,
+          "rank": 2,
+          "text_excerpt": "\u20132\u2013 manuscript submitted to JGR: Space Physics 1. Trace the \ufb02ow of energy that heats and accelerates the solar corona and solar 2. Determine the structure and dynamics of the plasma and magnetic \ufb01elds at the sources of the solar wind 3. Exp",
+          "text_sha256": "313bbaf2070ba1ee7af6c6333ec136868767de3caf8516f08b3775b79b8aed44"
+        },
+        {
+          "distance": 1.4731262922286987,
+          "position": 20,
+          "rank": 3,
+          "text_excerpt": "for the consensus \ufb01tting. However, for this orbit, six hours near perihelion constitutes a large amount of longitudinal motion which causes some windows to contain ensemble members from two of the sources. When generating the consensus then",
+          "text_sha256": "6f24156afa7b5628278bd87e7c0c154d37b2b5e053353a4d888e0d349823de1f"
+        },
+        {
+          "distance": 1.492802619934082,
+          "position": 57,
+          "rank": 4,
+          "text_excerpt": "Arge, C. N., & Pizzo, V. J. (2000). Improvement in the prediction of solar wind con- ditions using near-real time solar magnetic \ufb01eld updates. Journal of Geophysi- cal Research: Space Physics, 105(A5), 10465-10479. Retrieved from https:// a",
+          "text_sha256": "348120340d0d5f4886dde9d34b95eeab6bcb1b14fa23a5f1a3ccbde0bea32bff"
+        },
+        {
+          "distance": 1.6660590171813965,
+          "position": 62,
+          "rank": 5,
+          "text_excerpt": ", M., D\u00b4emoulin, P., Halekas, J., & Stevens, M. L. (2022, December). Statistical Analysis of the Radial Evolution of the Solar Winds be- tween 0.1 and 1 au and Their Semiempirical Isopoly Fluid Modeling. The As- trophysical Journal, 940(2),",
+          "text_sha256": "4e1ca8681a970917da1bd6f46a6a4be41c57584076a16a567b53c7faa289599b"
+        },
+        {
+          "distance": 1.704979419708252,
+          "position": 61,
+          "rank": 6,
+          "text_excerpt": ", 915(1), 44. doi: 10.3847/1538-4357/ abfd2f Carrington, R. C. (1863). Observations of the spots on the Sun: from November 9, 1853, to March 24, 1861, made at Redhill. Chhiber, R., Matthaeus, W. H., Cohen, C. M. S., Ru\ufb00olo, D., Sonsrettee, ",
+          "text_sha256": "670a48f20bfef4498da131bdf6fa9268cb15b4ae11b02385dee234f231d4f204"
+        },
+        {
+          "distance": 1.8612895011901855,
+          "position": 36,
+          "rank": 7,
+          "text_excerpt": "under- goes less non-radial expansion. The third, meanwhile, was thin and extended, suggest- ing almost all open \ufb02ux emanating from it necessarily has a high expansion factor. The relationships between these coronal holes and the peak solar",
+          "text_sha256": "d2406f09ef26d6b40f61073145d17628f7d2b7f2a71e4988fc2bda6cb5e9e747"
+        }
+      ]
+    },
+    {
+      "bibcode": null,
+      "chunk_count": 16,
+      "expected_overall": "NO",
+      "heuristic_match_count": 0,
+      "id": "future_iris_cross_reference",
+      "ocr": false,
+      "path": "test_pdfs/negative/says_iris_in_conclusion.pdf",
+      "pdf_sha256": "146ee7a34592612ad08a2b26155b6fdb4137ba272b46e61ee1ab62555df8c864",
+      "selected": []
+    },
+    {
+      "bibcode": "2016JGRA..121.7470T",
+      "chunk_count": 29,
+      "expected_overall": "NO",
+      "heuristic_match_count": 5,
+      "id": "instrument_description_only",
+      "ocr": false,
+      "path": "test_pdfs/negative/talks_about_iris_only.pdf",
+      "pdf_sha256": "eb5192fc88c85913458b0fb89712c2f3ec7459be061b4e6b203c1de481171370",
+      "selected": [
+        {
+          "distance": 1.354360580444336,
+          "position": 437,
+          "rank": 1,
+          "text_excerpt": "on SolarSoft IDL package [Gibson, 2015b], which also utilizes the CHIANTI database to model all of the COSMO LC Wiley lines as well as K-Cor type white light data. Thus, FORWARD can create synthetic data from any magnetic extrapolation or M",
+          "text_sha256": "80241dd946c2762087bdfa2edbf4430b28c76dd91788f2d18c248116f7f1b94c"
+        },
+        {
+          "distance": 1.3719208240509033,
+          "position": 351,
+          "rank": 2,
+          "text_excerpt": "the Hinode EUV the Imaging Spectrometer [Culhane et al., 2007] and the Interface Region Imaging Spectrograph (IRIS) [De Terms Pontieu et al., 2014] have the ability to spectrally resolve individual emission lines, but the \ufb01eld of view of an",
+          "text_sha256": "d0fc7e3437ba446499e4cc09ee63b1b732ff10104cc6de8d8090a33e7e9d2cbb"
+        },
+        {
+          "distance": 1.4164836406707764,
+          "position": 164,
+          "rank": 3,
+          "text_excerpt": "Conditions a 1.5 m aperture to measure the magnetic \ufb01eld, temperature, density, and dynamics of the corona; (2) an instrument for monitoring chromosphere and prominence magnetic \ufb01elds and plasma properties (ChroMag); and (3) a white light K",
+          "text_sha256": "a0dd0eada34fcaf29175625fd358b04db80e2a5c0a099c04890fb7d98d11c7f5"
+        },
+        {
+          "distance": 1.4541046619415283,
+          "position": 146,
+          "rank": 4,
+          "text_excerpt": "instruments will be complementary to DKIST and Hi-C and provide large \ufb01eld-of-view observations of the solar corona with 2 arc sec spatial resolution and an emphasis on a synoptic mode of operation that is matched to the key physical proces",
+          "text_sha256": "69168eb7aa148e83d2bdfdf1a6f69e70d634fa5110c8d00c4a714633c2828993"
+        },
+        {
+          "distance": 1.642557978630066,
+          "position": 54,
+          "rank": 5,
+          "text_excerpt": "and methods [Schrijver et al., 2008; Wiegelmann and Sakurai, 2012]. However, the highly dynamical state of See the solar chromosphere, which is marked by rapid changes of the plasma properties with height above the the photosphere, along wi",
+          "text_sha256": "f30430edb6846253b22af9291ad4e9a8becada1e7db262d6cbd393f89f16a652"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025SSRv..221...50H",
+      "chunk_count": 34,
+      "expected_overall": "NO",
+      "heuristic_match_count": 24,
+      "id": "review_only_quiet_sun",
+      "ocr": false,
+      "path": "data/pdfs/iris_search/2025SSRv..221...50H.pdf",
+      "pdf_sha256": "4016868e04b8a3d443e381ca0d0279497d5d9a3dadb8496d26013f3827a9092c",
+      "selected": [
+        {
+          "distance": 1.104188084602356,
+          "position": 78,
+          "rank": 1,
+          "text_excerpt": "size scales ever observed on the surface of the Sun through measurements made by Solar Orbiter in the corona and then the solar wind and Parker Solar Probe\u2019s solar wind measurements close ever that before, will provide us a holistic view of",
+          "text_sha256": "c92a0ec1fcf9714206f087fee54b4cd4324e7e02f9bd99e84d8d4f2b85eca841"
+        },
+        {
+          "distance": 1.236067533493042,
+          "position": 76,
+          "rank": 2,
+          "text_excerpt": "and the \ufb02ares at the 0.4\u2032\u2032 resolution and higher time cadence (1 sec) than current instruments. These datasets will allow us to probe the energy \ufb02ow through the solar atmosphere spectroscopically for the \ufb01rst time. Although some connections",
+          "text_sha256": "36813d43ddfb4d36fa76b57a9327cd984f5af76dbc68ec1124f017c0b3ba8d38"
+        },
+        {
+          "distance": 1.2694225311279297,
+          "position": 53,
+          "rank": 3,
+          "text_excerpt": "of multiple views of the Sun when combined with other spacecraft. Two views of some of the larger EUV brightenings were possible, using SDO/AIA and EUI when they were separated by 31.5\u25e6. The heights were determined from this, and found to b",
+          "text_sha256": "63bc61e607241a6f979392dcebeffce3c3457aa12086a215904020d7e6b906d9"
+        },
+        {
+          "distance": 1.3407812118530273,
+          "position": 51,
+          "rank": 4,
+          "text_excerpt": "the energy is often found. For example, Benz and Krucker (2002) explored these small-scale \ufb02ares in the EUV with EIT onboard the Solar and Heliospheric spacecraft (SOHO), and the assumptions made when measuring them. The discrepancies in th",
+          "text_sha256": "22aaf7da857f0ae77321bea6ffeb80fa62be4fe509356fd3ad926960a7791f8c"
+        },
+        {
+          "distance": 1.4631227254867554,
+          "position": 75,
+          "rank": 5,
+          "text_excerpt": "Solar Orbiter and Parker Solar Probe are working close to the Sun, where the properties of the nascent solar wind are still not completely modi\ufb01ed by the interaction with the ambient heliosphere. The element composition anomaly (of FIP bias",
+          "text_sha256": "09f543a738536f10544e09b181ae685378162677fbddd9d368ed04c0ee76d0ff"
+        },
+        {
+          "distance": 1.4700785875320435,
+          "position": 3,
+          "rank": 6,
+          "text_excerpt": "concentrated on such events that are observed in the EUV. For events observed in the optical regime please refer to Rutten (2020). The EUV bright- enings and \ufb02ows are summarised in Table 1 such as chromospheric jets, explosive events, blink",
+          "text_sha256": "fe40cb71dcc7db8e63b8deb1639d907d7239d31b5ded203c77124252f3212267"
+        },
+        {
+          "distance": 1.478959083557129,
+          "position": 50,
+          "rank": 7,
+          "text_excerpt": "et al. 2023a). The activity related to bright points will be discussed in Sect. 3. This section has summarised the basic characteristics of the quiet Sun. The next section discusses small-scale \ufb02are observations. This will be followed by mo",
+          "text_sha256": "7f0c9855eb2e728ba8ab70dd97d4a288af1c40a7aaa6babf0f26161bebfdbcb7"
+        },
+        {
+          "distance": 1.4793007373809814,
+          "position": 54,
+          "rank": 8,
+          "text_excerpt": "and often associated with strong Doppler shift). Alissandrakis and Vial (2023) and indeed, cases have been reported (e.g. Innes and Teriaca 2013; Huang et al. 2014) that demonstrate that the EUV brightenings population and the Explosive Eve",
+          "text_sha256": "49f5700f8a4664f5fc5637e2758a9537df81160828e3102622b491a86a7d889a"
+        },
+        {
+          "distance": 1.5140211582183838,
+          "position": 63,
+          "rank": 9,
+          "text_excerpt": "to explore whether there could be enough heating from Alfv\u00e9n wave resonance heat- ing and found that considering the density and magnetic \ufb01eld in the corona, only about 50% of the energy could be provided through this route. EUV Quiet Sun C",
+          "text_sha256": "e5b569d692a46a9b2d39b0969a8bbb25d2f79c589d0c4a79fffa906f9af5c845"
+        },
+        {
+          "distance": 1.5180957317352295,
+          "position": 73,
+          "rank": 10,
+          "text_excerpt": "proposed to feed into the solar wind. It is challenging to link these small-scale features with the in-situ solar wind data. De Pablos et al. (2022) have developed a method to aid connectivity measurements between the small-scale imaging an",
+          "text_sha256": "9190cadabf075b8167d201030b9332c6586151ce720070c4bd7eece9e771b198"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025ApJ...978...27D",
+      "chunk_count": 36,
+      "expected_overall": "YES",
+      "heuristic_match_count": 8,
+      "id": "synthetic_passband_only_mg_ii",
+      "ocr": false,
+      "path": "data/pdfs/iris_search/2025ApJ...978...27D.pdf",
+      "pdf_sha256": "f293d40b872db3e58e9c4d791c38bcdbcf2fb037eb417faac1c57ae44327fdec",
+      "selected": [
+        {
+          "distance": 1.3523584604263306,
+          "position": 48,
+          "rank": 1,
+          "text_excerpt": "row) and in the pixel of the \ufb01eld of view showing the maximum |Q| signals in the degraded pro\ufb01les (third row). The \ufb01lled circles and \ufb01lled squares show the degraded pro\ufb01les, mimicking a CLASP2 observation, for the AD and AA solutions, respe",
+          "text_sha256": "ab21ea9e2e66d832c27ebc8ee99f31d7f9dad267dfadc675ffbff6592cce2b84"
+        },
+        {
+          "distance": 1.3780795335769653,
+          "position": 42,
+          "rank": 2,
+          "text_excerpt": "Limited Resolution In Figure 10 we show the emergent linear polarization We then solved the RT problem, pixel-by-pixel, in the 3D pro\ufb01les for the four atmospheric models shown in Figures 2\u20135 model resulting from an MHD simulation described ",
+          "text_sha256": "a56e0823067c7c036f8fbfee4a8c2558b6b6293be5d3b8cfdbc7acf40deea5b6"
+        },
+        {
+          "distance": 1.4686124324798584,
+          "position": 1,
+          "rank": 3,
+          "text_excerpt": "3 Consejo Superior de Investigaciones Cient\u00ed\ufb01cas, Spain 4 Istituto ricerche solari Aldo e Cele Dacc\u00f2 (IRSOL), Faculty of informatics, Universit\u00e0 della Svizzera italiana, Locarno, Switzerland 5 Euler Institute, Universit\u00e0 della Svizzera ital",
+          "text_sha256": "f797965bd6c378b3d644734dc1247f7ae3d71764aa77c018b70168d8706be3e2"
+        },
+        {
+          "distance": 1.4689184427261353,
+          "position": 49,
+          "rank": 4,
+          "text_excerpt": "del Pino Alem\u00e1n et al. Figure 10. Linear polarization Q (left column) and U (right column) spectrum, around the Mg II k line, normalized to the AA intensity at \u03bb = 280 nm, calculated in the model atmospheres resulting from the inversion of ",
+          "text_sha256": "c98fdd2d291f44916ea4689f48787f415d7f6ba6678af10126674710b90c6e1d"
+        },
+        {
+          "distance": 1.4862611293792725,
+          "position": 4,
+          "rank": 5,
+          "text_excerpt": "\ufb01eld in the solar polarization in the far wings of these lines (W. Henze & chromosphere. The spectral line polarization carries information J. O. Sten\ufb02o 1987; R. Manso Sainz et al. 2019). Later, in 2013, about the magnetic \ufb01eld in the regio",
+          "text_sha256": "1687ad2173abcb90b42772b5e2d92a50fbaba8c867dbf9b9da960fc5d4f4161a"
+        },
+        {
+          "distance": 1.5516235828399658,
+          "position": 43,
+          "rank": 6,
+          "text_excerpt": "F the spectrograph slit, modeled with the square PSF of \u223c0.\uf0b298 in with FWHM = 110 m\u00c5 (D. Song et al. 2018; T. Tsuzuki et al. the direction perpendicular to the slit (\u201cx\u201d-direction; slit width 2020). For the degraded pro\ufb01les, we include the ",
+          "text_sha256": "cc9d91757ca977752590976a83c1fa3554b2be2c02b66b46dc2ff1c899e0bbdc"
+        },
+        {
+          "distance": 1.564684271812439,
+          "position": 2,
+          "rank": 7,
+          "text_excerpt": "Mg II doublet polarization pro\ufb01les. In particular, we aim to assess how the widely used angle-average approximation affects the predicted polarization. By solving the radiative transfer problem in 1D semiempirical atmospheric models, we \ufb01nd",
+          "text_sha256": "90c46a8d4ec90ae2db83cde8597729e7251d72ef84d647da301fb5966f3c8cfb"
+        },
+        {
+          "distance": 1.6502121686935425,
+          "position": 31,
+          "rank": 8,
+          "text_excerpt": "del Pino Alem\u00e1n et al. Figure 4. Circular polarization V spectrum, normalized to the AA intensity at Figure 5. Linear polarization Q spectrum, normalized to the AA intensity at \u03bb = 280 nm, in FAL-C (black curves) and FAL-C v\uf0ae(blue curves) f",
+          "text_sha256": "2cc96b0e0a16f2b7048799ecb006998ec362d4f87c49201e76e39cd2329500dc"
+        }
+      ]
+    },
+    {
+      "bibcode": "2025ApJ...982..147M",
+      "chunk_count": 62,
+      "expected_overall": "NO",
+      "heuristic_match_count": 7,
+      "id": "unrelated_iris_acronym",
+      "ocr": false,
+      "path": "data/pdfs/iris_search/2025ApJ...982..147M.pdf",
+      "pdf_sha256": "c0c2a246ea1241abc645d9e657c303f34669acf84b22ed8c7a2e4967133fc136",
+      "selected": [
+        {
+          "distance": 1.449081301689148,
+          "position": 3,
+          "rank": 1,
+          "text_excerpt": "magnetic reconnection in the solar atmosphere remains elusive. suspended against gravity within a magnetic \ufb01eld in a million- High-resolution data obtained from Solar Dynamics Observa- degree hot corona. They show a variety of dynamical pla",
+          "text_sha256": "d508347ac143ff7f4e536aafbf0af43d24fac0f3b6f73025e9c6ffda505de834"
+        },
+        {
+          "distance": 1.5400307178497314,
+          "position": 113,
+          "rank": 2,
+          "text_excerpt": ", arcades and prominence-associated plasma. The observed Figure 9). We would like to emphasize that the current sheet brightening phenomena could potentially be linked to the cannot be resolved using the available AIA imaging channels. cumu",
+          "text_sha256": "71a9b91217220f0cc2562354bdf03a2df0470cd2fb86ebdfce15a5711d461b5c"
+        },
+        {
+          "distance": 1.6262876987457275,
+          "position": 136,
+          "rank": 3,
+          "text_excerpt": ". B. Jess et al. 2010; A. K. Srivast- \ufb01eld. Another issue is that forced reconnection occurs on a ava et al. 2019; H. M\u00e9sz\u00e1rosov\u00e1 & P. G\u00f6m\u00f6ry 2020; small scale, with a rapid reconnection rate. Therefore, more A. K. Srivastava et al. 2021). ",
+          "text_sha256": "5c12ae4fd0a14bfd9940dfa65dc46ffefa2cc797f597f747801d1afd15d6229d"
+        },
+        {
+          "distance": 1.646134376525879,
+          "position": 114,
+          "rank": 4,
+          "text_excerpt": "Kumar et al. (2023), using data from et al. 2024a). SDO, STEREO, and IRIS. The results of their study suggest an Figure 10 shows multiple snapshots of the reconnection alternative perspective. Researchers have determined that the region in ",
+          "text_sha256": "a9d6856326640e13a81c87377398e1043a8293825ec68a1d295831a00152003e"
+        },
+        {
+          "distance": 1.7501001358032227,
+          "position": 13,
+          "rank": 5,
+          "text_excerpt": "structures act as external perturbations, which disturb the (2019) applied recurring external perturbations with different periphery of the prominence segment and initiate reconnection. strengths and showed that, during forced reconnection,",
+          "text_sha256": "faeccbd06947f599d7bea5dcf28ffb30efdb98f00c1f5fac461aa7936cd53be1"
+        },
+        {
+          "distance": 1.7879002094268799,
+          "position": 37,
+          "rank": 6,
+          "text_excerpt": "1,\u201d \u201cL2,\u201d and \u201cL3,\u201d are placed across the jetlike eruptions to track them at different heights. Multiple jetlike structures started to lift with a velocity of \u224849\u201365 km s\u22121 (right panels). They impinge on the nearby prominence obliquely and",
+          "text_sha256": "a23bfd749e6ab82f419a829a7e8119409182c2bc99e58daa868705854c704537"
+        },
+        {
+          "distance": 1.8619844913482666,
+          "position": 7,
+          "rank": 7,
+          "text_excerpt": "\ufffd\ufffdows (S. Mondal et al. 2023), J. Birn et al. 2005; R. Jain et al. 2005; G. Vekstein 2017; and solar \ufb02ares (e.g., S. Masuda et al. 1994; Y. Su et al. 2013) M. A. Potter et al. 2019). Energy release and plasma heating due under solar atmosph",
+          "text_sha256": "af5702607036c78ce4a7365fdf90a9e55a6b5b2f2c5aa8e108dc39c82eb3b931"
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

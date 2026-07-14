@@ -4,10 +4,35 @@
 
 The goal of this repository is to be able to find, identify and extract data references in research papers which talk about IRIS.
 
-An IRIS paper is defined as the following:
+An IRIS paper is one that:
 
-- Any paper which shows IRIS data
-- Any paper which creates synthetic data of any IRIS passband
+- directly uses observational data from IRIS; or
+- creates or analyzes a synthetic observable inside an IRIS spectrograph
+  wavelength window or for an IRIS slit-jaw channel.
+
+The synthetic observable counts even when the paper does not mention IRIS.
+Results must distinguish an explicit IRIS relationship (`EXPLICIT`) from one
+inferred only because IRIS can observe that wavelength or channel
+(`PASSBAND_ONLY`). A citation, mission description, review of other work, or an
+instrument/calibration/software discussion without observational or synthetic
+data use is not sufficient.
+
+The canonical instrument coverage follows the IRIS instrument paper
+([De Pontieu et al. 2014](https://doi.org/10.1007/s11207-014-0485-y)):
+
+- spectrograph FUV1: 1331.7–1358.4 Å;
+- spectrograph FUV2: 1389.0–1407.0 Å;
+- spectrograph NUV: 2782.7–2835.1 Å; and
+- slit-jaw channels: 1330, 1400, 2796, and 2832 Å.
+
+The machine-readable values live in
+[`src/paper_data_linking/iris.py`](src/paper_data_linking/iris.py). The manually
+curated ADS IRIS library is append-only positive ground truth. Absence from the
+library is unlabeled, not a negative result.
+
+The current v2 prompt predates this exact definition. Phase 0 preserves its
+outputs as a baseline; the structured prompt work will adopt this definition
+without rewriting the historical baseline.
 
 The `paper-data-linking` library contains code for ingesting and downloading PDFs.
 There is also a web application which will allow one to upload PDFs and have them analyzed by a LLM.
@@ -67,6 +92,10 @@ Make sure you have the following installed on your system:
    ```bash
    make onnx
    ```
+
+   This explicit setup verifies the pinned archive and every extracted model
+   file. Analysis never downloads a model automatically. Recheck an existing
+   model with `make onnx-check`.
 
 ### **4. Build Docker Images**
 
@@ -170,7 +199,7 @@ This guide explains each component and how they work together.
 ## Processing Pipeline
 
 1. **Initial Filtering**: Uses fuzzy string matching to quickly identify potentially relevant content
-2. **Embedding & Retrieval**: Creates embeddings of the text and finds relevant sections
+2. **Embedding & Retrieval**: Runs the local ONNX model and ranks text sections in memory
 3. **LLM Analysis**: Analyzes the relevant sections to extract detailed information
 
 ## Configuration File Structure
@@ -239,7 +268,7 @@ Therefore, one should be reasonably certain that if a paper does not contain any
 Uses the `embedder_kwargs` to:
 
 - Create embeddings of document sections
-- Find sections relevant to the `query`
+- Rank sections against the `query` with cosine similarity
 - Filters based on the initial filtering results using the `where` clause
 
 ### 3. LLM Analysis
