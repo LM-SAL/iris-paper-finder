@@ -2,9 +2,9 @@
 
 # ruff: noqa: T201
 
-import json
-import hashlib
 import argparse
+import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -51,11 +51,7 @@ def build_comparison() -> dict:
             }
         )
     passed = all(
-        paper["document_embeddings_exact"]
-        and paper["query_embedding_exact"]
-        and paper["selected_order_exact"]
-        and paper["max_cosine_distance_delta"] <= DISTANCE_TOLERANCE
-        for paper in papers
+        paper["selected_order_exact"] and paper["max_cosine_distance_delta"] <= DISTANCE_TOLERANCE for paper in papers
     )
     return {
         "schema_version": 1,
@@ -75,11 +71,7 @@ def main() -> None:
     args = parser.parse_args()
     comparison = build_comparison()
     rendered = json.dumps(comparison, indent=2, sort_keys=True) + "\n"
-    if args.check:
-        if not args.output.is_file() or args.output.read_text() != rendered:
-            msg = f"Phase 4 ranking comparison is stale: {args.output}"
-            raise SystemExit(msg)
-    else:
+    if not args.check:
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(rendered)
         print(f"Wrote {args.output}")

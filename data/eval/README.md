@@ -45,12 +45,13 @@ Phase 4 freezes the last Chroma run and compares it with direct ONNX/NumPy
 ranking:
 
 ```bash
-PYTHONPATH=src python scripts/freeze_phase4_chroma_baseline.py
-PYTHONPATH=src python scripts/compare_phase4_ranking.py
+uv run python scripts/compare_phase4_ranking.py --check
 ```
 
-The Chroma baseline command requires the frozen legacy environment; normal
-analysis no longer installs or imports Chroma.
+The Chroma baseline is a historical artifact from the removed legacy
+environment. The comparison requires identical selected-chunk order and cosine
+distance within tolerance; bitwise embedding hashes remain diagnostic because
+floating-point output can vary across ONNX platforms.
 
 - `phase4_chroma_baseline.json` stores the final Chroma embeddings and ranking.
 - `phase4_ranking_comparison.json` proves direct embedding/order equivalence.
