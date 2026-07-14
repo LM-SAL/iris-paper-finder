@@ -4,12 +4,11 @@
 manually assigned labels, evidence notes, PDF locations, and checksums used by
 `iris-papers evaluate`.
 
-`legacy_v2_2025/ads_iris_library_2026-01-07.txt` preserves the append-only ADS
-IRIS library snapshot used as positive ground truth. Absence from that library
-is unlabeled, never negative. `report.md` records the legacy baseline summary,
-and `outside_library_review_queue.txt` retains the three unresolved candidates.
-The removed v2 runtime and raw migration artifacts remain available in Git
-history.
+`ads_iris_library_2026-01-07.txt` preserves the append-only ADS IRIS library
+snapshot used as positive ground truth. Absence from that library is unlabeled,
+never negative. `outside_library_review_queue.txt` retains the three unresolved
+candidates. The removed v2 runtime and migration evidence remain available in
+Git history.
 
 The accepted structured evaluation is `reference_results.jsonl` with its
 human-readable decision record in `evaluation_report.md`. It preserves the full
