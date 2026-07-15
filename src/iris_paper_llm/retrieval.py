@@ -296,13 +296,11 @@ def _build_documents(
 def _rank_candidates_only(
     embedder: ONNXEmbedder,
     reasons: dict[str, SelectionReason],
-    top_k: int,
+    limit: int,
 ) -> list[tuple[str, float, SelectionReason]]:
-    if not reasons or top_k <= 0:
-        return []
     ranked = _query(
         embedder,
-        n_results=min(top_k, len(reasons)),
+        n_results=min(limit, len(reasons)),
         where={"is_candidate": 1},
     )
     return [(chunk_id, distance, reasons[chunk_id]) for chunk_id, distance in ranked]
@@ -312,17 +310,14 @@ def _rank_global(
     embedder: ONNXEmbedder,
     already_selected: list[tuple[str, float, SelectionReason]],
     chunks: list[PaperChunk],
-    top_k: int,
+    limit: int,
 ) -> list[tuple[str, float, SelectionReason]]:
-    if top_k <= 0:
-        return already_selected
     ranked = _query(
         embedder,
-        n_results=min(len(chunks), top_k + len(already_selected)),
+        n_results=min(len(chunks), limit + len(already_selected)),
     )
     selected = list(already_selected)
     selected_ids = {chunk_id for chunk_id, _distance, _reason in selected}
-    limit = min(top_k, len(chunks))
     for chunk_id, distance in ranked:
         if chunk_id in selected_ids:
             continue
@@ -380,12 +375,13 @@ def retrieve_chunks(
         embedder = ONNXEmbedder()
 
     embedder.create_embeddings(_build_documents(chunks, reasons))
+    effective_top_k = min(top_k, len(chunks))
 
     selected: list[tuple[str, float, SelectionReason]] = []
     if mode in {RetrievalMode.AUTO, RetrievalMode.HEURISTIC}:
-        selected = _rank_candidates_only(embedder, reasons, top_k)
+        selected = _rank_candidates_only(embedder, reasons, effective_top_k)
 
-    if mode == RetrievalMode.ALL or (mode == RetrievalMode.AUTO and len(selected) < min(top_k, len(chunks))):
-        selected = _rank_global(embedder, selected, chunks, top_k)
+    if mode == RetrievalMode.ALL or (mode == RetrievalMode.AUTO and len(selected) < effective_top_k):
+        selected = _rank_global(embedder, selected, chunks, effective_top_k)
 
     return _build_retrieval_result(chunks, reasons, selected)
