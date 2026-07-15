@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from collections import defaultdict
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -18,6 +17,7 @@ from iris_paper_llm.classify import (
     pdf_sha256,
 )
 from iris_paper_llm.download import download_records
+from iris_paper_llm.jsonl import read_jsonl
 from iris_paper_llm.models import Decision, PaperResult, RetrievalMode
 from iris_paper_llm.retrieval import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, DEFAULT_TOP_K
 
@@ -29,7 +29,7 @@ DEFAULT_OUTPUT = Path("data/eval/classification_results.jsonl")
 
 
 def load_cases(path: Path) -> list[dict]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    return read_jsonl(path)
 
 
 def case_path(case: dict, *, base_dir: Path) -> Path:
@@ -176,10 +176,7 @@ def _matching_results(
     if not output.is_file():
         return []
     latest = {}
-    for line in output.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        record = json.loads(line)
+    for record in read_jsonl(output):
         retrieval = record["retrieval"]
         if model is not None:
             expected_key = classification_key(

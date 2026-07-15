@@ -7,6 +7,7 @@ from hashlib import sha256
 from typing import TYPE_CHECKING
 
 from iris_paper_llm.iris import IRIS_SLIT_JAW_CHANNELS_ANGSTROM, IRIS_SPECTROGRAPH_WINDOWS_ANGSTROM
+from iris_paper_llm.jsonl import append_jsonl, read_jsonl
 from iris_paper_llm.models import (
     Decision,
     IRISClassification,
@@ -244,10 +245,7 @@ def load_successful_keys(path: Path) -> set[str]:
     if not path.is_file():
         return set()
     successful = set()
-    for line in path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        record = json.loads(line)
+    for record in read_jsonl(path):
         if record["result"]["status"] == ResultStatus.CLASSIFIED:
             successful.add(record["evaluation_key"])
     return successful
@@ -255,9 +253,7 @@ def load_successful_keys(path: Path) -> set[str]:
 
 def append_record(path: Path, record: dict) -> None:
     """Checkpoint one completed or failed paper immediately."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as stream:
-        stream.write(json.dumps(record, separators=(",", ":")) + "\n")
+    append_jsonl(path, record)
 
 
 def _retrieval_record(

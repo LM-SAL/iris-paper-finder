@@ -161,7 +161,9 @@ positive, while absence is unlabeled rather than negative.
 The CLI reads `OPENAI_API_KEY` and `ADS_TOKEN` from the environment or a local
 `.env`. The OpenAI request has a 300-second timeout and at most two SDK retries.
 The default model is the pinned `gpt-5-mini-2025-08-07`; use `--model` only for
-an intentional experiment.
+an intentional experiment. The local retriever loads `models/onnx` by default;
+set `IRIS_PAPER_LLM_MODEL_DIR` to a directory containing `model.onnx` and
+`tokenizer.json` to use a pre-installed copy.
 
 The classifier returns a strict Pydantic record. Extraction, retrieval, API,
 schema, refusal, and evidence-validation problems are stored as

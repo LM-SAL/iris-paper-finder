@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass
 from functools import cache
@@ -28,6 +29,7 @@ DEFAULT_CHUNK_SIZE = 500
 DEFAULT_CHUNK_OVERLAP = 50
 DEFAULT_TOP_K = 20
 DEFAULT_MODEL_DIR = Path(__file__).resolve().parents[2] / "models/onnx"
+MODEL_DIR_ENV = "IRIS_PAPER_LLM_MODEL_DIR"
 IRIS_RETRIEVAL_QUERY = (
     "Does this paper use observational IRIS data or create synthetic observables "
     "within an IRIS spectrograph window or slit-jaw channel?"
@@ -62,7 +64,7 @@ class _EmbeddingDocument:
 class _MiniLMModel:
     """Local all-MiniLM-L6-v2 inference matching the frozen Chroma baseline."""
 
-    def __init__(self, model_dir: Path | str = DEFAULT_MODEL_DIR) -> None:
+    def __init__(self, model_dir: Path | str) -> None:
         model_dir = Path(model_dir)
         model_path = model_dir / "model.onnx"
         tokenizer_path = model_dir / "tokenizer.json"
@@ -114,34 +116,38 @@ def _load_model(model_dir: str) -> _MiniLMModel:
 class ONNXEmbedder:
     """Keep documents and normalized embeddings in memory for one paper."""
 
-    def __init__(self, model_dir: Path | str = DEFAULT_MODEL_DIR) -> None:
+    def __init__(self, model_dir: Path | str | None = None) -> None:
+        if model_dir is None:
+            model_dir = os.getenv(MODEL_DIR_ENV, str(DEFAULT_MODEL_DIR))
         self.model = _load_model(str(Path(model_dir).resolve()))
-        self.docs = []
+        self.docs: list[_EmbeddingDocument] = []
         self.embeddings = np.empty((0, 384), dtype=np.float32)
 
-    def create_embeddings(self, docs: list) -> None:
+    def create_embeddings(self, docs: list[_EmbeddingDocument]) -> None:
         self.docs = list(docs)
         self.embeddings = self.model.encode([doc.page_content for doc in self.docs])
 
-    def get_relevant_docs(self, query: str, kwargs: dict | None = None, n_results: int = 10):
-        if n_results <= 0:
+    def get_relevant_docs(
+        self,
+        query: str,
+        *,
+        top_k: int = 10,
+        where: dict[str, int | str] | None = None,
+    ) -> tuple[list[_EmbeddingDocument], list[float]]:
+        if top_k <= 0:
             return [], []
-        kwargs = kwargs or {}
-        unsupported = set(kwargs) - {"where"}
-        if unsupported:
-            msg = f"Unsupported ranking options: {sorted(unsupported)}"
-            raise ValueError(msg)
-        where = kwargs.get("where", {})
-        indices = [
-            index
-            for index, doc in enumerate(self.docs)
-            if all(doc.metadata.get(key) == value for key, value in where.items())
-        ]
+        indices = range(len(self.docs))
+        if where:
+            indices = [
+                index
+                for index, doc in enumerate(self.docs)
+                if all(doc.metadata.get(key) == value for key, value in where.items())
+            ]
         if not indices:
             return [], []
         query_embedding = self.model.encode([query])[0]
         distances = 1.0 - self.embeddings[indices] @ query_embedding
-        order = np.argsort(distances, kind="stable")[:n_results]
+        order = np.argsort(distances, kind="stable")[:top_k]
         return (
             [self.docs[indices[index]] for index in order],
             [float(distances[index]) for index in order],
@@ -257,36 +263,23 @@ def select_candidates(chunks: list[PaperChunk]) -> dict[str, SelectionReason]:
     return reasons
 
 
-def _query(embedder, *, n_results: int, where: dict | None = None) -> list[tuple[str, float]]:
+def _query(
+    embedder: ONNXEmbedder,
+    *,
+    n_results: int,
+    where: dict[str, int | str] | None = None,
+) -> list[tuple[str, float]]:
     if n_results == 0:
         return []
-    kwargs = {"where": where} if where is not None else None
-    docs, distances = embedder.get_relevant_docs(IRIS_RETRIEVAL_QUERY, kwargs, n_results=n_results)
+    docs, distances = embedder.get_relevant_docs(IRIS_RETRIEVAL_QUERY, top_k=n_results, where=where)
     return [(str(doc.metadata["chunk_id"]), float(distance)) for doc, distance in zip(docs, distances, strict=True)]
 
 
-def retrieve_chunks(
+def _build_documents(
     chunks: list[PaperChunk],
-    *,
-    mode: RetrievalMode = RetrievalMode.AUTO,
-    top_k: int = DEFAULT_TOP_K,
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
-    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
-    embedder=None,
-) -> RetrievalResult:
-    """Rank chunks locally, prioritizing deterministic candidates in auto mode."""
-    if not chunks:
-        msg = "At least one chunk is required"
-        raise ValueError(msg)
-    if top_k <= 0:
-        msg = "top_k must be positive"
-        raise ValueError(msg)
-    mode = RetrievalMode(mode)
-    reasons = select_candidates(chunks)
-    if embedder is None:
-        embedder = ONNXEmbedder()
-
-    documents = [
+    reasons: dict[str, SelectionReason],
+) -> list[_EmbeddingDocument]:
+    return [
         _EmbeddingDocument(
             page_content=chunk.text,
             metadata={
@@ -298,31 +291,53 @@ def retrieve_chunks(
         )
         for position, chunk in enumerate(chunks)
     ]
-    embedder.create_embeddings(documents)
 
-    selected: list[tuple[str, float, SelectionReason]] = []
-    candidate_count = len(reasons)
-    if mode in {RetrievalMode.AUTO, RetrievalMode.HEURISTIC} and candidate_count:
-        candidate_ranked = _query(
-            embedder,
-            n_results=min(top_k, candidate_count),
-            where={"is_candidate": 1},
-        )
-        selected.extend((chunk_id, distance, reasons[chunk_id]) for chunk_id, distance in candidate_ranked)
 
-    if mode == RetrievalMode.ALL or (mode == RetrievalMode.AUTO and len(selected) < min(top_k, len(chunks))):
-        global_ranked = _query(
-            embedder,
-            n_results=min(len(chunks), top_k + len(selected)),
-        )
-        selected_ids = {chunk_id for chunk_id, _distance, _reason in selected}
-        for chunk_id, distance in global_ranked:
-            if chunk_id not in selected_ids:
-                selected.append((chunk_id, distance, SelectionReason.GLOBAL_FALLBACK))
-                selected_ids.add(chunk_id)
-            if len(selected) == min(top_k, len(chunks)):
-                break
+def _rank_candidates_only(
+    embedder: ONNXEmbedder,
+    reasons: dict[str, SelectionReason],
+    top_k: int,
+) -> list[tuple[str, float, SelectionReason]]:
+    if not reasons or top_k <= 0:
+        return []
+    ranked = _query(
+        embedder,
+        n_results=min(top_k, len(reasons)),
+        where={"is_candidate": 1},
+    )
+    return [(chunk_id, distance, reasons[chunk_id]) for chunk_id, distance in ranked]
 
+
+def _rank_global(
+    embedder: ONNXEmbedder,
+    already_selected: list[tuple[str, float, SelectionReason]],
+    chunks: list[PaperChunk],
+    top_k: int,
+) -> list[tuple[str, float, SelectionReason]]:
+    if top_k <= 0:
+        return already_selected
+    ranked = _query(
+        embedder,
+        n_results=min(len(chunks), top_k + len(already_selected)),
+    )
+    selected = list(already_selected)
+    selected_ids = {chunk_id for chunk_id, _distance, _reason in selected}
+    limit = min(top_k, len(chunks))
+    for chunk_id, distance in ranked:
+        if chunk_id in selected_ids:
+            continue
+        selected.append((chunk_id, distance, SelectionReason.GLOBAL_FALLBACK))
+        selected_ids.add(chunk_id)
+        if len(selected) == limit:
+            break
+    return selected
+
+
+def _build_retrieval_result(
+    chunks: list[PaperChunk],
+    reasons: dict[str, SelectionReason],
+    selected: list[tuple[str, float, SelectionReason]],
+) -> RetrievalResult:
     chunks_by_id = {chunk.chunk_id: chunk for chunk in chunks}
     retrieved = [
         RetrievedChunk(
@@ -341,3 +356,36 @@ def retrieve_chunks(
         adjacent_chunk_ids=adjacent_ids,
         selected=retrieved,
     )
+
+
+def retrieve_chunks(
+    chunks: list[PaperChunk],
+    *,
+    mode: RetrievalMode = RetrievalMode.AUTO,
+    top_k: int = DEFAULT_TOP_K,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_overlap: int = DEFAULT_CHUNK_OVERLAP,
+    embedder: ONNXEmbedder | None = None,
+) -> RetrievalResult:
+    """Rank chunks locally, prioritizing deterministic candidates in auto mode."""
+    if not chunks:
+        msg = "At least one chunk is required"
+        raise ValueError(msg)
+    if top_k <= 0:
+        msg = "top_k must be positive"
+        raise ValueError(msg)
+    mode = RetrievalMode(mode)
+    reasons = select_candidates(chunks)
+    if embedder is None:
+        embedder = ONNXEmbedder()
+
+    embedder.create_embeddings(_build_documents(chunks, reasons))
+
+    selected: list[tuple[str, float, SelectionReason]] = []
+    if mode in {RetrievalMode.AUTO, RetrievalMode.HEURISTIC}:
+        selected = _rank_candidates_only(embedder, reasons, top_k)
+
+    if mode == RetrievalMode.ALL or (mode == RetrievalMode.AUTO and len(selected) < min(top_k, len(chunks))):
+        selected = _rank_global(embedder, selected, chunks, top_k)
+
+    return _build_retrieval_result(chunks, reasons, selected)

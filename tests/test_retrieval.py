@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+from unittest.mock import patch
 
 import numpy as np
 
@@ -15,11 +16,11 @@ class FakeEmbedder:
     def create_embeddings(self, docs: list) -> None:
         self.docs = docs
 
-    def get_relevant_docs(self, _query: str, kwargs: dict | None = None, n_results: int = 10):
+    def get_relevant_docs(self, _query: str, *, top_k: int = 10, where: dict | None = None):
         docs = self.docs
-        if kwargs and kwargs.get("where"):
+        if where:
             docs = [doc for doc in docs if doc.metadata["is_candidate"] == 1]
-        docs = sorted(docs, key=lambda doc: doc.metadata["position"], reverse=True)[:n_results]
+        docs = sorted(docs, key=lambda doc: doc.metadata["position"], reverse=True)[:top_k]
         return docs, [float(index) / 10 for index in range(len(docs))]
 
 
@@ -63,11 +64,21 @@ def test_numpy_ranking() -> None:
     embedder.model = SimpleNamespace(
         encode=lambda _texts: np.asarray([[1.0, 0.0]], dtype=np.float32),
     )
-    docs, distances = embedder.get_relevant_docs("query", {"where": {"group": 1}})
+    docs, distances = embedder.get_relevant_docs("query", where={"group": 1})
     assert [doc.metadata["name"] for doc in docs] == ["best", "far"]
     assert distances == [0.0, 1.0]
+
+
+def test_model_directory_environment_override() -> None:
+    with (
+        patch.dict("os.environ", {"IRIS_PAPER_LLM_MODEL_DIR": "/tmp/custom-model"}),
+        patch("iris_paper_llm.retrieval._load_model") as load_model,
+    ):
+        ONNXEmbedder()
+    load_model.assert_called_once_with("/tmp/custom-model")
 
 
 if __name__ == "__main__":
     test_retrieval_modes_and_matching()
     test_numpy_ranking()
+    test_model_directory_environment_override()
