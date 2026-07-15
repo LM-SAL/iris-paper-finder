@@ -1,290 +1,189 @@
 # IRIS Paper LLM
 
-**This project was created by Buonomo, Anthony R.**
+Find solar-physics papers through ADS, download their PDFs, select relevant
+passages locally, and ask the OpenAI API for a schema-validated IRIS-use
+classification. The only interface is the `iris-papers` command.
 
-The goal of this repository is to be able to find, identify and extract data references in research papers which talk about IRIS.
+Created by Anthony R. Buonomo.
 
-An IRIS paper is defined as the following:
+## Install and classify one paper
 
-- Any paper which shows IRIS data
-- Any paper which creates synthetic data of any IRIS passband
-
-The `paper-data-linking` library contains code for ingesting and downloading PDFs.
-There is also a web application which will allow one to upload PDFs and have them analyzed by a LLM.
-
-## **Installation**
-
-To run the library, you can pip install the library into your virtual environment with the "scrape" extras.
+Python 3.13 or newer is required.
 
 ```bash
-pip install -e ".[scrape]"
+uv sync
+uv run python scripts/setup_onnx.py
 ```
 
-### Getting Papers
-
-This part of the library is managed via the Makefile.
+Set the API key and classify a local PDF:
 
 ```bash
-make help
+export OPENAI_API_KEY=your-key
+uv run iris-papers classify paper.pdf --output data/results/one-paper.jsonl
 ```
 
-will provide you the targets and the order of the commands for normal use.
+The command first extracts page-aware text, finds deterministic IRIS/passband
+matches, and uses the local ONNX model to rank additional passages. Only the
+selected labeled passages are sent to OpenAI. Results are appended immediately
+to JSONL, and rerunning the same command skips a matching successful result.
+A Markdown report is written beside the JSONL file.
 
-The queries to the ADS are fixed and one should modify the Makefile.
-Currently it will fetch the IRIS ADS library and do a query for all papers which have cited the IRIS instrument paper.
+## Search and process a publication year
 
-Typically when downloading the papers, you will hit bot procetions.
-Within `src/paper_data_linking/data/headers.py` is the code which creates the request headers.
-This might need updating or the bot protection is too advanced to bypass which means you will need to manually download those papers.
-
-When you have them all downloaded, you can precede with the rest of the readme.
-
-## Web Application
-
-To run the API, you will need to set up Docker, Docker Compose, and a few configuration files.
-
-### **1. Prerequisites**
-
-Make sure you have the following installed on your system:
-
-- **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
-- **Docker Compose**: [Install Docker Compose](https://docs.docker.com/compose/install/)
-
-### **2. Configure Environment Variables**
-
-1. Copy the example `.env` file:
-
-   ```bash
-   cp .env_example .env
-   ```
-
-2. Open the `.env` file and fill in the required environment variables.
-
-### **3. Download ONNX Model**
-
-1. Run the following make command:
-
-   ```bash
-   make onnx
-   ```
-
-### **4. Build Docker Images**
-
-Navigate to the root of the repository and build the Docker images:
+Set an [ADS API token](https://ui.adsabs.harvard.edu/user/settings/token):
 
 ```bash
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
+export ADS_TOKEN=your-token
 ```
 
-This process may take a few minutes.
-
-### **5. Start the Services**
-
-Run the application:
+Run each durable stage separately:
 
 ```bash
-COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose up
+uv run iris-papers search --year 2025
+uv run iris-papers download data/metadata/2025.jsonl
+uv run iris-papers classify data/pdfs/2025 --output data/results/2025.jsonl
 ```
 
-(The reason the env variables are still used here, is that its easier to just replace build with up in the commandline history)
+Or compose the same three functions plus report generation:
 
-The services may take a minute or two to start up.
-
-### **6. Access the Application**
-
-1. Open your browser and navigate to:
-
-   ```bash
-   http://localhost:80
-   ```
-
-2. If you see an NGINX 500 error, wait a moment for the `web` service to fully initialize.
-
-### **Notes**
-
-- For troubleshooting, ensure Docker is running and check logs using:
-
-  ```bash
-  docker-compose logs
-  ```
-
-- If you encounter any issues, refer to the project's documentation or contact support.
-
-## Usage of the Web App
-
-How to use the Paper Analyzer:
-
-1. **Select a Classifier**
-   - Use the dropdown menu to select the appropriate classifier for your analysis
-   - Different classifiers are optimized for different types of papers and analysis goals
-   - For instance, you might select `Interface Region Imaging Spectrograph`.
-
-2. **Upload Your PDF**
-   - Click "Choose File" to select your PDF document
-   - The system accepts standard PDF files
-   - There is an example PDF file available in the `scripts` dir of this repo.
-
-3. **Start Analysis**
-   - Click the "Analyze" button to begin processing.
-   - The system will show progress indicators for:
-     - Parsing: Initial PDF text extraction
-     - Embedding: Creating vector embeddings for the text chunks to enable text chunk relevance ranking
-     - Analyzing: Running the selected classifier
-   - Analysis typically takes a few seconds to a minute depending on the PDF size.
-
-4. **View Results**
-   - Results appear in three panels:
-     - Text from PDF: Shows the extracted text with highlights
-     - LLM Analysis: Detailed analysis of the content
-     - JSON Output: Structured data output
-   - Results can be copied or downloaded for further use
-
-### API Endpoints
-
-For programmatic access, the following endpoints are available:
-
-- `GET /api/get_configs`: Retrieve available classifier configurations
-- `POST /api/upload_pdf`: Upload a PDF file for analysis
-- `GET /api/task/{task_id}`: Check status of an analysis task
-- `POST /api/highlight_pdf`: Process a PDF with highlights
-
-Note: The API has a rate limit of 20 requests per minute.
-
-You can see an example of how to programmatically use the API endpoints to do a prediction in the file [scripts/query_api.py](scripts/query_api.py).
-Note that this script requires the `requests` and `python-dotenv` libraries in order to run.
-
-This is how this is meant to be run.
-Using the Makefile, you can do a ADS query, get the PDFs and then use the script above to do the LLM processing.
-
-### Tips
-
-- Ensure your PDF is text-searchable for best results
-- Large files may take longer to process
-- Check the classifier descriptions to choose the most appropriate one for your paper
-
-## Analyzer Configuration Guide
-
-The analyzer uses a YAML configuration file to define how it processes scientific papers.
-This guide explains each component and how they work together.
-
-## Processing Pipeline
-
-1. **Initial Filtering**: Uses fuzzy string matching to quickly identify potentially relevant content
-2. **Embedding & Retrieval**: Creates embeddings of the text and finds relevant sections
-3. **LLM Analysis**: Analyzes the relevant sections to extract detailed information
-
-## Configuration File Structure
-
-### Top-Level Fields
-
-```yaml
-name: "Interface Region Imaging Spectrograph" # Name of the instrument/mission
-classifier: # Main configuration block
-  # Classifier settings detailed below
-model_kwargs: # LLM model settings
-  model_name: "gpt-4"
-  temperature: 0
-embedder_kwargs: # Embedding settings
-  where:
-    passed_iris_heuristic: 1
+```bash
+uv run iris-papers run --year 2025
 ```
 
-### Classifier Configuration
+The default files are:
 
-```yaml
-classifier:
-  name: "IRIS" # Identifier for this classifier
-  query: "Does this paper use data from the IRIS spacecraft or its instruments?" # Query for relevant content
-  system_message: | # Context for the LLM
-    # Background information about the mission/instrument
-  human_message: | # Instructions for analysis
-    # Specific questions and format requirements
-  answer_divider: "Classification:" # Marker to extract classification
-  json_divider: "IRIS Aspects Used:" # Marker to extract structured data
-  answer_key: "IRIS" # Key for storing classification
-  json_key: "aspects" # Key for storing structured data
-  filter_terms: # Terms for initial filtering
-    - "IRIS"
-    - "Interface Region Imaging Spectrograph"
-    # ... more terms
-  filter_threshold: 80 # Fuzzy matching threshold (0-100)
+- `data/metadata/2025.jsonl`: ADS bibcodes and open-access link metadata;
+- `data/pdfs/2025/`: validated PDF cache, attempt history, and manual queue;
+- `data/results/2025.jsonl`: checkpointed structured classifications; and
+- `data/results/2025.md`: current summary report.
+
+The final JSON printed by each command includes the relevant downloaded,
+manual-download, positive, negative, uncertain, failed, and skipped counts.
+Use `--limit` for a small trial. `--force` intentionally reruns ADS search or
+successful classifications; it does not make the downloader overwrite a valid
+existing PDF.
+
+## Reviewed evaluation corpus
+
+The checksum-bearing manifest contains 13 manually reviewed cases:
+
+```bash
+uv run iris-papers evaluate data/eval/reviewed_cases.jsonl \
+  --output data/eval/classification_results.jsonl --prepare-pdfs
 ```
 
-### Metadata Mapping
+`--prepare-pdfs` acquires the three ignored publisher PDFs from explicit
+open-access sources and verifies their frozen SHA-256 checksums. Publisher PDFs
+remain local and are not committed. The other ten PDFs are tracked test data.
+They live under `tests/data/pdfs/` and use the reviewed-case IDs as filenames.
+Evaluation uses the same extraction, retrieval, classification, checkpoint,
+and report functions as ordinary runs. Rerun the same command after an
+interruption to skip matching successful records and continue from the JSONL
+checkpoint. This gold-corpus evaluation is separate from the offline developer
+checks: it uses real PDFs and ONNX, and new classifications call OpenAI.
 
-```yaml
-label_metadata_map:
-  IRIS Telescope: # Component name
-    link: "https://iris.lmsal.com/" # Reference link
-    detail: "High-resolution solar observation instrument" # Description
+Useful controls shared by `classify`, `evaluate`, and `run` are:
+
+```text
+--model MODEL
+--retrieval-mode auto|heuristic|all
+--top-k N
+--chunk-size N
+--chunk-overlap N
+--no-ocr
 ```
 
-## How It Works
+`auto` is the default: deterministic matches and neighboring chunks are ranked
+first, then whole-paper ONNX retrieval fills any unused context slots. A paper
+with no exact match is still searched across the whole paper; it is never
+silently classified as negative.
 
-### 1. Initial Filtering
+Embedded PDF text needs no extra packages. To allow the optional OCR fallback,
+install its Python dependencies and the system `pdftoppm`/Tesseract programs:
 
-The `is_soho_related()` function performs initial filtering using:
+```bash
+uv sync --extra ocr
+```
 
-- `filter_terms`: List of relevant terms to look for
-- `filter_threshold`: Minimum fuzzy match score (0-100) to consider a match
-- Uses sentence-level matching with spaCy
-- Returns True if ANY term matches above threshold
+## PDF download behavior
 
-Passages which do not contain any of these terms (or close matches) will NOT be analyzed by the LLM.
-Moreover, if not a single passage contains on of these terms (or a close match), no LLM analysis will even occur and we will assume the paper is not relevant.
-Therefore, one should be reasonably certain that if a paper does not contain any of these terms, the paper is not relevant.
+Downloads use ordinary sequential HTTP by default. A candidate is written only
+after a successful status, plausible content type, PDF signature, readable
+first page, and optional checksum validation. Writes are atomic, and existing
+valid PDFs are preserved.
 
-### 2. Embedding & Retrieval
+Every attempted URL is appended to `download_attempts.jsonl`. Unresolved papers
+are deduplicated in `manual_downloads.jsonl` and retried on later runs. If direct
+HTTP is insufficient, install and explicitly request the browser fallback:
 
-Uses the `embedder_kwargs` to:
+```bash
+uv sync --extra browser
+uv run iris-papers download data/metadata/2025.jsonl --browser-fallback
+```
 
-- Create embeddings of document sections
-- Find sections relevant to the `query`
-- Filters based on the initial filtering results using the `where` clause
+Selenium is not imported or started during an ordinary download.
 
-### 3. LLM Analysis
+## Classification definition
 
-The LLM:
+An IRIS paper is positive when its authors either:
 
-1. Receives context via `system_message`
-2. Processes relevant sections using `human_message` instructions
-3. Returns structured output based on the message templates
-4. Results are extracted using `answer_divider` and `json_divider`
+- analyze observational data from the Interface Region Imaging Spectrograph;
+  or
+- create or analyze a synthetic observable inside an IRIS spectrograph window
+  or slit-jaw channel.
 
-## Customization Guide
+A synthetic observable counts even when the paper does not mention IRIS. The
+result distinguishes an explicit relationship (`EXPLICIT`) from one inferred
+only from wavelength coverage (`PASSBAND_ONLY`), and records mission mention
+independently.
 
-To modify the analyzer for a new instrument:
+Merely noting that IRIS observed an event is not observational use. In
+particular, data availability, a coincidental observation, or a slit missing
+the relevant place or time does not count when the authors do not analyze the
+IRIS data. Citations, mission descriptions, and reviews of earlier work also do
+not prove new data use.
 
-1. Update the top-level `name` and classifier `name`
-2. Modify the `query` for your instrument
-3. Update `system_message` with relevant background
-4. Adjust `human_message` for desired analysis
-5. Add appropriate `filter_terms`
-6. Define instrument components in `label_metadata_map`
+Canonical coverage, following the
+[IRIS instrument paper](https://doi.org/10.1007/s11207-014-0485-y), is:
 
-Key considerations:
+- FUV1: 1331.7–1358.4 Å;
+- FUV2: 1389.0–1407.0 Å;
+- NUV: 2782.7–2835.1 Å; and
+- slit-jaw channels: 1330, 1400, 2796, and 2832 Å.
 
-- Filter terms should be distinctive to minimize false positives
-- System message should provide comprehensive context
-- Human message should clearly specify output format
-- Filter threshold may need adjustment based on term uniqueness
+The machine-readable values are in
+[`src/iris_paper_llm/iris.py`](src/iris_paper_llm/iris.py). The manually
+curated ADS IRIS library is append-only positive ground truth: membership is
+positive, while absence is unlabeled rather than negative.
 
-## Configuration Management
+## Configuration and failure semantics
 
-The application uses configuration files to define how it processes scientific papers.
-These configurations are built directly into the Docker image and are available to all services using that image.
+The CLI reads `OPENAI_API_KEY` and `ADS_TOKEN` from the environment or a local
+`.env`. The OpenAI request has a 300-second timeout and at most two SDK retries.
+The default model is the pinned `gpt-5-mini-2025-08-07`; use `--model` only for
+an intentional experiment.
 
-### Configuration Structure
+The classifier returns a strict Pydantic record. Extraction, retrieval, API,
+schema, refusal, and evidence-validation problems are stored as
+`PROCESSING_FAILED`; they are never converted to `NO`.
 
-- `src/paper_data_linking/web_app/config/`: Contains all configuration YAML files
-  - Analysis rules for different instruments
-  - LLM prompts and parameters
-  - Filter terms and thresholds
-  - Metadata mappings
+## Development checks
 
-### Managing Configurations
+```bash
+uv lock --check
+uv run python -m compileall -q src scripts tests
+uv run ruff check .
+uv run ruff format --check .
+uv run python scripts/setup_onnx.py --check
+uv run python tests/test_models.py
+uv run python tests/test_classify.py
+uv run python tests/test_retrieval.py
+uv run python tests/test_download.py
+uv run python tests/test_workflow.py
+```
 
-1. **Making Changes**:
-   - Edit YAML files in the `src/paper_data_linking/web_app/config/` directory
-   - Rebuild the Docker image
-   - Restart services to use the new image
+The pipeline test uses real tracked scientific PDFs with a fake local ranker
+and fake API response. It verifies selected page/chunk provenance, structured
+classification, failure semantics, checkpointing, and resume without network
+access or API charges. No Docker, Redis, browser, or local HTTP service is
+needed for the default workflow.

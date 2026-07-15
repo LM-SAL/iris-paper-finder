@@ -1,0 +1,1216 @@
+{
+  "backend": "Chroma 1.3.5 DefaultEmbeddingFunction",
+  "model": "all-MiniLM-L6-v2 ONNX",
+  "papers": [
+    {
+      "chunk_count": 150,
+      "document_embeddings_sha256": "ca914b1eadff7e63b90a71c52deb926a2be05e7587267a692f507a977c53b515",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "synthetic_explicit_flux_emergence",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0002-c0007",
+          "distance": 1.3257454633712769
+        },
+        {
+          "chunk_id": "p0001-c0004",
+          "distance": 1.4102411270141602
+        },
+        {
+          "chunk_id": "p0001-c0007",
+          "distance": 1.4384291172027588
+        },
+        {
+          "chunk_id": "p0023-c0004",
+          "distance": 1.4582545757293701
+        },
+        {
+          "chunk_id": "p0001-c0008",
+          "distance": 1.4604378938674927
+        },
+        {
+          "chunk_id": "p0006-c0019",
+          "distance": 1.462343454360962
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.4757177829742432
+        },
+        {
+          "chunk_id": "p0002-c0006",
+          "distance": 1.4818192720413208
+        },
+        {
+          "chunk_id": "p0001-c0005",
+          "distance": 1.495723009109497
+        },
+        {
+          "chunk_id": "p0006-c0020",
+          "distance": 1.5416018962860107
+        },
+        {
+          "chunk_id": "p0023-c0002",
+          "distance": 1.5456068515777588
+        },
+        {
+          "chunk_id": "p0002-c0008",
+          "distance": 1.5584869384765625
+        },
+        {
+          "chunk_id": "p0008-c0001",
+          "distance": 1.6235380172729492
+        },
+        {
+          "chunk_id": "p0006-c0021",
+          "distance": 1.6366239786148071
+        },
+        {
+          "chunk_id": "p0001-c0006",
+          "distance": 1.6439870595932007
+        },
+        {
+          "chunk_id": "p0001-c0003",
+          "distance": 1.6790565252304077
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.7027056217193604
+        },
+        {
+          "chunk_id": "p0002-c0001",
+          "distance": 1.7428191900253296
+        },
+        {
+          "chunk_id": "p0023-c0001",
+          "distance": 1.7554560899734497
+        },
+        {
+          "chunk_id": "p0023-c0003",
+          "distance": 1.7786798477172852
+        }
+      ]
+    },
+    {
+      "chunk_count": 61,
+      "document_embeddings_sha256": "b7f0fc9c6c60b959b8eba44b34079bf044beb27a822f37293cc744e16cd5a0a8",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "synthetic_explicit_si_iv",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0001-c0004",
+          "distance": 1.1933012008666992
+        },
+        {
+          "chunk_id": "p0001-c0006",
+          "distance": 1.3780521154403687
+        },
+        {
+          "chunk_id": "p0002-c0008",
+          "distance": 1.4227385520935059
+        },
+        {
+          "chunk_id": "p0010-c0000",
+          "distance": 1.465230941772461
+        },
+        {
+          "chunk_id": "p0011-c0003",
+          "distance": 1.46923828125
+        },
+        {
+          "chunk_id": "p0009-c0000",
+          "distance": 1.4911636114120483
+        },
+        {
+          "chunk_id": "p0007-c0002",
+          "distance": 1.51433265209198
+        },
+        {
+          "chunk_id": "p0007-c0003",
+          "distance": 1.5410116910934448
+        },
+        {
+          "chunk_id": "p0004-c0010",
+          "distance": 1.548966884613037
+        },
+        {
+          "chunk_id": "p0009-c0001",
+          "distance": 1.5838286876678467
+        },
+        {
+          "chunk_id": "p0004-c0009",
+          "distance": 1.591020107269287
+        },
+        {
+          "chunk_id": "p0010-c0001",
+          "distance": 1.6116938591003418
+        },
+        {
+          "chunk_id": "p0010-c0002",
+          "distance": 1.6174476146697998
+        },
+        {
+          "chunk_id": "p0011-c0004",
+          "distance": 1.6577211618423462
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.6579384803771973
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.6583964824676514
+        },
+        {
+          "chunk_id": "p0001-c0005",
+          "distance": 1.676335096359253
+        },
+        {
+          "chunk_id": "p0004-c0008",
+          "distance": 1.6880533695220947
+        },
+        {
+          "chunk_id": "p0004-c0003",
+          "distance": 1.6921035051345825
+        },
+        {
+          "chunk_id": "p0004-c0007",
+          "distance": 1.7041049003601074
+        }
+      ]
+    },
+    {
+      "chunk_count": 63,
+      "document_embeddings_sha256": "982c77f5a135b7672ab2c3167ca3be140d33f7ad2ca82bd17b4411aa59656b00",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "observational_iris_mosaic",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0005-c0000",
+          "distance": 0.8711766004562378
+        },
+        {
+          "chunk_id": "p0006-c0000",
+          "distance": 0.9719817042350769
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.1880868673324585
+        },
+        {
+          "chunk_id": "p0005-c0001",
+          "distance": 1.2099616527557373
+        },
+        {
+          "chunk_id": "p0004-c0001",
+          "distance": 1.2646585702896118
+        },
+        {
+          "chunk_id": "p0023-c0001",
+          "distance": 1.2945261001586914
+        },
+        {
+          "chunk_id": "p0005-c0002",
+          "distance": 1.4463270902633667
+        },
+        {
+          "chunk_id": "p0004-c0000",
+          "distance": 1.4731125831604004
+        },
+        {
+          "chunk_id": "p0003-c0001",
+          "distance": 1.478499412536621
+        },
+        {
+          "chunk_id": "p0021-c0000",
+          "distance": 1.4906467199325562
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.4924901723861694
+        },
+        {
+          "chunk_id": "p0023-c0000",
+          "distance": 1.5378234386444092
+        },
+        {
+          "chunk_id": "p0002-c0001",
+          "distance": 1.5785249471664429
+        },
+        {
+          "chunk_id": "p0020-c0001",
+          "distance": 1.5878515243530273
+        },
+        {
+          "chunk_id": "p0007-c0000",
+          "distance": 1.6196579933166504
+        },
+        {
+          "chunk_id": "p0021-c0001",
+          "distance": 1.6315997838974
+        },
+        {
+          "chunk_id": "p0008-c0001",
+          "distance": 1.664712905883789
+        },
+        {
+          "chunk_id": "p0001-c0002",
+          "distance": 1.7816979885101318
+        },
+        {
+          "chunk_id": "p0008-c0002",
+          "distance": 1.2976698875427246
+        },
+        {
+          "chunk_id": "p0016-c0000",
+          "distance": 1.3649392127990723
+        }
+      ]
+    },
+    {
+      "chunk_count": 86,
+      "document_embeddings_sha256": "2e6e7298a62c6891efefd22072f6644966d9620fae1c98fd73dd1f915f8a6308",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "observational_bifrost_comparison",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0016-c0002",
+          "distance": 1.2894611358642578
+        },
+        {
+          "chunk_id": "p0011-c0006",
+          "distance": 1.312159538269043
+        },
+        {
+          "chunk_id": "p0003-c0006",
+          "distance": 1.350219488143921
+        },
+        {
+          "chunk_id": "p0014-c0000",
+          "distance": 1.4028871059417725
+        },
+        {
+          "chunk_id": "p0003-c0003",
+          "distance": 1.449153184890747
+        },
+        {
+          "chunk_id": "p0013-c0001",
+          "distance": 1.4854300022125244
+        },
+        {
+          "chunk_id": "p0017-c0000",
+          "distance": 1.4886181354522705
+        },
+        {
+          "chunk_id": "p0004-c0003",
+          "distance": 1.518189787864685
+        },
+        {
+          "chunk_id": "p0001-c0001",
+          "distance": 1.519195795059204
+        },
+        {
+          "chunk_id": "p0003-c0004",
+          "distance": 1.5232294797897339
+        },
+        {
+          "chunk_id": "p0004-c0004",
+          "distance": 1.526407241821289
+        },
+        {
+          "chunk_id": "p0003-c0005",
+          "distance": 1.5375690460205078
+        },
+        {
+          "chunk_id": "p0012-c0003",
+          "distance": 1.573878288269043
+        },
+        {
+          "chunk_id": "p0002-c0004",
+          "distance": 1.6300160884857178
+        },
+        {
+          "chunk_id": "p0001-c0000",
+          "distance": 1.6338242292404175
+        },
+        {
+          "chunk_id": "p0011-c0004",
+          "distance": 1.6627174615859985
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.6674635410308838
+        },
+        {
+          "chunk_id": "p0001-c0008",
+          "distance": 1.6690187454223633
+        },
+        {
+          "chunk_id": "p0015-c0001",
+          "distance": 1.6705602407455444
+        },
+        {
+          "chunk_id": "p0016-c0000",
+          "distance": 1.6723029613494873
+        }
+      ]
+    },
+    {
+      "chunk_count": 66,
+      "document_embeddings_sha256": "027ba0df1bdada567ae81c5b0fa18584a415919aa39ba84fa74816bd8b1daf10",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "observational_filament_flows",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0004-c0011",
+          "distance": 1.0276257991790771
+        },
+        {
+          "chunk_id": "p0003-c0004",
+          "distance": 1.0883947610855103
+        },
+        {
+          "chunk_id": "p0011-c0006",
+          "distance": 1.1230747699737549
+        },
+        {
+          "chunk_id": "p0007-c0000",
+          "distance": 1.2688074111938477
+        },
+        {
+          "chunk_id": "p0002-c0006",
+          "distance": 1.275424838066101
+        },
+        {
+          "chunk_id": "p0011-c0010",
+          "distance": 1.282484769821167
+        },
+        {
+          "chunk_id": "p0003-c0001",
+          "distance": 1.3191763162612915
+        },
+        {
+          "chunk_id": "p0011-c0005",
+          "distance": 1.359566330909729
+        },
+        {
+          "chunk_id": "p0004-c0009",
+          "distance": 1.396665096282959
+        },
+        {
+          "chunk_id": "p0011-c0011",
+          "distance": 1.4092401266098022
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.4259849786758423
+        },
+        {
+          "chunk_id": "p0012-c0000",
+          "distance": 1.4275134801864624
+        },
+        {
+          "chunk_id": "p0011-c0007",
+          "distance": 1.429788589477539
+        },
+        {
+          "chunk_id": "p0002-c0001",
+          "distance": 1.4766908884048462
+        },
+        {
+          "chunk_id": "p0003-c0002",
+          "distance": 1.4833109378814697
+        },
+        {
+          "chunk_id": "p0002-c0005",
+          "distance": 1.492048978805542
+        },
+        {
+          "chunk_id": "p0002-c0003",
+          "distance": 1.4951801300048828
+        },
+        {
+          "chunk_id": "p0011-c0004",
+          "distance": 1.4992941617965698
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.5021469593048096
+        },
+        {
+          "chunk_id": "p0004-c0000",
+          "distance": 1.5123201608657837
+        }
+      ]
+    },
+    {
+      "chunk_count": 86,
+      "document_embeddings_sha256": "b5e0880740abc0766f86053ca5ca0b04489adaeaad4d66bb2a3b11caeda9af9a",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "iris_seen_but_not_used",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0006-c0006",
+          "distance": 1.2744648456573486
+        },
+        {
+          "chunk_id": "p0006-c0005",
+          "distance": 1.4742186069488525
+        },
+        {
+          "chunk_id": "p0006-c0007",
+          "distance": 1.55314302444458
+        },
+        {
+          "chunk_id": "p0008-c0002",
+          "distance": 1.353238821029663
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.4403221607208252
+        },
+        {
+          "chunk_id": "p0008-c0003",
+          "distance": 1.4465699195861816
+        },
+        {
+          "chunk_id": "p0005-c0004",
+          "distance": 1.4483481645584106
+        },
+        {
+          "chunk_id": "p0008-c0006",
+          "distance": 1.478703260421753
+        },
+        {
+          "chunk_id": "p0007-c0000",
+          "distance": 1.5331271886825562
+        },
+        {
+          "chunk_id": "p0017-c0000",
+          "distance": 1.5457558631896973
+        },
+        {
+          "chunk_id": "p0001-c0007",
+          "distance": 1.547576904296875
+        },
+        {
+          "chunk_id": "p0016-c0002",
+          "distance": 1.5551362037658691
+        },
+        {
+          "chunk_id": "p0002-c0002",
+          "distance": 1.5618906021118164
+        },
+        {
+          "chunk_id": "p0016-c0003",
+          "distance": 1.5694290399551392
+        },
+        {
+          "chunk_id": "p0009-c0000",
+          "distance": 1.5888481140136719
+        },
+        {
+          "chunk_id": "p0012-c0000",
+          "distance": 1.589550256729126
+        },
+        {
+          "chunk_id": "p0002-c0004",
+          "distance": 1.5904960632324219
+        },
+        {
+          "chunk_id": "p0008-c0001",
+          "distance": 1.5971450805664062
+        },
+        {
+          "chunk_id": "p0003-c0000",
+          "distance": 1.6084530353546143
+        },
+        {
+          "chunk_id": "p0005-c0002",
+          "distance": 1.611689567565918
+        }
+      ]
+    },
+    {
+      "chunk_count": 40,
+      "document_embeddings_sha256": "56b68eb3a4674a4eb923dcc8482946873c384c4f54130a5135216a827700389d",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "mention_previous_iris_work",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0007-c0008",
+          "distance": 1.080165982246399
+        },
+        {
+          "chunk_id": "p0002-c0003",
+          "distance": 1.1433920860290527
+        },
+        {
+          "chunk_id": "p0007-c0005",
+          "distance": 1.2959425449371338
+        },
+        {
+          "chunk_id": "p0001-c0004",
+          "distance": 1.2979832887649536
+        },
+        {
+          "chunk_id": "p0002-c0001",
+          "distance": 1.303079605102539
+        },
+        {
+          "chunk_id": "p0006-c0001",
+          "distance": 1.3056601285934448
+        },
+        {
+          "chunk_id": "p0005-c0008",
+          "distance": 1.3075343370437622
+        },
+        {
+          "chunk_id": "p0002-c0002",
+          "distance": 1.309100866317749
+        },
+        {
+          "chunk_id": "p0006-c0000",
+          "distance": 1.3217445611953735
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.3231868743896484
+        },
+        {
+          "chunk_id": "p0002-c0004",
+          "distance": 1.366889476776123
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.3870587348937988
+        },
+        {
+          "chunk_id": "p0007-c0000",
+          "distance": 1.3885555267333984
+        },
+        {
+          "chunk_id": "p0005-c0007",
+          "distance": 1.4127006530761719
+        },
+        {
+          "chunk_id": "p0001-c0007",
+          "distance": 1.4139845371246338
+        },
+        {
+          "chunk_id": "p0007-c0007",
+          "distance": 1.53009033203125
+        },
+        {
+          "chunk_id": "p0007-c0004",
+          "distance": 1.5334962606430054
+        },
+        {
+          "chunk_id": "p0001-c0003",
+          "distance": 1.5336172580718994
+        },
+        {
+          "chunk_id": "p0007-c0006",
+          "distance": 1.6337392330169678
+        },
+        {
+          "chunk_id": "p0001-c0002",
+          "distance": 1.637483835220337
+        }
+      ]
+    },
+    {
+      "chunk_count": 67,
+      "document_embeddings_sha256": "43038581ea2ed20fc5bea9451278c61ea46c2b69f20a382dae5a5d5b6c974963",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "citation_only_psp_sources",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0025-c0002",
+          "distance": 1.2928706407546997
+        },
+        {
+          "chunk_id": "p0025-c0001",
+          "distance": 1.4002189636230469
+        },
+        {
+          "chunk_id": "p0002-c0002",
+          "distance": 1.4065024852752686
+        },
+        {
+          "chunk_id": "p0026-c0002",
+          "distance": 1.4437789916992188
+        },
+        {
+          "chunk_id": "p0005-c0001",
+          "distance": 1.458533525466919
+        },
+        {
+          "chunk_id": "p0009-c0000",
+          "distance": 1.4900527000427246
+        },
+        {
+          "chunk_id": "p0024-c0001",
+          "distance": 1.4947121143341064
+        },
+        {
+          "chunk_id": "p0026-c0000",
+          "distance": 1.503568172454834
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.5042937994003296
+        },
+        {
+          "chunk_id": "p0011-c0000",
+          "distance": 1.5320959091186523
+        },
+        {
+          "chunk_id": "p0027-c0000",
+          "distance": 1.534820556640625
+        },
+        {
+          "chunk_id": "p0008-c0001",
+          "distance": 1.5405702590942383
+        },
+        {
+          "chunk_id": "p0022-c0002",
+          "distance": 1.5415040254592896
+        },
+        {
+          "chunk_id": "p0003-c0000",
+          "distance": 1.5529217720031738
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.5548714399337769
+        },
+        {
+          "chunk_id": "p0006-c0000",
+          "distance": 1.5563888549804688
+        },
+        {
+          "chunk_id": "p0004-c0001",
+          "distance": 1.5850671529769897
+        },
+        {
+          "chunk_id": "p0023-c0000",
+          "distance": 1.6076672077178955
+        },
+        {
+          "chunk_id": "p0012-c0002",
+          "distance": 1.614845871925354
+        },
+        {
+          "chunk_id": "p0013-c0000",
+          "distance": 1.6166164875030518
+        }
+      ]
+    },
+    {
+      "chunk_count": 23,
+      "document_embeddings_sha256": "7226017a52ef785c05dab3f912c3739264bf1e554e19e201f7726459adc0ef73",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "future_iris_cross_reference",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0009-c0001",
+          "distance": 1.6123039722442627
+        },
+        {
+          "chunk_id": "p0009-c0000",
+          "distance": 1.7541122436523438
+        },
+        {
+          "chunk_id": "p0009-c0002",
+          "distance": 2.0059664249420166
+        },
+        {
+          "chunk_id": "p0005-c0001",
+          "distance": 1.403064250946045
+        },
+        {
+          "chunk_id": "p0002-c0002",
+          "distance": 1.434499740600586
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.4488558769226074
+        },
+        {
+          "chunk_id": "p0003-c0000",
+          "distance": 1.4720542430877686
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.491288185119629
+        },
+        {
+          "chunk_id": "p0003-c0001",
+          "distance": 1.498203158378601
+        },
+        {
+          "chunk_id": "p0002-c0001",
+          "distance": 1.5692970752716064
+        },
+        {
+          "chunk_id": "p0001-c0000",
+          "distance": 1.575906753540039
+        },
+        {
+          "chunk_id": "p0001-c0001",
+          "distance": 1.6072087287902832
+        },
+        {
+          "chunk_id": "p0007-c0002",
+          "distance": 1.6075721979141235
+        },
+        {
+          "chunk_id": "p0006-c0000",
+          "distance": 1.6213358640670776
+        },
+        {
+          "chunk_id": "p0005-c0000",
+          "distance": 1.621509313583374
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.6224420070648193
+        },
+        {
+          "chunk_id": "p0006-c0002",
+          "distance": 1.6388171911239624
+        },
+        {
+          "chunk_id": "p0006-c0001",
+          "distance": 1.65359365940094
+        },
+        {
+          "chunk_id": "p0007-c0000",
+          "distance": 1.7125885486602783
+        },
+        {
+          "chunk_id": "p0004-c0000",
+          "distance": 1.7293592691421509
+        }
+      ]
+    },
+    {
+      "chunk_count": 430,
+      "document_embeddings_sha256": "09756d656b2536cbbc81c3835e05a29d70de45a3bdbc20ef49a2a7035265dd2c",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "instrument_description_only",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0011-c0010",
+          "distance": 0.9918294548988342
+        },
+        {
+          "chunk_id": "p0012-c0021",
+          "distance": 0.9972909688949585
+        },
+        {
+          "chunk_id": "p0012-c0018",
+          "distance": 1.1397775411605835
+        },
+        {
+          "chunk_id": "p0012-c0017",
+          "distance": 1.3374742269515991
+        },
+        {
+          "chunk_id": "p0011-c0008",
+          "distance": 1.3759522438049316
+        },
+        {
+          "chunk_id": "p0015-c0022",
+          "distance": 1.4509475231170654
+        },
+        {
+          "chunk_id": "p0011-c0011",
+          "distance": 1.5006227493286133
+        },
+        {
+          "chunk_id": "p0012-c0022",
+          "distance": 1.5445283651351929
+        },
+        {
+          "chunk_id": "p0017-c0016",
+          "distance": 1.5695997476577759
+        },
+        {
+          "chunk_id": "p0015-c0021",
+          "distance": 1.6402357816696167
+        },
+        {
+          "chunk_id": "p0015-c0023",
+          "distance": 1.6554628610610962
+        },
+        {
+          "chunk_id": "p0017-c0017",
+          "distance": 1.6563079357147217
+        },
+        {
+          "chunk_id": "p0017-c0018",
+          "distance": 1.8933347463607788
+        },
+        {
+          "chunk_id": "p0004-c0026",
+          "distance": 1.1774969100952148
+        },
+        {
+          "chunk_id": "p0004-c0022",
+          "distance": 1.1886584758758545
+        },
+        {
+          "chunk_id": "p0005-c0026",
+          "distance": 1.203177571296692
+        },
+        {
+          "chunk_id": "p0016-c0014",
+          "distance": 1.2352633476257324
+        },
+        {
+          "chunk_id": "p0007-c0021",
+          "distance": 1.279522180557251
+        },
+        {
+          "chunk_id": "p0017-c0014",
+          "distance": 1.2843928337097168
+        },
+        {
+          "chunk_id": "p0015-c0038",
+          "distance": 1.3074620962142944
+        }
+      ]
+    },
+    {
+      "chunk_count": 90,
+      "document_embeddings_sha256": "e8a8037a58023cbace2f9413a1cef002307a0e6e7acd6a5d2f1e0e70c55d399b",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "review_only_quiet_sun",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0003-c0032",
+          "distance": 1.2375421524047852
+        },
+        {
+          "chunk_id": "p0022-c0002",
+          "distance": 1.276852011680603
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.337040662765503
+        },
+        {
+          "chunk_id": "p0010-c0000",
+          "distance": 1.3734773397445679
+        },
+        {
+          "chunk_id": "p0003-c0033",
+          "distance": 1.3994958400726318
+        },
+        {
+          "chunk_id": "p0022-c0001",
+          "distance": 1.5017790794372559
+        },
+        {
+          "chunk_id": "p0007-c0002",
+          "distance": 1.5103554725646973
+        },
+        {
+          "chunk_id": "p0003-c0017",
+          "distance": 1.5261743068695068
+        },
+        {
+          "chunk_id": "p0008-c0001",
+          "distance": 1.555709719657898
+        },
+        {
+          "chunk_id": "p0010-c0001",
+          "distance": 1.596846103668213
+        },
+        {
+          "chunk_id": "p0001-c0001",
+          "distance": 1.6207187175750732
+        },
+        {
+          "chunk_id": "p0003-c0016",
+          "distance": 1.6244539022445679
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.636584758758545
+        },
+        {
+          "chunk_id": "p0023-c0000",
+          "distance": 1.6799159049987793
+        },
+        {
+          "chunk_id": "p0003-c0015",
+          "distance": 1.7188422679901123
+        },
+        {
+          "chunk_id": "p0003-c0031",
+          "distance": 1.7234411239624023
+        },
+        {
+          "chunk_id": "p0001-c0000",
+          "distance": 1.7418057918548584
+        },
+        {
+          "chunk_id": "p0009-c0002",
+          "distance": 1.7472748756408691
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.8529279232025146
+        },
+        {
+          "chunk_id": "p0003-c0030",
+          "distance": 1.2024168968200684
+        }
+      ]
+    },
+    {
+      "chunk_count": 62,
+      "document_embeddings_sha256": "f0b130b2b9bf30b7c111336acd3a45428c41cd0da84da0d0c8b32e73955c97bf",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "synthetic_passband_only_mg_ii",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0001-c0005",
+          "distance": 1.4314088821411133
+        },
+        {
+          "chunk_id": "p0001-c0004",
+          "distance": 1.5346308946609497
+        },
+        {
+          "chunk_id": "p0001-c0003",
+          "distance": 1.6356946229934692
+        },
+        {
+          "chunk_id": "p0007-c0002",
+          "distance": 1.216614007949829
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.311808705329895
+        },
+        {
+          "chunk_id": "p0008-c0001",
+          "distance": 1.3344372510910034
+        },
+        {
+          "chunk_id": "p0010-c0000",
+          "distance": 1.3417818546295166
+        },
+        {
+          "chunk_id": "p0009-c0001",
+          "distance": 1.3719998598098755
+        },
+        {
+          "chunk_id": "p0007-c0001",
+          "distance": 1.4016790390014648
+        },
+        {
+          "chunk_id": "p0010-c0001",
+          "distance": 1.43174409866333
+        },
+        {
+          "chunk_id": "p0009-c0000",
+          "distance": 1.4884262084960938
+        },
+        {
+          "chunk_id": "p0001-c0006",
+          "distance": 1.5000805854797363
+        },
+        {
+          "chunk_id": "p0002-c0006",
+          "distance": 1.5054932832717896
+        },
+        {
+          "chunk_id": "p0007-c0003",
+          "distance": 1.515411138534546
+        },
+        {
+          "chunk_id": "p0010-c0005",
+          "distance": 1.5192043781280518
+        },
+        {
+          "chunk_id": "p0010-c0004",
+          "distance": 1.5219924449920654
+        },
+        {
+          "chunk_id": "p0003-c0007",
+          "distance": 1.5307316780090332
+        },
+        {
+          "chunk_id": "p0002-c0008",
+          "distance": 1.5393043756484985
+        },
+        {
+          "chunk_id": "p0004-c0001",
+          "distance": 1.5401774644851685
+        },
+        {
+          "chunk_id": "p0001-c0001",
+          "distance": 1.552804708480835
+        }
+      ]
+    },
+    {
+      "chunk_count": 159,
+      "document_embeddings_sha256": "0cf076ca1bf04f97603835bd08005b59dec34443f9401cbe3e35b669c096002d",
+      "document_norm_range": [
+        0.9999999403953552,
+        1.0
+      ],
+      "id": "unrelated_iris_acronym",
+      "query_embedding_sha256": "dda5fdb0f302a60fd140c923643d5ba992a2e3c0d3e5158e5d387b0a50367d0c",
+      "query_norm": 1.0,
+      "selected": [
+        {
+          "chunk_id": "p0001-c0006",
+          "distance": 1.4566800594329834
+        },
+        {
+          "chunk_id": "p0014-c0000",
+          "distance": 1.4776837825775146
+        },
+        {
+          "chunk_id": "p0001-c0003",
+          "distance": 1.5746477842330933
+        },
+        {
+          "chunk_id": "p0014-c0001",
+          "distance": 1.6965736150741577
+        },
+        {
+          "chunk_id": "p0017-c0007",
+          "distance": 1.7116085290908813
+        },
+        {
+          "chunk_id": "p0018-c0000",
+          "distance": 1.7602087259292603
+        },
+        {
+          "chunk_id": "p0017-c0008",
+          "distance": 1.7952585220336914
+        },
+        {
+          "chunk_id": "p0002-c0001",
+          "distance": 1.8007081747055054
+        },
+        {
+          "chunk_id": "p0001-c0002",
+          "distance": 1.835451602935791
+        },
+        {
+          "chunk_id": "p0002-c0002",
+          "distance": 1.8414311408996582
+        },
+        {
+          "chunk_id": "p0014-c0002",
+          "distance": 1.8563296794891357
+        },
+        {
+          "chunk_id": "p0002-c0000",
+          "distance": 1.9335620403289795
+        },
+        {
+          "chunk_id": "p0001-c0004",
+          "distance": 2.0312435626983643
+        },
+        {
+          "chunk_id": "p0017-c0006",
+          "distance": 2.050920009613037
+        },
+        {
+          "chunk_id": "p0008-c0000",
+          "distance": 1.2995789051055908
+        },
+        {
+          "chunk_id": "p0018-c0008",
+          "distance": 1.4303245544433594
+        },
+        {
+          "chunk_id": "p0003-c0002",
+          "distance": 1.46126127243042
+        },
+        {
+          "chunk_id": "p0006-c0004",
+          "distance": 1.4929356575012207
+        },
+        {
+          "chunk_id": "p0003-c0001",
+          "distance": 1.4998648166656494
+        },
+        {
+          "chunk_id": "p0016-c0007",
+          "distance": 1.5151673555374146
+        }
+      ]
+    }
+  ],
+  "schema_version": 1
+}

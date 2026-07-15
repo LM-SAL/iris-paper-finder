@@ -5,9 +5,10 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "paper-data-linking"
+name = "iris-paper-llm"
 version = "0.1.0"
-description = "Identify and extract data references in heliophysics research papers."
+description = "Classify IRIS observations and synthetic observables in scientific papers."
+license = "MIT"
 authors = [
     {name = "Anthony Buonomo", email = "anthony.r.buonomo@gmail.com"}
 ]
@@ -16,56 +17,43 @@ requires-python = ">=3.13"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering",
     "Topic :: Text Processing",
 ]
 dependencies = [
+    "numpy",
+    "onnxruntime",
+    "openai",
+    "PyMuPDF",
     "python-dotenv",
+    "pydantic",
+    "requests",
     "tiktoken",
-    "thefuzz",
-    "langchain",
+    "tokenizers",
 ]
 
+[project.scripts]
+iris-papers = "iris_paper_llm.cli:main"
+
 [project.optional-dependencies]
-scrape = [
-    "ads",
-    "aiofiles",
-    "aiohttp",
-    "beautifulsoup4",
-    "numpy",
-    "pydantic",
-    "pypdf",
+browser = [
     "selenium",
-    "tqdm",
-    "webdriver-manager",
 ]
-webapp = [
-    "celery[redis]",
-    "chromadb",
-    "fastapi[all]",
-    "flower@git+https://github.com/mher/flower.git",
-    "langchain-community",
-    "langchain-core",
-    "langchain-openai",
-    "langchain-text-splitters",
-    "openai",
+ocr = [
     "pdf2image",
-    "pi_heif",
-    "PyMuPDF",
     "pytesseract",
-    "pyyaml",
-    "slowapi",
-    "spacy",
-    "unstructured-inference",
-    "unstructured",
-    "uvicorn",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
 ]
 
 [tool.setuptools.packages.find]
-include = ["paper_data_linking*"]
+where = ["src"]
+include = ["iris_paper_llm*"]
 
 [tool.setuptools.package-dir]
 "" = "src"
