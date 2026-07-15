@@ -17,7 +17,6 @@ from iris_paper_llm.download import (
     DEFAULT_BROWSER_WAIT_SECONDS,
     DEFAULT_TIMEOUT_SECONDS,
     download_records,
-    read_jsonl,
 )
 from iris_paper_llm.evaluate import (
     DEFAULT_CASES,
@@ -26,6 +25,7 @@ from iris_paper_llm.evaluate import (
     prepare_case_pdfs,
     write_report,
 )
+from iris_paper_llm.jsonl import read_jsonl
 from iris_paper_llm.models import RetrievalMode
 from iris_paper_llm.retrieval import DEFAULT_CHUNK_OVERLAP, DEFAULT_CHUNK_SIZE, DEFAULT_TOP_K
 

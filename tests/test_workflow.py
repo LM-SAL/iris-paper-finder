@@ -56,11 +56,11 @@ class FakeEmbedder:
     def create_embeddings(self, docs: list) -> None:
         self.docs = docs
 
-    def get_relevant_docs(self, _query: str, kwargs: dict | None = None, n_results: int = 10):
+    def get_relevant_docs(self, _query: str, *, top_k: int = 10, where: dict | None = None):
         docs = self.docs
-        if kwargs and kwargs.get("where"):
+        if where:
             docs = [doc for doc in docs if doc.metadata["is_candidate"] == 1]
-        docs = docs[:n_results]
+        docs = docs[:top_k]
         return docs, [float(index) for index in range(len(docs))]
 
 

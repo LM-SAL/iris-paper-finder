@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import logging
 import os
 from datetime import UTC, datetime
@@ -14,6 +13,8 @@ from typing import TYPE_CHECKING
 
 import fitz
 import requests
+
+from iris_paper_llm.jsonl import append_jsonl, read_jsonl, write_jsonl
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator, Mapping
@@ -27,10 +28,6 @@ DEFAULT_HEADERS = {
 }
 TRANSIENT_HTTP_STATUS = {408, 425, 429}
 logger = logging.getLogger(__name__)
-
-
-def read_jsonl(path: Path) -> list[dict]:
-    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
 
 
 def candidate_pdf_urls(record: Mapping[str, object]) -> list[str]:
@@ -185,12 +182,6 @@ def _atomic_write(path: Path, content: bytes) -> None:
             temporary_path.unlink(missing_ok=True)
 
 
-def _append_jsonl(path: Path, record: Mapping[str, object]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("a", encoding="utf-8") as stream:
-        stream.write(json.dumps(record, separators=(",", ":")) + "\n")
-
-
 def _save_pdf(job: dict, content: bytes, attempts_path: Path) -> bool:
     try:
         _atomic_write(job["target"], content)
@@ -204,23 +195,9 @@ def _save_pdf(job: dict, content: bytes, attempts_path: Path) -> bool:
             error=str(error) or type(error).__name__,
         )
         job["attempts"].append(attempt)
-        _append_jsonl(attempts_path, attempt)
+        append_jsonl(attempts_path, attempt)
         return False
     return True
-
-
-def _write_jsonl(path: Path, records: Iterable[Mapping[str, object]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = None
-    try:
-        with NamedTemporaryFile("w", dir=path.parent, prefix=f".{path.name}.", suffix=".tmp", delete=False) as stream:
-            temporary_path = Path(stream.name)
-            for record in records:
-                stream.write(json.dumps(record, separators=(",", ":")) + "\n")
-        temporary_path.replace(path)
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
 
 
 def _load_manual_queue(path: Path) -> dict[str, dict]:
@@ -364,7 +341,7 @@ def download_records(
                         category="permanent",
                         error="existing valid PDF conflicts with the expected SHA-256; file was preserved",
                     )
-                    _append_jsonl(attempts_path, attempt)
+                    append_jsonl(attempts_path, attempt)
                     manual[bibcode] = {
                         "bibcode": bibcode,
                         "target": str(target),
@@ -407,7 +384,7 @@ def download_records(
                     expected_sha256=job["expected_sha256"],
                 )
                 job["attempts"].append(attempt)
-                _append_jsonl(attempts_path, attempt)
+                append_jsonl(attempts_path, attempt)
                 if content is not None:
                     if _save_pdf(job, content, attempts_path):
                         manual.pop(job["bibcode"], None)
@@ -426,7 +403,7 @@ def download_records(
         for job, content, attempts in browser_attempts((job for job in pending if job["urls"]), browser_wait):
             for attempt in attempts:
                 job["attempts"].append(attempt)
-                _append_jsonl(attempts_path, attempt)
+                append_jsonl(attempts_path, attempt)
             if content is None:
                 still_pending.append(job)
             elif _save_pdf(job, content, attempts_path):
@@ -451,7 +428,7 @@ def download_records(
             "updated_at": _now(),
         }
 
-    _write_jsonl(manual_path, (manual[bibcode] for bibcode in sorted(manual)))
+    write_jsonl(manual_path, (manual[bibcode] for bibcode in sorted(manual)))
     return {
         "downloaded": downloaded,
         "skipped": skipped,

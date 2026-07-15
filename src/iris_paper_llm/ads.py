@@ -5,9 +5,10 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from tempfile import NamedTemporaryFile
 
 import requests
+
+from iris_paper_llm.jsonl import write_jsonl
 
 IRIS_INSTRUMENT_BIBCODE = "2014SoPh..289.2733D"
 
@@ -69,20 +70,6 @@ def iris_query(year: int) -> str:
     )
 
 
-def _write_jsonl(path: Path, records: list[dict]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = None
-    try:
-        with NamedTemporaryFile("w", dir=path.parent, prefix=f".{path.name}.", suffix=".tmp", delete=False) as stream:
-            temporary_path = Path(stream.name)
-            for record in records:
-                stream.write(json.dumps(record, separators=(",", ":")) + "\n")
-        temporary_path.replace(path)
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
-
-
 def search_papers(
     query: str,
     output: Path,
@@ -105,5 +92,5 @@ def search_papers(
         raise ValueError(msg)
     bibcodes = _bibcodes_by_query(query, api_token, limit)
     records = _metadata_for_bibcodes(bibcodes, api_token)
-    _write_jsonl(output, records)
+    write_jsonl(output, records)
     return {"found": len(bibcodes), "written": len(records), "skipped": 0}
