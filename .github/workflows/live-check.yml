@@ -1,0 +1,42 @@
+# Monthly check that the ADS (SciX) and OpenAI APIs still work with the repository secrets; costs a few cents.
+name: Live check
+
+on:
+  schedule:
+    - cron: "23 4 1 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
+      - run: uv sync --locked
+      - run: uv run iris-papers search --year "$(( $(date -u +%Y) - 1 ))" --limit 2 --output live/metadata.jsonl
+        env:
+          ADS_TOKEN: ${{ secrets.ADS_TOKEN }}
+      # The first two reviewed cases are tracked PDFs in tests/data/pdfs, so nothing is downloaded.
+      - run: uv run iris-papers evaluate --limit 2 --output live/eval.jsonl
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          assert len(Path("live/metadata.jsonl").read_text().splitlines()) == 2, "ADS returned fewer than 2 papers"
+          records = [json.loads(line) for line in Path("live/eval.jsonl").read_text().splitlines()]
+          wrong = [
+              record["id"]
+              for record in records
+              if record["result"]["status"] != "CLASSIFIED"
+              or record["result"]["classification"]["include"] != record["expected"]["include"]
+          ]
+          assert len(records) == 2 and not wrong, f"failed or wrong: {wrong}"

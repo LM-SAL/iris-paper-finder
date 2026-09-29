@@ -1,21 +1,10 @@
 .env
-.venv/
 .history/
-.ruff_cache/
-.pytest_cache/
-.coverage*
-htmlcov/
-
 __pycache__/
-*.py[cod]
 *.egg-info/
 build/
-dist/
 
 data/*
 !data/eval/
-!data/eval/**
-data/eval/classification_results.jsonl
-data/eval/classification_results.md
-models/*
+data/eval/classification_results.*
 scripts/*.json

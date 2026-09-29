@@ -1,6 +1,19 @@
-target-version = "py313"
+target-version = "py314"
 line-length = 120
 
 [lint]
-select = ["B", "E", "F", "I", "UP"]
-ignore = ["E501"]
+select = ["ALL"]
+ignore = [
+    "COM812",  # conflicts with ruff format
+    "D1",      # docstrings where they add information, not on every public name
+    "PLR0913", # the many-argument functions are keyword-only
+    "PLR2004", # HTTP status codes and small thresholds read better inline
+    "CPY001",  # Copyright
+]
+
+[lint.per-file-ignores]
+"src/iris_paper_llm/cli.py" = ["T201"]  # the CLI prints its summary JSON
+"tests/**" = ["S101", "S106", "INP001"]  # pytest asserts, fake tokens, no package
+
+[lint.pydocstyle]
+convention = "google"

@@ -6,54 +6,39 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "iris-paper-llm"
-version = "0.1.0"
-description = "Classify IRIS observations and synthetic observables in scientific papers."
+version = "0.2.0"
+description = "Decide which papers belong in the ADS IRIS bibliography."
 license = "MIT"
 authors = [
     {name = "Anthony Buonomo", email = "anthony.r.buonomo@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Science/Research",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Topic :: Scientific/Engineering",
-    "Topic :: Text Processing",
-]
+requires-python = ">=3.14"
 dependencies = [
-    "numpy",
-    "onnxruntime",
     "openai",
     "PyMuPDF",
     "python-dotenv",
     "pydantic",
     "requests",
-    "tiktoken",
-    "tokenizers",
 ]
 
 [project.scripts]
 iris-papers = "iris_paper_llm.cli:main"
 
-[project.optional-dependencies]
-browser = [
-    "selenium",
-]
-ocr = [
-    "pdf2image",
-    "pytesseract",
-]
-
 [dependency-groups]
 dev = [
+    "pytest>=9.1.1",
     "ruff",
+    "ty>=0.0.84",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["iris_paper_llm*"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
-[tool.setuptools.package-dir]
-"" = "src"
+[tool.codespell]
+skip = "*.pdf,uv.lock"
+ignore-words-list = "ure"  # the FIG(?:URE|.) caption regex in classify.py
+
+[[tool.ty.overrides]]
+include = ["tests/**"]
+rules = {invalid-argument-type = "ignore"}  # the tests pass duck-typed fakes for the OpenAI client and requests session
