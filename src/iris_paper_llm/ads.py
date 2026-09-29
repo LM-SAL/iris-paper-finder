@@ -1,96 +1,95 @@
-"""ADS search and metadata acquisition for the CLI pipeline."""
+"""ADS search and download metadata for the CLI pipeline."""
 
 from __future__ import annotations
 
 import json
+import logging
 import os
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import requests
 
 from iris_paper_llm.jsonl import write_jsonl
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+# The single place to change when moving from ADS to SciX (scixplorer).
+ADS_API = "https://api.adsabs.harvard.edu/v1"
+ADS_MAX_ROWS = 2000
 IRIS_INSTRUMENT_BIBCODE = "2014SoPh..289.2733D"
-
-
-def _bibcodes_by_query(query: str, token: str, limit: int) -> list[str]:
-    response = requests.get(
-        "https://api.adsabs.harvard.edu/v1/search/query",
-        params={"q": query, "fl": "bibcode", "rows": limit},
-        headers={"Authorization": f"Bearer {token}"},
-        timeout=60,
-    )
-    response.raise_for_status()
-    return [document["bibcode"] for document in response.json()["response"]["docs"]]
-
-
-def _metadata_for_bibcodes(bibcodes: list[str], token: str) -> list[dict]:
-    if not bibcodes:
-        return []
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "big-query/csv",
-    }
-    payload = "bibcode\n" + "\n".join(bibcodes)
-    records = []
-    start = 0
-    total = len(bibcodes)
-    while start < total:
-        response = requests.post(
-            "https://api.adsabs.harvard.edu/v1/search/bigquery",
-            params={"q": "*:*", "fl": "bibcode,links_data", "rows": 2000, "start": start},
-            headers=headers,
-            data=payload,
-            timeout=30,
-        )
-        response.raise_for_status()
-        page = response.json()["response"]
-        total = page["numFound"]
-        documents = page["docs"]
-        if not documents and start < total:
-            msg = f"ADS returned no metadata records at offset {start} of {total}"
-            raise RuntimeError(msg)
-        for document in documents:
-            record = dict(document)
-            record["links_data"] = [
-                json.loads(link) if isinstance(link, str) else link for link in record.get("links_data", []) or []
-            ]
-            record.setdefault("pdf_links", [])
-            records.append(record)
-        start = page["start"] + len(documents)
-    return records
+logger = logging.getLogger(__name__)
 
 
 def iris_query(year: int) -> str:
-    """Build the established refereed IRIS discovery query for one year."""
+    """Build the refereed IRIS discovery query for one publication year."""
     return (
-        '(=full:"Interface Region Imaging Spectrograph" '
-        f"OR citations(bibcode:{IRIS_INSTRUMENT_BIBCODE})) "
-        f'+ property:refereed + doctype:"Article" + pubdate:[{year}-01 TO {year}-12]'
+        "("
+        # Full instrument name, exact phrase (no synonym expansion).
+        '=full:"Interface Region Imaging Spectrograph"'
+        # Papers citing the IRIS instrument paper.
+        f" OR citations(bibcode:{IRIS_INSTRUMENT_BIBCODE})"
+        # Acronym only: unprefixed uppercase "IRIS" is matched case-sensitively; the
+        # IRIS-specific channels/lines and the astronomy database drop TMT/IRAS/eye-iris noise.
+        ' OR (full:"IRIS" AND full:("slit-jaw" OR "slit jaw" OR "SJI" OR "Mg II" OR "Si IV" OR "C II")'
+        " AND database:astronomy)"
+        # Standard IRIS data acknowledgement sentence.
+        ' OR full:("IRIS is a NASA small explorer" OR "developed and operated by LMSAL")'
+        # Synthetic/modelled observables in IRIS passbands, solar or stellar, IRIS need not be named.
+        ' OR (abs:("Mg II" OR "Si IV" OR "C II" OR "O IV" OR "Fe XII 1349" OR "Fe XXI" OR "Cl I"'
+        ' OR "NUV continuum" OR "near-ultraviolet continuum" OR "near-UV continuum")'
+        ' AND abs:(synthetic OR synthesized OR synthesised OR synthesis OR "forward model"'
+        ' OR "forward modeling" OR "forward modelling" OR "radiative transfer" OR "non-LTE" OR NLTE'
+        ' OR "radiative hydrodynamic" OR "radiative-hydrodynamic" OR "radiation hydrodynamic")'
+        ' AND abs:(chromosphere OR chromospheric OR "transition region" OR flare OR flares)'
+        " AND database:astronomy)"
+        ")"
+        f' + property:refereed + doctype:"Article" + pubdate:[{year}-01 TO {year}-12]'
     )
 
 
-def search_papers(
-    query: str,
-    output: Path,
-    *,
-    api_token: str | None = None,
-    limit: int = 2000,
-    force: bool = False,
-) -> dict[str, int]:
-    """Search ADS, fetch download metadata, and write one durable JSONL file."""
+def _download_record(document: dict) -> dict:
+    record = dict(document)
+    record["links_data"] = [
+        json.loads(link) if isinstance(link, str) else link for link in record.get("links_data", []) or []
+    ]
+    return record
+
+
+def search_papers(query: str, output: Path, *, api_token: str | None = None, limit: int = 2000) -> dict[str, int]:
+    """Query ADS page by page and replace the metadata JSONL with bibcodes, link data, DOIs and abstracts."""
     if limit <= 0:
         msg = "limit must be positive"
         raise ValueError(msg)
-    if output.is_file() and not force:
-        records = sum(1 for line in output.read_text(encoding="utf-8").splitlines() if line.strip())
-        return {"found": records, "written": 0, "skipped": records}
-
     api_token = api_token or os.getenv("ADS_TOKEN")
     if not api_token:
         msg = "ADS_TOKEN or --api-token is required"
         raise ValueError(msg)
-    bibcodes = _bibcodes_by_query(query, api_token, limit)
-    records = _metadata_for_bibcodes(bibcodes, api_token)
+
+    records: list[dict] = []
+    while True:
+        response = requests.get(
+            f"{ADS_API}/search/query",
+            params={
+                "q": query,
+                "fl": "bibcode,links_data,doi,abstract",
+                "sort": "bibcode asc",
+                "start": len(records),
+                "rows": min(ADS_MAX_ROWS, limit - len(records)),
+            },
+            headers={"Authorization": f"Bearer {api_token}"},
+            timeout=60,
+        )
+        response.raise_for_status()
+        page = response.json()["response"]
+        found = page["numFound"]
+        records.extend(_download_record(document) for document in page["docs"])
+        if len(records) >= min(found, limit):
+            break
+        if not page["docs"]:
+            msg = f"ADS returned no records at offset {len(records)} of {found}"
+            raise RuntimeError(msg)
+    if found > limit:
+        logger.warning("ADS matched %d papers; --limit %d kept the first %d by bibcode", found, limit, len(records))
     write_jsonl(output, records)
-    return {"found": len(bibcodes), "written": len(records), "skipped": 0}
+    return {"found": found, "written": len(records)}
