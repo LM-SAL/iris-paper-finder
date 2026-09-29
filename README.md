@@ -195,18 +195,19 @@ trial is the quick way to catch them.
 
 ## Checking accuracy
 
-`data/eval/reviewed_cases.jsonl` holds 13 hand-labelled papers. Run them after
+`data/eval/reviewed_cases.jsonl` holds 16 labelled PDF cases covering 15 papers. Run them after
 changing the prompt or the model; it costs a few cents:
 
 ```bash
 uv run iris-papers evaluate --prepare-pdfs
 ```
 
-`--prepare-pdfs` downloads the seven labelled PDFs that are not in the
+`--prepare-pdfs` downloads the ten labelled PDFs that are not in the
 repository into `data/pdfs/reviewed/` and checks their SHA-256. The report is
 written to `data/eval/classification_results.md`; the current default model
-gets all 13 right. Add `--model <name>` to test another model without changing
-anything.
+gets all 16 decisions right. The labels and the benchmark's limits are
+documented in [data/eval/README.md](data/eval/README.md). Add `--model <name>`
+to test another model without changing anything.
 
 ## Maintenance
 
