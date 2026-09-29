@@ -1,52 +1,113 @@
-"""Validated, resumable PDF downloads with an optional browser fallback."""
+"""Validated, resumable PDF downloads from ADS links, with open copies found through OpenAlex."""
 
 from __future__ import annotations
 
 import hashlib
 import logging
-import os
+import re
+import unicodedata
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
-from time import monotonic, sleep
-from typing import TYPE_CHECKING
+from functools import partial
+from time import sleep
+from typing import TYPE_CHECKING, Any
+from urllib.parse import quote, unquote, urlparse
 
-import fitz
+import pymupdf
 import requests
 
-from iris_paper_llm.jsonl import append_jsonl, read_jsonl, write_jsonl
+from iris_paper_llm.jsonl import append_jsonl, atomic_write, read_jsonl, write_jsonl
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Mapping
+    from collections.abc import Iterable, Mapping
+    from pathlib import Path
 
 DEFAULT_TIMEOUT_SECONDS = 60.0
-DEFAULT_BROWSER_WAIT_SECONDS = 15.0
-USER_AGENT = "iris-papers/0.1"
+REQUEST_DELAY_SECONDS = 3.0
 DEFAULT_HEADERS = {
-    "User-Agent": USER_AGENT,
+    "User-Agent": "iris-papers/0.2 (+https://github.com/LM-SAL/iris_paper_llm)",
     "Accept": "application/pdf,application/octet-stream;q=0.9,*/*;q=0.1",
 }
 TRANSIENT_HTTP_STATUS = {408, 425, 429}
+OPENALEX_WORK_URL = "https://api.openalex.org/works/doi:{doi}"
+PMC_PDF_URL = "https://pmc-oa-opendata.s3.amazonaws.com/{pmcid}.1/{pmcid}.1.pdf"
+# The wrong-paper check needs this many distinct abstract words of 5+ ASCII letters (so it skips Chinese abstracts).
+# Of 1069 correct PDFs the first 3 pages held at least 0.64 of them (a preprint with a rewritten abstract);
+# a same-title conference paper that ADS merged into the record held 0.46.
+MIN_ABSTRACT_WORDS = 20
+MIN_ABSTRACT_OVERLAP = 0.6
 logger = logging.getLogger(__name__)
 
 
-def candidate_pdf_urls(record: Mapping[str, object]) -> list[str]:
-    """Return explicit PDF and arXiv links in stable ADS order."""
-    urls = [str(url) for url in record.get("pdf_links", []) or []]
+# Publishers whose open PDFs sit at a URL derived from the DOI.
+DOI_PDF_URLS = {
+    "10.1007/": "https://link.springer.com/content/pdf/{doi}.pdf",
+    "10.1186/": "https://link.springer.com/content/pdf/{doi}.pdf",
+    "10.1038/": "https://www.nature.com/articles/{suffix}.pdf",
+    "10.3389/": "https://www.frontiersin.org/articles/{doi}/pdf",
+}
+
+
+def candidate_pdf_urls(record: Mapping[str, Any]) -> list[str]:
+    """Return open arXiv links, publisher PDF links, DOI-derived PDF URLs, then the ADS scan, once each (https kept)."""
+    arxiv = []
+    publisher = [str(url) for url in record.get("pdf_links", []) or []]
+    from_doi = []
+    scans = []
     for link in record.get("links_data", []) or []:
         if not isinstance(link, dict) or link.get("access") != "open":
             continue
         url = str(link.get("url", ""))
         link_type = link.get("type")
-        if link_type == "pdf":
-            urls.append(url)
+        if "//articles.adsabs.harvard.edu/" in url:
+            scans.append(f"https://articles.adsabs.harvard.edu/pdf/{record['bibcode']}")
         elif link_type == "preprint" and "arxiv.org/" in url:
-            urls.append(url.replace("http://", "https://").replace("/abs/", "/pdf/"))
-    return list(dict.fromkeys(url for url in urls if url))
+            arxiv.append(url.replace("http://", "https://").replace("/abs/", "/pdf/"))
+        elif link_type == "pdf":
+            publisher.append(url)
+        elif link_type == "electr":
+            doi = unquote(url).split("doi.org/", 1)[-1]
+            from_doi.extend(
+                template.format(doi=doi, suffix=doi.split("/", 1)[-1])
+                for prefix, template in DOI_PDF_URLS.items()
+                if doi.startswith(prefix)
+            )
+    unique = {}
+    for url in arxiv + publisher + from_doi + scans:
+        key = url.split("://", 1)[-1]
+        if url and (key not in unique or url.startswith("https://")):
+            unique[key] = url
+    return list(unique.values())
 
 
-def validate_pdf(content: bytes, expected_sha256: str | None = None) -> None:
-    """Reject non-PDF, unreadable, empty, or checksum-mismatched content."""
+def _doi(record: Mapping[str, Any]) -> str | None:
+    """Return the record's first DOI, else the DOI of an electr link."""
+    if dois := record.get("doi"):
+        return str(dois[0])
+    for link in record.get("links_data", []) or []:
+        url = unquote(str(link.get("url", ""))) if isinstance(link, dict) and link.get("type") == "electr" else ""
+        if "doi.org/" in url:
+            return url.split("doi.org/", 1)[1]
+    return None
+
+
+def _words(text: str) -> set[str]:
+    return set(re.findall(r"[a-z]+", unicodedata.normalize("NFKC", text).lower()))
+
+
+def abstract_overlap(abstract: str, text: str) -> float | None:
+    """Return the share of the abstract's long words found in the text, or None if it has too few to judge."""
+    words = {word for word in _words(abstract) if len(word) >= 5}
+    if len(words) < MIN_ABSTRACT_WORDS:
+        return None
+    return len(words & _words(text)) / len(words)
+
+
+def validate_pdf(content: bytes, expected_sha256: str | None = None, abstract: str | None = None) -> None:
+    """Reject non-PDF, unreadable, empty, or checksum-mismatched content.
+
+    With an abstract, also reject first pages that have no text or text that does not match it.
+    """
     if not content.startswith(b"%PDF-"):
         msg = "content does not start with a PDF signature"
         raise ValueError(msg)
@@ -54,17 +115,23 @@ def validate_pdf(content: bytes, expected_sha256: str | None = None) -> None:
         msg = "PDF checksum does not match the expected SHA-256"
         raise ValueError(msg)
     try:
-        with fitz.open(stream=content, filetype="pdf") as document:
+        with pymupdf.open(stream=content, filetype="pdf") as document:
             page_count = document.page_count
             if page_count:
                 document.load_page(0)
-    except ValueError:
-        raise
+            text = " ".join(page.get_text() for page in document.pages(stop=3)) if abstract else ""
     except Exception as error:
         msg = "PDF cannot be opened or its first page cannot be read"
         raise ValueError(msg) from error
     if page_count < 1:
         msg = "PDF has no pages"
+        raise ValueError(msg)
+    if abstract and not text.strip():
+        msg = "PDF has no extractable text"
+        raise ValueError(msg)
+    overlap = abstract_overlap(abstract, text) if abstract else None
+    if overlap is not None and overlap < MIN_ABSTRACT_OVERLAP:
+        msg = f"PDF text does not match the ADS abstract (overlap {overlap:.2f})"
         raise ValueError(msg)
 
 
@@ -94,97 +161,120 @@ def _attempt(
     }
 
 
-def download_http(
-    session: requests.Session,
-    *,
-    bibcode: str,
-    url: str,
-    headers: Mapping[str, str],
-    timeout: float,
-    expected_sha256: str | None = None,
-) -> tuple[bytes | None, dict]:
-    """Attempt one direct HTTP download and return its durable record."""
-    try:
-        response = session.get(url, allow_redirects=True, headers=dict(headers), timeout=timeout)
-        if not 200 <= response.status_code < 300:
-            category = (
-                "transient"
-                if response.status_code in TRANSIENT_HTTP_STATUS or response.status_code >= 500
-                else "permanent"
-            )
-            msg = f"HTTP {response.status_code}"
-            return None, _attempt(
-                bibcode=bibcode,
-                url=url,
-                final_url=response.url,
-                method="http",
-                status="failed",
-                category=category,
-                error=msg,
-            )
-        content_type = response.headers.get("content-type", "").lower()
-        if (
-            content_type
-            and "pdf" not in content_type
-            and "octet-stream" not in content_type
-            and not response.content.startswith(b"%PDF-")
-        ):
-            msg = f"unexpected content type: {content_type}"
-            return None, _attempt(
-                bibcode=bibcode,
-                url=url,
-                final_url=response.url,
-                method="http",
-                status="failed",
-                category="permanent",
-                error=msg,
-            )
-        validate_pdf(response.content, expected_sha256)
-        return response.content, _attempt(
-            bibcode=bibcode,
-            url=url,
-            final_url=response.url,
-            method="http",
-            status="downloaded",
+@dataclass
+class _Fetcher:
+    """One run's HTTP state; consecutive requests are REQUEST_DELAY_SECONDS apart."""
+
+    session: requests.Session
+    timeout: float
+    requested: bool = False
+    blocked_hosts: set[str] = field(default_factory=set)
+
+    def get(self, url: str) -> requests.Response:
+        if self.requested:
+            sleep(REQUEST_DELAY_SECONDS)
+        self.requested = True
+        return self.session.get(url, headers=DEFAULT_HEADERS, timeout=self.timeout)
+
+
+def _bot_protection(response: requests.Response) -> str | None:
+    headers = response.headers
+    server = headers.get("server", "").lower()
+    body = response.content
+    if "x-datadome" in headers or b"captcha-delivery" in body:
+        return "DataDome"
+    # Every response through Cloudflare (doi.org too) has its server and cf-ray headers, so those count only on a 403.
+    challenge = "cf-mitigated" in headers or b"<title>Just a moment" in body
+    if challenge or (server == "cloudflare" and response.status_code == 403):
+        return "Cloudflare"
+    # The Akamai "Access Denied" page links errors.edgesuite.net; S3 also answers "Access Denied".
+    if server.startswith("akamaighost") or b"edgesuite" in body:
+        return "Akamai"
+    return None
+
+
+def _response_failure(response: requests.Response) -> tuple[str, str] | None:
+    """Return (category, error) for a response that is not a PDF, else None."""
+    status = response.status_code
+    content_type = response.headers.get("content-type", "").lower()
+    pdf_type = not content_type or "pdf" in content_type or "octet-stream" in content_type
+    if 200 <= status < 300:
+        if pdf_type or response.content.startswith(b"%PDF-"):
+            return None
+        error = f"unexpected content type: {content_type}"
+    else:
+        error = f"HTTP {status}"
+    if protection := _bot_protection(response):
+        return "blocked", f"{error} (bot protection: {protection})"
+    if status in TRANSIENT_HTTP_STATUS or status >= 500:
+        return "transient", error
+    return "permanent", error
+
+
+def _download_url(fetcher: _Fetcher, job: dict, url: str, method: str) -> tuple[bytes | None, dict]:
+    """Attempt one direct HTTP download, unless its host blocked an earlier one, and return its durable record."""
+    attempt = partial(_attempt, bibcode=job["bibcode"], url=url, method=method)
+    host = urlparse(url).netloc
+    if host in fetcher.blocked_hosts:
+        return None, attempt(
+            status="skipped", category="blocked", error=f"skipped: {host} already blocked a request in this run"
         )
+    try:
+        response = fetcher.get(url)
     except requests.RequestException as error:
-        return None, _attempt(
-            bibcode=bibcode,
-            url=url,
-            method="http",
-            status="failed",
-            category="transient",
-            error=str(error) or type(error).__name__,
-        )
-    except ValueError as error:
-        return None, _attempt(
-            bibcode=bibcode,
-            url=url,
-            method="http",
-            status="failed",
-            category="permanent",
-            error=str(error),
-        )
+        return None, attempt(status="failed", category="transient", error=str(error) or type(error).__name__)
+    failure = _response_failure(response)
+    if failure is None:
+        try:
+            validate_pdf(response.content, job["expected_sha256"], job["abstract"])
+        except ValueError as error:
+            failure = "permanent", str(error)
+    if failure is not None:
+        category, error = failure
+        if category == "blocked":
+            fetcher.blocked_hosts.add(host)
+        return None, attempt(final_url=response.url, status="failed", category=category, error=error)
+    return response.content, attempt(final_url=response.url, status="downloaded")
 
 
-def _atomic_write(path: Path, content: bytes) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    temporary_path = None
+def _open_access_urls(fetcher: _Fetcher, job: dict) -> tuple[list[str], dict | None]:
+    """Return the PDF URLs of OpenAlex's open locations for the DOI, then its PMC open-data copy.
+
+    The second value records a failed lookup; OpenAlex not knowing the DOI (HTTP 404) is not a failure.
+    """
+    url = OPENALEX_WORK_URL.format(doi=quote(job["doi"]))
     try:
-        with NamedTemporaryFile("wb", dir=path.parent, prefix=f".{path.name}.", suffix=".tmp", delete=False) as stream:
-            temporary_path = Path(stream.name)
-            stream.write(content)
-            stream.flush()
-            os.fsync(stream.fileno())
-        temporary_path.replace(path)
-    finally:
-        if temporary_path is not None:
-            temporary_path.unlink(missing_ok=True)
+        response = fetcher.get(url)
+        if response.status_code == 404:
+            return [], None
+        response.raise_for_status()
+        work = response.json()
+        locations = work.get("locations") or []
+        # doi.org pdf_urls can resolve to a publisher placeholder PDF that validate_pdf accepts.
+        urls = [
+            location["pdf_url"]
+            for location in locations
+            if location.get("is_oa")
+            and location.get("pdf_url")
+            and urlparse(location["pdf_url"]).hostname not in {"doi.org", "dx.doi.org"}
+        ]
+        # OpenAlex responses currently carry the PMCID only in a location's landing page URL.
+        pages = [(work.get("ids") or {}).get("pmcid"), *(location.get("landing_page_url") for location in locations)]
+        pmcids = [match[1] for page in pages if (match := re.search(r"/pmc/articles/(?:PMC)?(\d+)", str(page)))]
+    except (requests.RequestException, ValueError, AttributeError, TypeError) as error:
+        # ponytail: every failure but a 404 counts as transient (timeouts, 429, 5xx); split out persistent 4xx if seen.
+        error_text = f"OpenAlex lookup failed: {str(error) or type(error).__name__}"
+        return [], _attempt(
+            bibcode=job["bibcode"], url=url, method="openalex", status="failed", category="transient", error=error_text
+        )
+    if pmcids:
+        urls.append(PMC_PDF_URL.format(pmcid=f"PMC{pmcids[0]}"))
+    return list(dict.fromkeys(urls)), None
 
 
 def _save_pdf(job: dict, content: bytes, attempts_path: Path) -> bool:
     try:
-        _atomic_write(job["target"], content)
+        atomic_write(job["target"], content)
     except OSError as error:
         attempt = _attempt(
             bibcode=job["bibcode"],
@@ -200,238 +290,135 @@ def _save_pdf(job: dict, content: bytes, attempts_path: Path) -> bool:
     return True
 
 
-def _load_manual_queue(path: Path) -> dict[str, dict]:
-    if not path.is_file():
-        return {}
-    return {record["bibcode"]: record for record in read_jsonl(path)}
+def _try_urls(fetcher: _Fetcher, job: dict, urls: list[str], method: str, attempts_path: Path) -> bool:
+    for url in urls:
+        content, attempt = _download_url(fetcher, job, url, method)
+        job["attempts"].append(attempt)
+        append_jsonl(attempts_path, attempt)
+        if content is not None and _save_pdf(job, content, attempts_path):
+            return True
+    return False
 
 
-def _browser_fetch(driver: object, url: str, wait_seconds: float, expected_sha256: str | None) -> bytes:
-    with TemporaryDirectory() as directory:
-        driver.execute_cdp_cmd(
-            "Page.setDownloadBehavior",
-            {"behavior": "allow", "downloadPath": directory},
-        )
-        driver.get(url)
-        deadline = monotonic() + wait_seconds
-        while monotonic() < deadline:
-            files = [path for path in Path(directory).iterdir() if path.is_file() and path.suffix != ".crdownload"]
-            if files:
-                content = max(files, key=lambda path: path.stat().st_size).read_bytes()
-                validate_pdf(content, expected_sha256)
-                return content
-            sleep(0.25)
-    msg = f"browser produced no PDF within {wait_seconds:g} seconds"
-    raise TimeoutError(msg)
+def _download_job(fetcher: _Fetcher, job: dict, attempts_path: Path) -> bool:
+    """Try the ADS candidates, then the open copies OpenAlex lists for the DOI; return whether a PDF was saved."""
+    if _try_urls(fetcher, job, job["urls"], "http", attempts_path):
+        return True
+    if not job["doi"]:
+        return False
+    urls, failure = _open_access_urls(fetcher, job)
+    if failure is not None:
+        job["attempts"].append(failure)
+        append_jsonl(attempts_path, failure)
+    tried = {url.split("://", 1)[-1] for url in job["urls"]}
+    extra = [url for url in urls if url.split("://", 1)[-1] not in tried]
+    job["urls"] += extra
+    return _try_urls(fetcher, job, extra, "openalex", attempts_path)
 
 
-def browser_attempts(jobs: Iterable[dict], wait_seconds: float) -> Iterator[tuple[dict, bytes | None, list[dict]]]:
-    """Try direct-download failures with one lazily created browser driver."""
-    jobs = list(jobs)
+def _job(record: Mapping[str, Any], output_dir: Path) -> dict:
+    bibcode = str(record["bibcode"])
+    return {
+        "bibcode": bibcode,
+        "target": output_dir / f"{bibcode}.pdf",
+        "urls": candidate_pdf_urls(record),
+        "expected_sha256": str(record.get("pdf_sha256") or "") or None,
+        "doi": _doi(record),
+        "abstract": str(record.get("abstract") or "") or None,
+        "attempts": [],
+    }
+
+
+def _existing_pdf(job: dict) -> str | None:
+    """Return "valid" or "conflict" (valid, other checksum) for a readable PDF at the target, else None."""
+    if not job["target"].is_file():
+        return None
+    existing = job["target"].read_bytes()
     try:
-        from selenium import webdriver
-    except ImportError as error:
-        for job in jobs:
-            attempt = _attempt(
-                bibcode=job["bibcode"],
-                url=job["urls"][0],
-                method="browser",
-                status="failed",
-                category="permanent",
-                error=f"browser fallback is not installed: {error}",
-            )
-            yield job, None, [attempt]
-        return
+        validate_pdf(existing)
+    except ValueError:
+        return None
+    if job["expected_sha256"] and hashlib.sha256(existing).hexdigest() != job["expected_sha256"]:
+        return "conflict"
+    return "valid"
 
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless=new")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_experimental_option(
-        "prefs",
-        {
-            "download.prompt_for_download": False,
-            "download.directory_upgrade": True,
-            "plugins.always_open_pdf_externally": True,
-        },
-    )
-    try:
-        driver_context = webdriver.Chrome(options=options)
-    except Exception as error:
-        for job in jobs:
-            attempt = _attempt(
-                bibcode=job["bibcode"],
-                url=job["urls"][0],
-                method="browser",
-                status="failed",
-                category="permanent",
-                error=f"browser setup failed: {error}",
-            )
-            yield job, None, [attempt]
-        return
 
-    with driver_context as driver:
-        for job in jobs:
-            attempts = []
-            content = None
-            for url in job["urls"]:
-                try:
-                    content = _browser_fetch(driver, url, wait_seconds, job["expected_sha256"])
-                    attempts.append(
-                        _attempt(
-                            bibcode=job["bibcode"],
-                            url=url,
-                            method="browser",
-                            status="downloaded",
-                        )
-                    )
-                    break
-                except Exception as error:
-                    attempts.append(
-                        _attempt(
-                            bibcode=job["bibcode"],
-                            url=url,
-                            method="browser",
-                            status="failed",
-                            category="permanent",
-                            error=str(error) or type(error).__name__,
-                        )
-                    )
-            yield job, content, attempts
+def _manual_entry(job: dict) -> dict:
+    attempts = job["attempts"]
+    errors = [attempt["error"] for attempt in attempts if attempt["error"]]
+    if not attempts:
+        searched = "ADS or OpenAlex" if job["doi"] else "ADS (no DOI for OpenAlex)"
+        errors.append(f"no open-access PDF URL was found in {searched}")
+    categories = {attempt["category"] for attempt in attempts}
+    # A rerun may still fetch a transient failure, so that outranks needing a browser.
+    category = next((category for category in ("transient", "blocked") if category in categories), "permanent")
+    return {
+        "bibcode": job["bibcode"],
+        "target": str(job["target"]),
+        "urls": job["urls"],
+        "category": category,
+        "errors": errors,
+        "updated_at": _now(),
+    }
 
 
 def download_records(
     records: Iterable[Mapping[str, object]],
     output_dir: Path,
     *,
-    headers: Mapping[str, str] = DEFAULT_HEADERS,
     timeout: float = DEFAULT_TIMEOUT_SECONDS,
-    browser_fallback: bool = False,
-    browser_wait: float = DEFAULT_BROWSER_WAIT_SECONDS,
     session: requests.Session | None = None,
 ) -> dict[str, int]:
     """Download missing PDFs and checkpoint attempts and unresolved work."""
     output_dir.mkdir(parents=True, exist_ok=True)
     attempts_path = output_dir / "download_attempts.jsonl"
     manual_path = output_dir / "manual_downloads.jsonl"
-    manual = _load_manual_queue(manual_path)
+    manual = {record["bibcode"]: record for record in read_jsonl(manual_path)} if manual_path.is_file() else {}
     records = list(records)
-    jobs = []
+    jobs: list[dict] = []
     skipped = conflicts = 0
-
     for index, record in enumerate(records, start=1):
-        bibcode = str(record["bibcode"])
-        target = output_dir / f"{bibcode}.pdf"
-        expected_sha256 = str(record.get("pdf_sha256") or "") or None
-        logger.info("[%d/%d] prepare %s", index, len(records), bibcode)
-        if target.is_file():
-            existing = target.read_bytes()
-            try:
-                validate_pdf(existing)
-            except ValueError:
-                pass
-            else:
-                if expected_sha256 and hashlib.sha256(existing).hexdigest() != expected_sha256:
-                    attempt = _attempt(
-                        bibcode=bibcode,
-                        url="",
-                        method="existing",
-                        status="failed",
-                        category="permanent",
-                        error="existing valid PDF conflicts with the expected SHA-256; file was preserved",
-                    )
-                    append_jsonl(attempts_path, attempt)
-                    manual[bibcode] = {
-                        "bibcode": bibcode,
-                        "target": str(target),
-                        "urls": candidate_pdf_urls(record),
-                        "category": "permanent",
-                        "errors": [attempt["error"]],
-                        "updated_at": _now(),
-                    }
-                    conflicts += 1
-                    continue
-                manual.pop(bibcode, None)
-                skipped += 1
-                continue
-        urls = candidate_pdf_urls(record)
-        jobs.append(
-            {
-                "bibcode": bibcode,
-                "target": target,
-                "urls": urls,
-                "expected_sha256": expected_sha256,
-                "attempts": [],
-            }
-        )
+        job = _job(record, output_dir)
+        logger.info("[%d/%d] prepare %s", index, len(records), job["bibcode"])
+        existing = _existing_pdf(job)
+        if existing is None:
+            jobs.append(job)
+        elif existing == "valid":
+            manual.pop(job["bibcode"], None)
+            skipped += 1
+        else:
+            attempt = _attempt(
+                bibcode=job["bibcode"],
+                url="",
+                method="existing",
+                status="failed",
+                category="permanent",
+                error="existing valid PDF conflicts with the expected SHA-256; file was preserved",
+            )
+            job["attempts"].append(attempt)
+            append_jsonl(attempts_path, attempt)
+            manual[job["bibcode"]] = _manual_entry(job)
+            conflicts += 1
 
     own_session = session is None
-    session = session or requests.Session()
+    fetcher = _Fetcher(session or requests.Session(), timeout)
     downloaded = 0
-    pending = []
     try:
         for index, job in enumerate(jobs, start=1):
             logger.info("[%d/%d] download %s", index, len(jobs), job["bibcode"])
-            content = None
-            for url in job["urls"]:
-                content, attempt = download_http(
-                    session,
-                    bibcode=job["bibcode"],
-                    url=url,
-                    headers=headers,
-                    timeout=timeout,
-                    expected_sha256=job["expected_sha256"],
-                )
-                job["attempts"].append(attempt)
-                append_jsonl(attempts_path, attempt)
-                if content is not None:
-                    if _save_pdf(job, content, attempts_path):
-                        manual.pop(job["bibcode"], None)
-                        downloaded += 1
-                        break
-                    content = None
-            if content is None:
-                pending.append(job)
-    finally:
-        if own_session:
-            session.close()
-
-    if browser_fallback and pending:
-        no_url_jobs = [job for job in pending if not job["urls"]]
-        still_pending = []
-        for job, content, attempts in browser_attempts((job for job in pending if job["urls"]), browser_wait):
-            for attempt in attempts:
-                job["attempts"].append(attempt)
-                append_jsonl(attempts_path, attempt)
-            if content is None:
-                still_pending.append(job)
-            elif _save_pdf(job, content, attempts_path):
+            if _download_job(fetcher, job, attempts_path):
                 manual.pop(job["bibcode"], None)
                 downloaded += 1
             else:
-                still_pending.append(job)
-        pending = no_url_jobs + still_pending
-
-    for job in pending:
-        attempts = job["attempts"]
-        errors = [attempt["error"] for attempt in attempts if attempt["error"]]
-        if not job["urls"]:
-            errors.append("no explicit open-access PDF or arXiv URL was supplied by ADS")
-        category = "transient" if any(attempt["category"] == "transient" for attempt in attempts) else "permanent"
-        manual[job["bibcode"]] = {
-            "bibcode": job["bibcode"],
-            "target": str(job["target"]),
-            "urls": job["urls"],
-            "category": category,
-            "errors": errors,
-            "updated_at": _now(),
-        }
+                manual[job["bibcode"]] = _manual_entry(job)
+    finally:
+        if own_session:
+            fetcher.session.close()
 
     write_jsonl(manual_path, (manual[bibcode] for bibcode in sorted(manual)))
     return {
         "downloaded": downloaded,
         "skipped": skipped,
-        "failed": len(pending) + conflicts,
+        "failed": len(jobs) - downloaded + conflicts,
         "manual_queue": len(manual),
     }
