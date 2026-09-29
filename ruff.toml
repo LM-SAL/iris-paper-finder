@@ -14,6 +14,7 @@ ignore = [
 [lint.per-file-ignores]
 "src/iris_paper_llm/cli.py" = ["T201"]  # the CLI prints its summary JSON
 "tests/**" = ["S101", "S106", "INP001"]  # pytest asserts, fake tokens, no package
+"data/eval/**" = ["INP001", "T201"]  # standalone scripts that print their results
 
 [lint.pydocstyle]
 convention = "google"
