@@ -15,8 +15,8 @@ Created by Anthony R. Buonomo.
 2. Get the code, install it, and create your key file:
 
    ```bash
-   git clone https://github.com/LM-SAL/iris_paper_llm.git
-   cd iris_paper_llm
+   git clone https://github.com/LM-SAL/iris-paper-finder.git
+   cd iris-paper-finder
    uv sync
    cp -n .env.example .env
    ```

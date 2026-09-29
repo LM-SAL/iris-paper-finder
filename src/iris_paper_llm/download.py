@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 DEFAULT_TIMEOUT_SECONDS = 60.0
 REQUEST_DELAY_SECONDS = 3.0
 DEFAULT_HEADERS = {
-    "User-Agent": "iris-papers/0.2 (+https://github.com/LM-SAL/iris_paper_llm)",
+    "User-Agent": "iris-papers/0.2 (+https://github.com/LM-SAL/iris-paper-finder)",
     "Accept": "application/pdf,application/octet-stream;q=0.9,*/*;q=0.1",
 }
 TRANSIENT_HTTP_STATUS = {408, 425, 429}
