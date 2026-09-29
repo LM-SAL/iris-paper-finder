@@ -2,99 +2,54 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import shutil
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from unittest.mock import patch
 
-import fitz
+import pytest
 
-from iris_paper_llm.ads import _metadata_for_bibcodes, iris_query
-from iris_paper_llm.classify import DEFAULT_MODEL, classify_paths
-from iris_paper_llm.evaluate import prepare_case_pdfs, write_report
+from iris_paper_llm.ads import iris_query, search_papers
+from iris_paper_llm.classify import (
+    DEFAULT_MODEL,
+    DEFAULT_REASONING_EFFORT,
+    classification_key,
+    classify_jobs,
+    pdf_jobs,
+)
+from iris_paper_llm.evaluate import write_report
+from iris_paper_llm.jsonl import append_jsonl, read_jsonl
 from iris_paper_llm.models import (
+    Basis,
     Decision,
     Evidence,
-    IRISAspect,
     IRISClassification,
     PaperResult,
+    PipelineProvenance,
     ResultStatus,
-    RetrievalMode,
-    SyntheticConnection,
 )
 
 
-def paper_pdf(label: str) -> bytes:
-    with fitz.open() as document:
-        page = document.new_page()
-        page.insert_textbox(
-            fitz.Rect(72, 72, 500, 700),
-            f"{label}. We analyze IRIS observations. " * 20,
-        )
-        return document.tobytes()
-
-
-class FakeResponse:
-    status_code = 200
-    url = "https://example.test/paper.pdf"
-
-    def __init__(self, content: bytes) -> None:
-        self.content = content
-        self.headers = {"content-type": "application/pdf"}
-
-
-class FakeSession:
-    def __init__(self, content: bytes) -> None:
-        self.content = content
-
-    def get(self, *_args, **_kwargs) -> FakeResponse:
-        return FakeResponse(self.content)
-
-
-class FakeEmbedder:
-    def create_embeddings(self, docs: list) -> None:
-        self.docs = docs
-
-    def get_relevant_docs(self, _query: str, *, top_k: int = 10, where: dict | None = None):
-        docs = self.docs
-        if where:
-            docs = [doc for doc in docs if doc.metadata["is_candidate"] == 1]
-        docs = docs[:top_k]
-        return docs, [float(index) for index in range(len(docs))]
-
-
-class CharacterEncoding:
-    @staticmethod
-    def encode(text: str, **_kwargs: object) -> list[int]:
-        return [ord(character) for character in text]
-
-    @staticmethod
-    def decode(tokens: list[int]) -> str:
-        return "".join(chr(token) for token in tokens)
+def observational(page: int) -> IRISClassification:
+    return IRISClassification(
+        include=Decision.YES,
+        basis=[Basis.OBSERVATIONAL_DATA],
+        iris_mission_mentioned=True,
+        evidence=[Evidence(page=page, reason="OBSERVATIONAL_DATA: IRIS data are analyzed.")],
+    )
 
 
 class FakeResponses:
-    def parse(self, **kwargs: object) -> object:
-        context = kwargs["input"][1]["content"]
-        page = int(context.split("page=", 1)[1].split(" ", 1)[0])
-        chunk_id = context.split("chunk_id=", 1)[1].split("]", 1)[0]
-        classification = IRISClassification(
-            observational_use=Decision.YES,
-            synthetic_use=Decision.NO,
-            synthetic_connection=SyntheticConnection.NOT_APPLICABLE,
-            review_only=Decision.NO,
-            iris_mission_mentioned=True,
-            aspects=[IRISAspect.TELESCOPE],
-            observational_evidence=[Evidence(page=page, chunk_id=chunk_id, reason="IRIS data are analyzed.")],
-            synthetic_evidence=[],
-            review_evidence=[],
-        )
+    def parse(self, *, input: list[dict], **_kwargs: object) -> object:  # noqa: A002  (the OpenAI keyword)
+        context = input[1]["content"]
+        page = int(context.split("[PAGE ", 1)[1].split("]", 1)[0])
         return SimpleNamespace(
             id="response-test",
             model="resolved-test-model",
             output=[],
-            output_parsed=classification,
+            output_parsed=observational(page),
             status="completed",
             usage=None,
         )
@@ -111,7 +66,7 @@ def test_offline_pipeline_checkpoint_and_resume() -> None:
     client = SimpleNamespace(responses=FakeResponses())
     repository = Path(__file__).resolve().parents[1]
     first = repository / "tests/data/pdfs/observational_filament_flows.pdf"
-    second = repository / "tests/data/pdfs/instrument_description_only.pdf"
+    second = repository / "tests/data/pdfs/iris_seen_but_not_used.pdf"
     with TemporaryDirectory() as directory:
         root = Path(directory)
         pdfs = root / "pdfs"
@@ -120,100 +75,168 @@ def test_offline_pipeline_checkpoint_and_resume() -> None:
         shutil.copyfile(second, pdfs / second.name)
         output = root / "results.jsonl"
 
-        with patch("tiktoken.get_encoding", return_value=CharacterEncoding()):
-            first_summary = classify_paths(first, output, client=client, embedder=FakeEmbedder())
-            assert len(output.read_text().splitlines()) == 1
-            directory_summary = classify_paths(pdfs, output, client=client, embedder=FakeEmbedder())
+        first_summary = classify_jobs(pdf_jobs(first), output, client=client)
+        assert len(output.read_text().splitlines()) == 1
+        directory_summary = classify_jobs(pdf_jobs(pdfs), output, client=client)
 
-            failed_output = root / "failed.jsonl"
-            failed_summary = classify_paths(
-                first,
-                failed_output,
-                client=SimpleNamespace(responses=FailingResponses()),
-                embedder=FakeEmbedder(),
-            )
+        failed_output = root / "failed.jsonl"
+        failed_summary = classify_jobs(
+            pdf_jobs(first), failed_output, client=SimpleNamespace(responses=FailingResponses())
+        )
 
         assert first_summary == {"positive": 1, "negative": 0, "uncertain": 0, "failed": 0, "skipped": 0}
         assert directory_summary == {"positive": 1, "negative": 0, "uncertain": 0, "failed": 0, "skipped": 1}
-        records = [json.loads(line) for line in output.read_text().splitlines()]
+        records = read_jsonl(output)
         assert len(records) == 2
-        sent = records[0]["retrieval"]["sent"]
+        assert set(records[0]) == {"evaluation_key", "id", "bibcode", "pages_sent", "characters_sent", "result"}
+        assert records[0]["pages_sent"] > 1
+        assert records[0]["characters_sent"] > 10_000
         result = PaperResult.model_validate(records[0]["result"])
-        assert sent
         assert result.status == ResultStatus.CLASSIFIED
         assert result.classification is not None
-        assert result.classification.overall == Decision.YES
-        evidence = result.classification.observational_evidence[0]
-        assert (evidence.chunk_id, evidence.page) == (sent[0]["chunk_id"], sent[0]["page"])
+        assert result.classification.include == Decision.YES
+        assert result.classification.evidence[0].page == 1
 
         assert failed_summary == {"positive": 0, "negative": 0, "uncertain": 0, "failed": 1, "skipped": 0}
-        failed = PaperResult.model_validate(json.loads(failed_output.read_text())["result"])
+        failed = PaperResult.model_validate(read_jsonl(failed_output)[0]["result"])
         assert failed.status == ResultStatus.PROCESSING_FAILED
-        assert failed.classification is None
-        report = write_report(
-            output,
-            model=DEFAULT_MODEL,
-            retrieval_mode=RetrievalMode.AUTO,
-            top_k=20,
-        )
+        assert failed.errors == ["offline API failure"]
+        report = write_report(output)
         assert report["positive"] == 2
         assert output.with_suffix(".md").is_file()
 
 
-def test_reviewed_pdf_preparation_uses_manifest_checksum() -> None:
-    content = paper_pdf("Reviewed")
-    checksum = hashlib.sha256(content).hexdigest()
+def result_record(paper: str, status: ResultStatus, *, model: str = DEFAULT_MODEL, pdf: str = "") -> dict:
+    pdf_hash = hashlib.sha256((pdf or paper).encode()).hexdigest()
+    classified = status == ResultStatus.CLASSIFIED
+    result = PaperResult(
+        bibcode=paper,
+        pdf_sha256=pdf_hash,
+        status=status,
+        classification=observational(1) if classified else None,
+        provenance=PipelineProvenance(
+            pipeline_version="test",
+            prompt_version="test",
+            prompt_sha256="0" * 64,
+            model=model,
+            reasoning_effort=DEFAULT_REASONING_EFFORT,
+            request_id=None,
+            input_tokens=None,
+            output_tokens=None,
+        ),
+        errors=[] if classified else ["offline API failure"],
+    )
+    return {
+        "evaluation_key": classification_key(pdf_hash, model=model, reasoning_effort=DEFAULT_REASONING_EFFORT),
+        "id": paper,
+        "bibcode": paper,
+        "pages_sent": 1,
+        "characters_sent": 100,
+        "result": result.model_dump(mode="json"),
+    }
+
+
+def test_report_prefers_latest_success_without_double_counting() -> None:
     with TemporaryDirectory() as directory:
-        root = Path(directory)
-        cases = root / "cases.jsonl"
-        case = {
-            "id": "reviewed",
-            "path": "pdfs/TEST.pdf",
-            "pdf_sha256": checksum,
-            "pdf_links": ["https://example.test/paper.pdf"],
-            "bibcode": "TEST",
-        }
+        output = Path(directory) / "results.jsonl"
+        for record in (
+            result_record("success-then-failure", ResultStatus.CLASSIFIED),
+            result_record("success-then-failure", ResultStatus.PROCESSING_FAILED),
+            result_record("failure-then-success", ResultStatus.PROCESSING_FAILED),
+            result_record("failure-then-success", ResultStatus.CLASSIFIED),
+            result_record("never-classified", ResultStatus.PROCESSING_FAILED),
+            result_record("never-classified", ResultStatus.PROCESSING_FAILED),
+            result_record("other-model", ResultStatus.CLASSIFIED, model="other-model"),
+            result_record("replaced-pdf", ResultStatus.CLASSIFIED),
+            result_record("replaced-pdf", ResultStatus.PROCESSING_FAILED, pdf="publisher copy"),
+            result_record("relabelled", ResultStatus.CLASSIFIED) | {"expected": {"include": "NO", "basis": []}},
+        ):
+            append_jsonl(output, record)
+        cases = Path(directory) / "cases.jsonl"
+        case = {"id": "relabelled", "expected_include": "YES", "expected_basis": ["OBSERVATIONAL_DATA"]}
         cases.write_text(json.dumps(case) + "\n")
-        summary = prepare_case_pdfs(cases, base_dir=root, session=FakeSession(content))
-        assert summary == {"downloaded": 1, "skipped": 0, "failed": 0, "manual_queue": 0}
-        assert hashlib.sha256((root / "pdfs/TEST.pdf").read_bytes()).hexdigest() == checksum
+        summary = write_report(output, cases=cases)
+        report = output.with_suffix(".md").read_text()
+    assert summary == {"positive": 4, "negative": 0, "uncertain": 0, "failed": 1, "skipped": 0}
+    assert "- Results: 5 papers" in report
+    assert report.count("`success-then-failure`") == 1
+    assert report.count("`replaced-pdf`") == 1
+    assert "other-model" not in report
+    assert "| 1 | 0 | 0 | 1 of 1 |" in report
+    assert "| `relabelled` | YES (OBSERVATIONAL_DATA) | YES |" in report
+
+
+def test_report_lists_new_candidates_and_failures() -> None:
+    with TemporaryDirectory() as directory:
+        output = Path(directory) / "results.jsonl"
+        for record in (
+            result_record("2025ApJ...1A", ResultStatus.CLASSIFIED),
+            result_record("2025A&A...2B", ResultStatus.CLASSIFIED),
+            result_record("2025ApJ...3C", ResultStatus.PROCESSING_FAILED),
+        ):
+            append_jsonl(output, record)
+        library = Path(directory) / "library.txt"
+        library.write_text("2025ApJ...1A\n")
+        write_report(output, library=library)
+        report = output.with_suffix(".md").read_text()
+        review = (Path(directory) / "results_to_review.txt").read_text().splitlines()
+    assert review == ["https://ui.adsabs.harvard.edu/abs/2025A%26A...2B/abstract  # YES (OBSERVATIONAL_DATA)"]
+    assert "not in `library.txt` (1)" in report
+    assert "[2025ApJ...1A](" not in report
+    assert "| `2025ApJ...3C` | offline API failure |" in report
 
 
 def test_standard_query_is_scoped_to_year() -> None:
     query = iris_query(2025)
-    assert "2014SoPh..289.2733D" in query
-    assert "pubdate:[2025-01 TO 2025-12]" in query
+    assert "citations(bibcode:2014SoPh..289.2733D)" in query
+    assert query.endswith("pubdate:[2025-01 TO 2025-12]")
 
 
-def test_ads_metadata_normalizes_link_records() -> None:
-    response = SimpleNamespace(
-        raise_for_status=lambda: None,
-        json=lambda: {
-            "response": {
-                "start": 0,
-                "numFound": 1,
-                "docs": [
-                    {
-                        "bibcode": "TEST",
-                        "links_data": ['{"access":"open","type":"pdf","url":"https://example.test/paper.pdf"}'],
-                    }
-                ],
-            }
-        },
-    )
-    with patch("iris_paper_llm.ads.requests.post", return_value=response):
-        records = _metadata_for_bibcodes(["TEST"], "token")
-    assert records == [
-        {
-            "bibcode": "TEST",
-            "links_data": [{"access": "open", "type": "pdf", "url": "https://example.test/paper.pdf"}],
-            "pdf_links": [],
-        }
+def test_ads_search_paginates_and_always_requeries() -> None:
+    documents = [
+        {"bibcode": "A", "links_data": ['{"access":"open","type":"pdf","url":"https://example.test/a.pdf"}']},
+        {"bibcode": "B"},
+        {"bibcode": "C", "links_data": []},
     ]
+    calls = []
+
+    def get(_url: str, *, params: dict, **_kwargs: object) -> SimpleNamespace:
+        calls.append(params)
+        start = params["start"]
+        page = documents[start : start + min(params["rows"], 2)]  # the server caps a page at 2 rows
+        return SimpleNamespace(
+            raise_for_status=lambda: None,
+            json=lambda: {"response": {"numFound": len(documents), "start": start, "docs": page}},
+        )
+
+    with TemporaryDirectory() as directory, patch("iris_paper_llm.ads.requests.get", side_effect=get):
+        output = Path(directory) / "metadata.jsonl"
+        assert search_papers("q", output, api_token="token") == {"found": 3, "written": 3}
+        assert search_papers("q", output, api_token="token") == {"found": 3, "written": 3}
+        assert [call["start"] for call in calls] == [0, 2, 0, 2]
+        records = read_jsonl(output)
+        assert search_papers("q", output, api_token="token", limit=1) == {"found": 3, "written": 1}
+        assert calls[-1]["rows"] == 1
+    assert records[0] == {
+        "bibcode": "A",
+        "links_data": [{"access": "open", "type": "pdf", "url": "https://example.test/a.pdf"}],
+    }
+    assert [record["bibcode"] for record in records] == ["A", "B", "C"]
+    assert records[1]["links_data"] == []
 
 
-if __name__ == "__main__":
-    test_offline_pipeline_checkpoint_and_resume()
-    test_reviewed_pdf_preparation_uses_manifest_checksum()
-    test_standard_query_is_scoped_to_year()
-    test_ads_metadata_normalizes_link_records()
+def test_jsonl_tolerates_truncated_last_line() -> None:
+    with TemporaryDirectory() as directory:
+        path = Path(directory) / "results.jsonl"
+        path.write_text('{"id":1}\n{"id":2}\n{"id":', encoding="utf-8")
+        assert read_jsonl(path) == [{"id": 1}, {"id": 2}]
+        append_jsonl(path, {"id": 3})
+        assert path.read_text(encoding="utf-8") == '{"id":1}\n{"id":2}\n{"id":3}\n'
+
+        path.write_text('{"id":1}', encoding="utf-8")
+        append_jsonl(path, {"id": 2})
+        assert read_jsonl(path) == [{"id": 1}, {"id": 2}]
+
+        path.write_text('{"id":1}\n{"id":\n{"id":3}\n', encoding="utf-8")
+        with pytest.raises(ValueError, match=re.escape(f"{path}:2:")):
+            read_jsonl(path)

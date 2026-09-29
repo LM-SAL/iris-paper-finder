@@ -1,40 +1,30 @@
+import pytest
 from pydantic import ValidationError
 
-from iris_paper_llm.models import Decision, Evidence, IRISAspect, IRISClassification, SyntheticConnection
+from iris_paper_llm.models import IRISClassification
 
-
-def classification() -> IRISClassification:
-    return IRISClassification(
-        observational_use=Decision.NO,
-        synthetic_use=Decision.YES,
-        synthetic_connection=SyntheticConnection.PASSBAND_ONLY,
-        review_only=Decision.NO,
-        iris_mission_mentioned=True,
-        aspects=[IRISAspect.SPECTROGRAPH],
-        observational_evidence=[],
-        synthetic_evidence=[Evidence(page=2, chunk_id="p2-c1", reason="Synthetic Mg II intensity is analyzed.")],
-        review_evidence=[],
-    )
+EVIDENCE = [{"page": 2, "reason": "SYNTHETIC_OBSERVABLE: synthetic Mg II intensity is analyzed."}]
 
 
 def test_classification_consistency() -> None:
-    record = classification().model_dump(mode="json")
-    invalid_records = [
-        {**record, "synthetic_connection": "NOT_APPLICABLE"},
-        {
-            **record,
-            "review_only": "YES",
-            "review_evidence": [{"page": 2, "chunk_id": "p2-c1", "reason": "Prior work."}],
-        },
+    valid = [
+        {"include": "YES", "basis": ["SYNTHETIC_OBSERVABLE", "REVIEW"], "evidence": EVIDENCE},
+        {"include": "NO", "basis": [], "evidence": []},
+        {"include": "UNCERTAIN", "basis": ["REVIEW"], "evidence": EVIDENCE},
+        {"include": "UNCERTAIN", "basis": [], "evidence": []},
     ]
-    for invalid in invalid_records:
-        try:
-            IRISClassification.model_validate(invalid)
-        except ValidationError:
-            pass
-        else:
-            raise AssertionError("inconsistent classification was accepted")
-
-
-if __name__ == "__main__":
-    test_classification_consistency()
+    invalid = [
+        {"include": "YES", "basis": [], "evidence": EVIDENCE},
+        {"include": "YES", "basis": ["REVIEW"], "evidence": EVIDENCE},
+        {"include": "YES", "basis": ["OBSERVATIONAL_DATA"], "evidence": []},
+        {"include": "YES", "basis": ["OBSERVATIONAL_DATA", "OBSERVATIONAL_DATA"], "evidence": EVIDENCE},
+        {"include": "NO", "basis": ["REVIEW"], "evidence": EVIDENCE},
+        {"include": "UNCERTAIN", "basis": ["OBSERVATIONAL_DATA"], "evidence": EVIDENCE},
+        {"include": "UNCERTAIN", "basis": ["REVIEW"], "evidence": []},
+        {"include": "YES", "basis": ["OBSERVATIONAL_DATA"], "evidence": [{"page": 0, "reason": "p0"}]},
+    ]
+    for record in valid:
+        IRISClassification.model_validate({**record, "iris_mission_mentioned": True})
+    for record in invalid:
+        with pytest.raises(ValidationError):
+            IRISClassification.model_validate({**record, "iris_mission_mentioned": True})

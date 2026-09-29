@@ -18,17 +18,12 @@ class Decision(StrEnum):
     UNCERTAIN = "UNCERTAIN"
 
 
-class SyntheticConnection(StrEnum):
-    EXPLICIT = "EXPLICIT"
-    PASSBAND_ONLY = "PASSBAND_ONLY"
-    NOT_APPLICABLE = "NOT_APPLICABLE"
-    UNCERTAIN = "UNCERTAIN"
-
-
-class IRISAspect(StrEnum):
-    TELESCOPE = "TELESCOPE"
-    SPECTROGRAPH = "SPECTROGRAPH"
-    SLIT_JAW_IMAGER = "SLIT_JAW_IMAGER"
+class Basis(StrEnum):
+    OBSERVATIONAL_DATA = "OBSERVATIONAL_DATA"
+    SYNTHETIC_OBSERVABLE = "SYNTHETIC_OBSERVABLE"
+    INSTRUMENT_OR_SOFTWARE = "INSTRUMENT_OR_SOFTWARE"
+    COMPANION_PAPER = "COMPANION_PAPER"
+    REVIEW = "REVIEW"
 
 
 class ResultStatus(StrEnum):
@@ -36,90 +31,33 @@ class ResultStatus(StrEnum):
     PROCESSING_FAILED = "PROCESSING_FAILED"
 
 
-class RetrievalMode(StrEnum):
-    AUTO = "auto"
-    HEURISTIC = "heuristic"
-    ALL = "all"
-
-
-class SelectionReason(StrEnum):
-    HEURISTIC_MATCH = "heuristic_match"
-    ADJACENT_CONTEXT = "adjacent_context"
-    GLOBAL_FALLBACK = "global_fallback"
-
-
 class Evidence(StrictModel):
-    page: int | None = Field(ge=1)
-    chunk_id: str = Field(min_length=1, pattern=r"^[^\r\n]+$")
+    page: int = Field(ge=1)
     reason: str = Field(min_length=1)
 
 
-class PaperChunk(StrictModel):
-    page: int | None = Field(ge=1)
-    chunk_id: str = Field(min_length=1, pattern=r"^[^\r\n]+$")
-    text: str = Field(min_length=1)
-
-
-class RetrievedChunk(PaperChunk):
-    distance: float
-    reason: SelectionReason
-
-
-class RetrievalResult(StrictModel):
-    exact_match_chunk_ids: list[str]
-    adjacent_chunk_ids: list[str]
-    selected: list[RetrievedChunk]
-
-
 class IRISClassification(StrictModel):
-    observational_use: Decision
-    synthetic_use: Decision
-    synthetic_connection: SyntheticConnection
-    review_only: Decision
+    include: Decision
+    basis: list[Basis]
     iris_mission_mentioned: bool
-    aspects: list[IRISAspect]
-    observational_evidence: list[Evidence]
-    synthetic_evidence: list[Evidence]
-    review_evidence: list[Evidence]
-
-    @property
-    def overall(self) -> Decision:
-        if Decision.YES in {self.observational_use, self.synthetic_use}:
-            return Decision.YES
-        if self.observational_use == self.synthetic_use == Decision.NO:
-            return Decision.NO
-        return Decision.UNCERTAIN
+    evidence: list[Evidence]
 
     @model_validator(mode="after")
     def validate_consistency(self) -> IRISClassification:
-        allowed_connections = {
-            Decision.YES: {SyntheticConnection.EXPLICIT, SyntheticConnection.PASSBAND_ONLY},
-            Decision.NO: {SyntheticConnection.NOT_APPLICABLE},
-            Decision.UNCERTAIN: {SyntheticConnection.UNCERTAIN},
-        }
-        if self.synthetic_connection not in allowed_connections[self.synthetic_use]:
-            msg = f"{self.synthetic_use=} is inconsistent with {self.synthetic_connection=}"
+        if len(self.basis) != len(set(self.basis)):
+            msg = "basis must not contain duplicates"
             raise ValueError(msg)
-
-        if Decision.YES in {self.observational_use, self.synthetic_use} and self.review_only != Decision.NO:
-            msg = "review_only must be NO when this paper has new observational or synthetic use"
+        if self.include == Decision.NO and self.basis:
+            msg = "include=NO requires an empty basis"
             raise ValueError(msg)
-
-        evidence_fields = (
-            ("observational_use", self.observational_use, self.observational_evidence),
-            ("synthetic_use", self.synthetic_use, self.synthetic_evidence),
-            ("review_only", self.review_only, self.review_evidence),
-        )
-        for name, decision, evidence in evidence_fields:
-            if decision in {Decision.YES, Decision.UNCERTAIN} and not evidence:
-                msg = f"{name}={decision} requires evidence"
-                raise ValueError(msg)
-
-        if Decision.YES not in {self.observational_use, self.synthetic_use} and self.aspects:
-            msg = "aspects must be empty when neither data-use field is YES"
+        if self.include == Decision.YES and not set(self.basis) - {Basis.REVIEW}:
+            msg = "include=YES requires at least one basis other than REVIEW"
             raise ValueError(msg)
-        if len(self.aspects) != len(set(self.aspects)):
-            msg = "aspects must not contain duplicates"
+        if self.include == Decision.UNCERTAIN and set(self.basis) - {Basis.REVIEW}:
+            msg = "include=UNCERTAIN allows only the REVIEW basis"
+            raise ValueError(msg)
+        if self.basis and not self.evidence:
+            msg = f"include={self.include} with basis {self.basis} requires evidence"
             raise ValueError(msg)
         return self
 
@@ -129,14 +67,14 @@ class PipelineProvenance(StrictModel):
     prompt_version: str = Field(min_length=1)
     prompt_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     model: str | None
-    retrieval_mode: str | None
+    reasoning_effort: str = Field(min_length=1)
     request_id: str | None
     input_tokens: int | None = Field(ge=0)
     output_tokens: int | None = Field(ge=0)
 
 
 class PaperResult(StrictModel):
-    schema_version: Literal[1] = 1
+    schema_version: Literal[2] = 2
     bibcode: str | None
     pdf_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     status: ResultStatus
