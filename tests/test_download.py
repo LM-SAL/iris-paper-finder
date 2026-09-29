@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 import pymupdf
+import pytest
 import requests
 
 from iris_paper_llm.download import REQUEST_DELAY_SECONDS, candidate_pdf_urls, download_records, validate_pdf
@@ -128,19 +129,29 @@ def test_manual_queue_is_deduplicated() -> None:
         assert session.calls == 0
 
 
-def test_openalex_copies_follow_failed_ads_links() -> None:
+@pytest.mark.parametrize(
+    "pmc_location",
+    [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/123",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC123/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC123/",
+        "PMC123",
+    ],
+)
+def test_openalex_copies_follow_failed_ads_links(pmc_location: str) -> None:
     publisher = "https://publisher.test/paper.pdf"
     openalex = "https://api.openalex.org/works/doi:10.1234/paper"
     repository = "https://repository.test/paper.pdf"
     pmc = "https://pmc-oa-opendata.s3.amazonaws.com/PMC123.1/PMC123.1.pdf"
     work = {
+        "ids": {"pmcid": pmc_location if pmc_location == "PMC123" else None},
         "locations": [
             {"is_oa": True, "pdf_url": "https://doi.org/10.1234/paper"},  # can be a publisher placeholder PDF
             {"is_oa": True, "pdf_url": "http://publisher.test/paper.pdf"},  # already tried
             {"is_oa": False, "pdf_url": "https://closed.test/paper.pdf"},
             {"is_oa": True, "pdf_url": repository},
-            {"is_oa": True, "pdf_url": None, "landing_page_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/123"},
-        ]
+            {"is_oa": True, "pdf_url": None, "landing_page_url": pmc_location if "://" in pmc_location else None},
+        ],
     }
     cloudflare = {"content-type": "text/html", "server": "cloudflare"}
     challenge = FakeResponse(b"<title>Just a moment...</title>", 403, cloudflare)
@@ -220,6 +231,35 @@ def test_pdf_of_another_paper_or_without_text_is_rejected() -> None:
     ]
 
 
+@pytest.mark.parametrize("text", ["Galaxy clusters at high redshift.", ""])
+def test_existing_wrong_or_scanned_pdf_is_preserved_and_replaced(text: str) -> None:
+    existing = one_page_pdf(text)
+    right = one_page_pdf(ABSTRACT)
+    session = FakeSession(right)
+    record = {"bibcode": "paper", "abstract": ABSTRACT}
+    with TemporaryDirectory() as directory:
+        output = Path(directory)
+        target = output / "paper.pdf"
+        target.write_bytes(existing)
+        assert download_records([record], output, session=session) == {
+            "downloaded": 0,
+            "skipped": 0,
+            "failed": 1,
+            "manual_queue": 1,
+        }
+        assert not target.exists()
+        (rejected,) = output.glob("*.rejected")
+        assert rejected.read_bytes() == existing
+        assert session.calls == 0
+
+        record["pdf_links"] = ["https://example.test/paper.pdf"]
+        assert download_records([record], output, session=session)["downloaded"] == 1
+        assert target.read_bytes() == right
+        assert download_records([record], output, session=session)["skipped"] == 1
+        assert session.calls == 1
+        assert read_jsonl(output / "manual_downloads.jsonl") == []
+
+
 def test_reviewed_pdf_preparation_uses_manifest_checksum() -> None:
     content = one_page_pdf()
     checksum = hashlib.sha256(content).hexdigest()
@@ -232,3 +272,9 @@ def test_reviewed_pdf_preparation_uses_manifest_checksum() -> None:
         summary = prepare_case_pdfs(cases, session=FakeSession(content))
         assert summary == {"downloaded": 1, "skipped": 0, "failed": 0, "manual_queue": 0}
         assert hashlib.sha256(target.read_bytes()).hexdigest() == checksum
+
+        conflict = one_page_pdf("A different PDF that must be preserved.")
+        target.write_bytes(conflict)
+        summary = prepare_case_pdfs(cases, session=FakeSession(content))
+        assert summary == {"downloaded": 0, "skipped": 0, "failed": 1, "manual_queue": 1}
+        assert target.read_bytes() == conflict

@@ -81,7 +81,7 @@ def prepare_case_pdfs(
 
 
 def latest_results(output: Path, *, model: str, reasoning_effort: str) -> list[dict]:
-    """One record per paper for this configuration: its latest success, else its latest failure."""
+    """One record per paper's latest PDF: its latest success, else its latest failure, for this configuration."""
     if not output.is_file():
         return []
     latest = {}
@@ -90,7 +90,11 @@ def latest_results(output: Path, *, model: str, reasoning_effort: str) -> list[d
         if record["evaluation_key"] != key:
             continue
         paper = record["id"]
-        has_success = paper in latest and latest[paper]["result"]["status"] == ResultStatus.CLASSIFIED
+        has_success = (
+            paper in latest
+            and latest[paper]["evaluation_key"] == key
+            and latest[paper]["result"]["status"] == ResultStatus.CLASSIFIED
+        )
         if record["result"]["status"] == ResultStatus.CLASSIFIED or not has_success:
             latest[paper] = record
     return list(latest.values())

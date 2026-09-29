@@ -260,7 +260,11 @@ def _open_access_urls(fetcher: _Fetcher, job: dict) -> tuple[list[str], dict | N
         ]
         # OpenAlex responses currently carry the PMCID only in a location's landing page URL.
         pages = [(work.get("ids") or {}).get("pmcid"), *(location.get("landing_page_url") for location in locations)]
-        pmcids = [match[1] for page in pages if (match := re.search(r"/pmc/articles/(?:PMC)?(\d+)", str(page)))]
+        pmcids = [
+            match[1]
+            for page in pages
+            if (match := re.search(r"(?:/(?:pmc/)?articles/(?:PMC)?|^PMC)(\d+)(?:[/?#]|$)", str(page)))
+        ]
     except (requests.RequestException, ValueError, AttributeError, TypeError) as error:
         # ponytail: every failure but a 404 counts as transient (timeouts, 429, 5xx); split out persistent 4xx if seen.
         error_text = f"OpenAlex lookup failed: {str(error) or type(error).__name__}"
@@ -329,14 +333,26 @@ def _job(record: Mapping[str, Any], output_dir: Path) -> dict:
     }
 
 
-def _existing_pdf(job: dict) -> str | None:
-    """Return "valid" or "conflict" (valid, other checksum) for a readable PDF at the target, else None."""
+def _existing_pdf(job: dict, attempts_path: Path) -> str | None:
+    """Validate cached PDFs; preserve rejected copies outside PDF discovery before trying a replacement."""
     if not job["target"].is_file():
         return None
     existing = job["target"].read_bytes()
     try:
-        validate_pdf(existing)
-    except ValueError:
+        validate_pdf(existing, abstract=job["abstract"])
+    except ValueError as error:
+        rejected = job["target"].with_suffix(f".{hashlib.sha256(existing).hexdigest()}.rejected")
+        job["target"].rename(rejected)
+        attempt = _attempt(
+            bibcode=job["bibcode"],
+            url="",
+            method="existing",
+            status="failed",
+            category="permanent",
+            error=f"{error}; file preserved as {rejected.name}",
+        )
+        job["attempts"].append(attempt)
+        append_jsonl(attempts_path, attempt)
         return None
     if job["expected_sha256"] and hashlib.sha256(existing).hexdigest() != job["expected_sha256"]:
         return "conflict"
@@ -380,7 +396,7 @@ def download_records(
     for index, record in enumerate(records, start=1):
         job = _job(record, output_dir)
         logger.info("[%d/%d] prepare %s", index, len(records), job["bibcode"])
-        existing = _existing_pdf(job)
+        existing = _existing_pdf(job, attempts_path)
         if existing is None:
             jobs.append(job)
         elif existing == "valid":

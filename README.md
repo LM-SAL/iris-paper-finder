@@ -143,6 +143,11 @@ with "No usable embedded text", open the saved file: it is probably a web page
 saved with a `.pdf` name, or a scanned PDF without text. Replace it with a
 real, text-based PDF (the arXiv version works) at the same path.
 
+Existing PDFs receive the same abstract check as new downloads. Rejected
+files are preserved as `<bibcode>.<sha256>.rejected` so they cannot be
+classified while the downloader looks for a replacement. The queue and
+download log record the reason and preserved filename.
+
 ## What counts as an IRIS paper
 
 The ADS IRIS library is the ground truth, and the classifier follows its

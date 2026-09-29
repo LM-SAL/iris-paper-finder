@@ -157,10 +157,12 @@ def test_report_prefers_latest_success_without_double_counting() -> None:
         cases.write_text(json.dumps(case) + "\n")
         summary = write_report(output, cases=cases)
         report = output.with_suffix(".md").read_text()
-    assert summary == {"positive": 4, "negative": 0, "uncertain": 0, "failed": 1, "skipped": 0}
+    assert summary == {"positive": 3, "negative": 0, "uncertain": 0, "failed": 2, "skipped": 0}
     assert "- Results: 5 papers" in report
     assert report.count("`success-then-failure`") == 1
-    assert report.count("`replaced-pdf`") == 1
+    assert "| `success-then-failure` | - | YES | OBSERVATIONAL_DATA | CLASSIFIED |" in report
+    assert "| `replaced-pdf` | offline API failure |" in report
+    assert "| `replaced-pdf` | - | - | - | PROCESSING_FAILED |" in report
     assert "other-model" not in report
     assert "| 1 | 0 | 0 | 1 of 1 |" in report
     assert "| `relabelled` | YES (OBSERVATIONAL_DATA) | YES |" in report
