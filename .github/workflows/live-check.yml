@@ -1,4 +1,5 @@
-# Monthly check that the ADS (SciX) and OpenAI APIs still work with the repository secrets; costs a few cents.
+# Monthly check that the ADS (SciX) API still works, and the OpenAI API too when its secret is set
+# (two classifications, about a cent).
 name: Live check
 
 on:
@@ -13,6 +14,8 @@ jobs:
   live:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      OPENAI_KEY_SET: ${{ secrets.OPENAI_API_KEY != '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
@@ -24,14 +27,20 @@ jobs:
           ADS_TOKEN: ${{ secrets.ADS_TOKEN }}
       # The first two reviewed cases are tracked PDFs in tests/data/pdfs, so nothing is downloaded.
       - run: uv run iris-papers evaluate --limit 2 --output live/eval.jsonl
+        if: env.OPENAI_KEY_SET == 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       - shell: python
         run: |
-          import json
           from pathlib import Path
 
           assert len(Path("live/metadata.jsonl").read_text().splitlines()) == 2, "ADS returned fewer than 2 papers"
+      - shell: python
+        if: env.OPENAI_KEY_SET == 'true'
+        run: |
+          import json
+          from pathlib import Path
+
           records = [json.loads(line) for line in Path("live/eval.jsonl").read_text().splitlines()]
           wrong = [
               record["id"]

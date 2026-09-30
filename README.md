@@ -238,8 +238,9 @@ nothing. GitHub Actions runs the hooks and the tests (on Ubuntu and macOS) on
 every push to `main` and every pull request.
 
 A monthly live check (`.github/workflows/live-check.yml`, also runnable from
-the Actions tab) searches ADS and classifies two reviewed papers for a few
-cents. It needs the repository secrets `ADS_TOKEN` and `OPENAI_API_KEY`
-(Settings > Secrets and variables > Actions). GitHub pauses scheduled
-workflows after 60 days without repository activity; re-enable it in the
-Actions tab.
+the Actions tab) searches ADS with the repository secret `ADS_TOKEN`
+(Settings > Secrets and variables > Actions). If the secret `OPENAI_API_KEY`
+is also set, it classifies two reviewed papers too, for about a cent a month;
+use a key from a separate OpenAI project with a small monthly budget. GitHub
+pauses scheduled workflows after 60 days without repository activity;
+re-enable it in the Actions tab.
