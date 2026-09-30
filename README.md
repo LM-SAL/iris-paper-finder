@@ -181,7 +181,7 @@ mean the command was mistyped; read the `error:` line after it.
 | Error | What to do |
 |---|---|
 | `Missing credentials` or `Incorrect API key provided` | Check `OPENAI_API_KEY` in `.env`. A key exported in your shell overrides `.env`; remove it with `unset OPENAI_API_KEY` |
-| `ADS_TOKEN or --api-token is required` | Set `ADS_TOKEN` in `.env` |
+| `ADS_TOKEN is not set; add it to .env` | Set `ADS_TOKEN` in `.env` |
 | `401 Client Error: UNAUTHORIZED` from `api.adsabs.harvard.edu` | The ADS token is wrong or expired; make a new one and update `.env` |
 | `insufficient_quota` | Add credits to the OpenAI account |
 | The model `does not exist` | The default model was retired; see Maintenance |

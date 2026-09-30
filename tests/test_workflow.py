@@ -211,13 +211,17 @@ def test_ads_search_paginates_and_always_requeries() -> None:
             json=lambda: {"response": {"numFound": len(documents), "start": start, "docs": page}},
         )
 
-    with TemporaryDirectory() as directory, patch("iris_paper_llm.ads.requests.get", side_effect=get):
+    with (
+        TemporaryDirectory() as directory,
+        patch("iris_paper_llm.ads.requests.get", side_effect=get),
+        patch.dict("os.environ", {"ADS_TOKEN": "token"}),
+    ):
         output = Path(directory) / "metadata.jsonl"
-        assert search_papers("q", output, api_token="token") == {"found": 3, "written": 3}
-        assert search_papers("q", output, api_token="token") == {"found": 3, "written": 3}
+        assert search_papers("q", output) == {"found": 3, "written": 3}
+        assert search_papers("q", output) == {"found": 3, "written": 3}
         assert [call["start"] for call in calls] == [0, 2, 0, 2]
         records = read_jsonl(output)
-        assert search_papers("q", output, api_token="token", limit=1) == {"found": 3, "written": 1}
+        assert search_papers("q", output, limit=1) == {"found": 3, "written": 1}
         assert calls[-1]["rows"] == 1
     assert records[0] == {
         "bibcode": "A",

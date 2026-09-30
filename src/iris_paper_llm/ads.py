@@ -56,14 +56,14 @@ def _download_record(document: dict) -> dict:
     return record
 
 
-def search_papers(query: str, output: Path, *, api_token: str | None = None, limit: int = 2000) -> dict[str, int]:
+def search_papers(query: str, output: Path, *, limit: int = 2000) -> dict[str, int]:
     """Query ADS page by page and replace the metadata JSONL with bibcodes, link data, DOIs and abstracts."""
     if limit <= 0:
         msg = "limit must be positive"
         raise ValueError(msg)
-    api_token = api_token or os.getenv("ADS_TOKEN")
+    api_token = os.getenv("ADS_TOKEN")
     if not api_token:
-        msg = "ADS_TOKEN or --api-token is required"
+        msg = "ADS_TOKEN is not set; add it to .env"
         raise ValueError(msg)
 
     records: list[dict] = []

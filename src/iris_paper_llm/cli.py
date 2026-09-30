@@ -38,7 +38,7 @@ def _search(args: argparse.Namespace) -> dict[str, int]:
             msg = "--output is required when using --query"
             raise ValueError(msg)
         args.output = Path("data/metadata") / f"{args.year}.jsonl"
-    return search_papers(query, args.output, api_token=args.api_token, limit=args.limit)
+    return search_papers(query, args.output, limit=args.limit)
 
 
 def _download(args: argparse.Namespace) -> dict[str, int]:
@@ -85,7 +85,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
     metadata = Path("data/metadata") / f"{args.year}.jsonl"
     pdfs = Path("data/pdfs") / str(args.year)
     results = Path("data/results") / f"{args.year}.jsonl"
-    search = search_papers(args.query or iris_query(args.year), metadata, api_token=args.api_token, limit=args.limit)
+    search = search_papers(args.query or iris_query(args.year), metadata, limit=args.limit)
     downloads = download_records(read_jsonl(metadata), pdfs, timeout=args.timeout)
     classifications = classify_jobs(
         pdf_jobs(pdfs, args.limit),
@@ -112,7 +112,6 @@ def build_parser() -> argparse.ArgumentParser:
     source.add_argument("--year", type=int)
     source.add_argument("--query")
     search.add_argument("--output", type=Path)
-    search.add_argument("--api-token")
     search.add_argument("--limit", type=int, default=2000)
     search.set_defaults(handler=_search)
 
@@ -148,7 +147,6 @@ def build_parser() -> argparse.ArgumentParser:
     run = subparsers.add_parser("run", help="Compose search, download, classification, and reporting.")
     run.add_argument("--year", required=True, type=int)
     run.add_argument("--query", help="Override the standard IRIS query for this year.")
-    run.add_argument("--api-token")
     run.add_argument("--limit", type=int, default=2000)
     run.add_argument("--force", action="store_true", help="Reclassify papers that already have a result.")
     run.add_argument("--library", type=Path, default=DEFAULT_LIBRARY, help="ADS IRIS library bibcodes, one per line.")
