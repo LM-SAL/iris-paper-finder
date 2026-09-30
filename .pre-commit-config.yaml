@@ -10,7 +10,6 @@ repos:
       - id: check-yaml
       - id: detect-private-key
       - id: end-of-file-fixer
-        exclude: ^data/eval/model_comparison_[^/]+/.*\.jsonl?$  # archived raw outputs stay byte-identical
       - id: trailing-whitespace
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
@@ -34,7 +33,6 @@ repos:
     rev: v2.4.3
     hooks:
       - id: codespell
-        exclude: ^data/eval/model_comparison_[^/]+/.*\.jsonl?$  # archived raw outputs stay byte-identical
 
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     rev: v1.30.1
