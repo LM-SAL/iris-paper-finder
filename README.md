@@ -93,10 +93,10 @@ Each paper gets one decision:
 
 The report starts with **To review**: every `YES` and `UNCERTAIN` paper that
 is not in the library, with its ADS link and the evidence (a page number and
-a reason for each tag). The same links are in `<year>_to_review.txt`. The
-library comes from `data/eval/ads_iris_library_2026-01-07.txt`; to use a
-newer export of the library's bibcodes (one per line), add `--library <file>`
-to `classify` or `run`.
+a reason for each tag). The same links are in `<year>_to_review.txt`.
+`classify` and `run` fetch the current library from ADS before classifying and
+save it as `data/ads_iris_library_<date>.txt`; to compare against another list
+of bibcodes (one per line), add `--library <file>`.
 
 Page numbers count pages of the downloaded PDF, which is often the arXiv
 version, so they are not journal page numbers. The model can be wrong: check

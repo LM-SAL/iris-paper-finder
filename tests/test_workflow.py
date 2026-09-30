@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import pytest
 
-from iris_paper_llm.ads import iris_query, search_papers
+from iris_paper_llm.ads import fetch_library, iris_query, search_papers
 from iris_paper_llm.classify import (
     DEFAULT_MODEL,
     DEFAULT_REASONING_EFFORT,
@@ -186,6 +186,29 @@ def test_report_lists_new_candidates_and_failures() -> None:
     assert "not in `library.txt` (1)" in report
     assert "[2025ApJ...1A](" not in report
     assert "| `2025ApJ...3C` | offline API failure |" in report
+
+
+def test_library_fetch_paginates() -> None:
+    bibcodes = ["2014A", "2015B", "2016C"]
+    starts = []
+
+    def get(_url: str, *, params: dict, **_kwargs: object) -> SimpleNamespace:
+        starts.append(params["start"])
+        page = bibcodes[params["start"] : params["start"] + 2]  # the server caps a page at 2 rows
+        return SimpleNamespace(
+            raise_for_status=lambda: None,
+            json=lambda: {"documents": page, "metadata": {"num_documents": len(bibcodes)}},
+        )
+
+    with (
+        TemporaryDirectory() as directory,
+        patch("iris_paper_llm.ads.requests.get", side_effect=get),
+        patch.dict("os.environ", {"ADS_TOKEN": "token"}),
+    ):
+        output = Path(directory) / "library.txt"
+        assert fetch_library(output) == 3
+        assert output.read_text().split() == bibcodes
+    assert starts == [0, 2]
 
 
 def test_standard_query_is_scoped_to_year() -> None:

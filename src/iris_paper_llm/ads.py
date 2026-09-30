@@ -18,6 +18,8 @@ if TYPE_CHECKING:
 ADS_API = "https://api.adsabs.harvard.edu/v1"
 ADS_MAX_ROWS = 2000
 IRIS_INSTRUMENT_BIBCODE = "2014SoPh..289.2733D"
+# https://ui.adsabs.harvard.edu/public-libraries/30bDOCvOTJiAgacWhJxkmA
+IRIS_LIBRARY_ID = "30bDOCvOTJiAgacWhJxkmA"
 logger = logging.getLogger(__name__)
 
 
@@ -48,6 +50,14 @@ def iris_query(year: int) -> str:
     )
 
 
+def _headers() -> dict[str, str]:
+    api_token = os.getenv("ADS_TOKEN")
+    if not api_token:
+        msg = "ADS_TOKEN is not set; add it to .env"
+        raise ValueError(msg)
+    return {"Authorization": f"Bearer {api_token}"}
+
+
 def _download_record(document: dict) -> dict:
     record = dict(document)
     record["links_data"] = [
@@ -61,11 +71,7 @@ def search_papers(query: str, output: Path, *, limit: int = 2000) -> dict[str, i
     if limit <= 0:
         msg = "limit must be positive"
         raise ValueError(msg)
-    api_token = os.getenv("ADS_TOKEN")
-    if not api_token:
-        msg = "ADS_TOKEN is not set; add it to .env"
-        raise ValueError(msg)
-
+    headers = _headers()
     records: list[dict] = []
     while True:
         response = requests.get(
@@ -77,7 +83,7 @@ def search_papers(query: str, output: Path, *, limit: int = 2000) -> dict[str, i
                 "start": len(records),
                 "rows": min(ADS_MAX_ROWS, limit - len(records)),
             },
-            headers={"Authorization": f"Bearer {api_token}"},
+            headers=headers,
             timeout=60,
         )
         response.raise_for_status()
@@ -93,3 +99,28 @@ def search_papers(query: str, output: Path, *, limit: int = 2000) -> dict[str, i
         logger.warning("ADS matched %d papers; --limit %d kept the first %d by bibcode", found, limit, len(records))
     write_jsonl(output, records)
     return {"found": found, "written": len(records)}
+
+
+def fetch_library(output: Path) -> int:
+    """Write the current bibcodes of the ADS IRIS library to `output`, one per line."""
+    headers = _headers()
+    bibcodes: list[str] = []
+    while True:
+        response = requests.get(
+            f"{ADS_API}/biblib/libraries/{IRIS_LIBRARY_ID}",
+            params={"start": len(bibcodes), "rows": 100},
+            headers=headers,
+            timeout=60,
+        )
+        response.raise_for_status()
+        body = response.json()
+        bibcodes.extend(body["documents"])
+        total = body["metadata"]["num_documents"]
+        if len(bibcodes) >= total:
+            break
+        if not body["documents"]:
+            msg = f"ADS returned no library records at offset {len(bibcodes)} of {total}"
+            raise RuntimeError(msg)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text("".join(f"{bibcode}\n" for bibcode in bibcodes), encoding="utf-8")
+    return len(bibcodes)

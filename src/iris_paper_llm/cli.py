@@ -6,18 +6,18 @@ import argparse
 import json
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 
 import openai
 import requests
 from dotenv import load_dotenv
 
-from iris_paper_llm.ads import iris_query, search_papers
+from iris_paper_llm.ads import fetch_library, iris_query, search_papers
 from iris_paper_llm.classify import DEFAULT_MODEL, DEFAULT_REASONING_EFFORT, classify_jobs, pdf_jobs
 from iris_paper_llm.download import DEFAULT_TIMEOUT_SECONDS, download_records
 from iris_paper_llm.evaluate import (
     DEFAULT_CASES,
-    DEFAULT_LIBRARY,
     DEFAULT_OUTPUT,
     case_jobs,
     prepare_case_pdfs,
@@ -41,6 +41,14 @@ def _search(args: argparse.Namespace) -> dict[str, int]:
     return search_papers(query, args.output, limit=args.limit)
 
 
+def _library(args: argparse.Namespace) -> Path:
+    """The --library file, or else today's ADS IRIS library, fetched to data/."""
+    if args.library is None:
+        args.library = Path("data") / f"ads_iris_library_{datetime.now().astimezone().date()}.txt"
+        fetch_library(args.library)
+    return args.library
+
+
 def _download(args: argparse.Namespace) -> dict[str, int]:
     records = read_jsonl(args.input)
     if args.limit is not None:
@@ -51,6 +59,7 @@ def _download(args: argparse.Namespace) -> dict[str, int]:
 
 def _classify(args: argparse.Namespace) -> dict[str, int]:
     output = args.output or Path("data/results") / f"{args.input.name}.jsonl"
+    library = _library(args)
     summary = classify_jobs(
         pdf_jobs(args.input, args.limit),
         output,
@@ -58,7 +67,7 @@ def _classify(args: argparse.Namespace) -> dict[str, int]:
         model=args.model,
         reasoning_effort=args.reasoning_effort,
     )
-    write_report(output, library=args.library, model=args.model, reasoning_effort=args.reasoning_effort)
+    write_report(output, library=library, model=args.model, reasoning_effort=args.reasoning_effort)
     return summary
 
 
@@ -85,6 +94,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
     metadata = Path("data/metadata") / f"{args.year}.jsonl"
     pdfs = Path("data/pdfs") / str(args.year)
     results = Path("data/results") / f"{args.year}.jsonl"
+    library = _library(args)
     search = search_papers(args.query or iris_query(args.year), metadata, limit=args.limit)
     downloads = download_records(read_jsonl(metadata), pdfs, timeout=args.timeout)
     classifications = classify_jobs(
@@ -94,7 +104,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
         model=args.model,
         reasoning_effort=args.reasoning_effort,
     )
-    write_report(results, library=args.library, model=args.model, reasoning_effort=args.reasoning_effort)
+    write_report(results, library=library, model=args.model, reasoning_effort=args.reasoning_effort)
     return {
         **classifications,
         "downloaded": downloads["downloaded"],
@@ -128,7 +138,7 @@ def build_parser() -> argparse.ArgumentParser:
     classify.add_argument("--limit", type=int)
     classify.add_argument("--force", action="store_true")
     classify.add_argument(
-        "--library", type=Path, default=DEFAULT_LIBRARY, help="ADS IRIS library bibcodes, one per line."
+        "--library", type=Path, help="ADS IRIS library bibcodes, one per line (default: fetch the live library)."
     )
     _add_classification_options(classify)
     classify.set_defaults(handler=_classify)
@@ -149,7 +159,9 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--query", help="Override the standard IRIS query for this year.")
     run.add_argument("--limit", type=int, default=2000)
     run.add_argument("--force", action="store_true", help="Reclassify papers that already have a result.")
-    run.add_argument("--library", type=Path, default=DEFAULT_LIBRARY, help="ADS IRIS library bibcodes, one per line.")
+    run.add_argument(
+        "--library", type=Path, help="ADS IRIS library bibcodes, one per line (default: fetch the live library)."
+    )
     run.add_argument("--timeout", type=float, default=DEFAULT_TIMEOUT_SECONDS)
     _add_classification_options(run)
     run.set_defaults(handler=_run)

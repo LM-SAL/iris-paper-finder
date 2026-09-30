@@ -27,8 +27,6 @@ if TYPE_CHECKING:
 
 DEFAULT_CASES = Path("data/eval/reviewed_cases.jsonl")
 DEFAULT_OUTPUT = Path("data/eval/classification_results.jsonl")
-# ADS IRIS library bibcodes, one per line; pass a fresher export with --library.
-DEFAULT_LIBRARY = Path("data/eval/ads_iris_library_2026-01-07.txt")
 
 
 def _expected(case: dict) -> dict:
