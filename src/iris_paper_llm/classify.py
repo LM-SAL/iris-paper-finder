@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
     from pathlib import Path
 
-IRIS_PROMPT_VERSION = "iris-v4.1"
+IRIS_PROMPT_VERSION = "iris-v4.2"
 PIPELINE_VERSION = "whole-paper-v1"
 # Chosen by the 2026-09-28 model comparison (data/eval/README.md). OpenAI publishes it only as an alias,
 # with no dated snapshot, so rerun `iris-papers evaluate` when OpenAI announces an update.
@@ -93,28 +93,34 @@ YES tags:
   thickness). Real observations of covered lines by other instruments are
   not synthetic observables, and synthesis only outside the coverage does
   not count.
-- INSTRUMENT_OR_SOFTWARE: the paper's own subject is the IRIS instrument, its
-  calibration or operations, IRIS data processing or data products, or
-  software, a database, catalogue, or tool built for IRIS data. Simulation
-  or model data released as part of the IRIS project, or explicitly to
-  support the analysis of IRIS observations, count as IRIS data products.
-  Describing IRIS as background, heritage, or a comparison for another
-  instrument does not.
+- INSTRUMENT_OR_SOFTWARE: IRIS itself is the paper's subject: the IRIS
+  instrument, its calibration or operations, IRIS data processing or data
+  products, or software, a database, catalogue, or tool built for IRIS data.
+  An instrument paper for any other instrument (e.g. Solar Orbiter/SPICE,
+  MUSE, CLASP, SUIT) is not tagged, however similar its passbands. A paper that
+  releases or describes a simulation or model data set as part of the IRIS
+  project counts; a paper that only uses such a data set does not, unless
+  another tag applies (for example, it synthesizes covered observables from
+  it). General-purpose software that supports IRIS among many instruments
+  does not qualify either.
 - COMPANION_PAPER: the supplied text says this paper is part of one study
   with a companion paper (e.g. Paper I and II) that analyzes IRIS data, and
-  this paper models, interprets, or extends those same IRIS observations. A
-  later paper that analyzes other data and only compares with earlier IRIS
-  results does not qualify.
+  this paper itself models, interprets, or extends those same IRIS
+  observations. Being a numbered paper in the same series is not enough: a
+  paper that analyzes other data and compares with a companion's or earlier
+  IRIS results does not qualify.
 
 REVIEW tag:
 - REVIEW marks a review or overview of published work. If it substantially
-  discusses IRIS results, for example by reproducing or adapting published
-  IRIS figures or summarizing IRIS-based findings beyond passing citations,
-  include is UNCERTAIN with basis REVIEW so a curator decides. Reproducing
-  or adapting published IRIS figures is not OBSERVATIONAL_DATA. Only if the
+  discusses IRIS results, include is UNCERTAIN with basis REVIEW so a curator
+  decides. Substantially means IRIS results get their own section,
+  subsection, or figure, or a sustained discussion as a main line of
+  evidence; a review that cites IRIS papers among many others, or mentions
+  IRIS in passing or as one of several instruments, is NO. Reproducing or
+  adapting published IRIS figures is not OBSERVATIONAL_DATA, and discussing
+  published synthetic results is not SYNTHETIC_OBSERVABLE. Only if the
   review also presents original work of its own that earns a YES tag is
-  include YES, with REVIEW listed too. A review that only lists or cites
-  IRIS is NO.
+  include YES, with REVIEW listed too.
 
 Clear NO cases, unless a YES tag applies:
 - IRIS observed, co-observed, or coincidentally captured the target, but the

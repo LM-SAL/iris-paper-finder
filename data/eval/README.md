@@ -34,6 +34,30 @@ case came back `NO` here, although one earlier sweep run returned
 `ads_iris_library_2026-01-07.txt` preserves the ADS IRIS library snapshot used
 as ground truth. Its `2025NatAs.tmp..221A` entry is now `2026NatAs..10...54A`.
 
+## Prompt iris-v4.2 (2026-09-30)
+
+v4.2 tightens three rules: `INSTRUMENT_OR_SOFTWARE` now requires IRIS itself
+as the subject (papers that only use the IRIS-released Bifrost simulation,
+other missions' instrument papers and general-purpose software no longer
+qualify, matching the library); a numbered series paper is a
+`COMPANION_PAPER` only if it models or extends the companion's IRIS
+observations; and "substantially discusses IRIS" in a review means a
+section, figure or sustained discussion. With `gpt-5.6-luna` at effort
+`medium`:
+
+- gold corpus: all 16 include decisions right, 15 of 16 basis sets;
+- archived comparison set: 4 disagreements with the 221 reference labels
+  (v4.1: 3), 2 of them on the 29 adjudicated papers (v4.1: 3). Three of the
+  four flipped between two v4.2 runs with near-identical wording, so the
+  difference is run-to-run variation on borderline papers;
+- the 123 sweep papers that v4.1 flagged, compared with an independent
+  `claude-opus-5-5` reading (itself using v4.1 rules): agreement rose from
+  84 to 98 of 122. All four users of the Bifrost release, the SPICE
+  instrument paper and the Ellerman-bomb preprint are now `NO`.
+
+Known remaining error: one paper was tagged `SYNTHETIC_OBSERVABLE` for O IV
+279.93 Å, an EUV line, confusing Å with nm (the NUV window is 2782.7-2835.1 Å).
+
 ## Archived model comparison (2026-09-28)
 
 Five models were run with the whole-paper pipeline at reasoning effort
