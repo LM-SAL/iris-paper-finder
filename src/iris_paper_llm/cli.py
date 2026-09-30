@@ -22,7 +22,7 @@ from iris_paper_llm.classify import (
     classify_jobs,
     pdf_jobs,
 )
-from iris_paper_llm.download import DEFAULT_TIMEOUT_SECONDS, download_records
+from iris_paper_llm.download import DEFAULT_TIMEOUT_SECONDS, download_records, missing_pdfs
 from iris_paper_llm.evaluate import (
     DEFAULT_CASES,
     DEFAULT_OUTPUT,
@@ -31,6 +31,8 @@ from iris_paper_llm.evaluate import (
     write_report,
 )
 from iris_paper_llm.jsonl import read_jsonl
+
+logger = logging.getLogger(__name__)
 
 
 def _add_classification_options(parser: argparse.ArgumentParser) -> None:
@@ -43,6 +45,15 @@ def _openai_client(model: str) -> openai.OpenAI:
     client = openai.OpenAI(timeout=OPENAI_TIMEOUT_SECONDS, max_retries=OPENAI_MAX_RETRIES)
     client.models.retrieve(model)
     return client
+
+
+def _warn_missing_pdfs(pdf_dir: Path) -> None:
+    if missing := missing_pdfs(pdf_dir):
+        logger.warning(
+            "%d papers have no PDF yet and will not be classified; see %s and step 3 of the README",
+            len(missing),
+            pdf_dir / "manual_downloads.jsonl",
+        )
 
 
 def _search(args: argparse.Namespace) -> dict[str, int]:
@@ -68,13 +79,16 @@ def _download(args: argparse.Namespace) -> dict[str, int]:
     if args.limit is not None:
         records = records[: args.limit]
     output_dir = args.output_dir or Path("data/pdfs") / args.input.stem
-    return download_records(records, output_dir, timeout=args.timeout)
+    summary = download_records(records, output_dir, timeout=args.timeout)
+    _warn_missing_pdfs(output_dir)
+    return summary
 
 
 def _classify(args: argparse.Namespace) -> dict[str, int]:
     output = args.output or Path("data/results") / f"{args.input.name}.jsonl"
     client = _openai_client(args.model)
     library = _library(args)
+    _warn_missing_pdfs(args.input)
     summary = classify_jobs(
         pdf_jobs(args.input, args.limit),
         output,
@@ -83,7 +97,8 @@ def _classify(args: argparse.Namespace) -> dict[str, int]:
         reasoning_effort=args.reasoning_effort,
         client=client,
     )
-    write_report(output, library=library, model=args.model, reasoning_effort=args.reasoning_effort)
+    pdfs = args.input if args.input.is_dir() else None
+    write_report(output, library=library, pdfs=pdfs, model=args.model, reasoning_effort=args.reasoning_effort)
     return summary
 
 
@@ -116,6 +131,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
     library = _library(args)
     search = search_papers(args.query or iris_query(args.year), metadata, limit=args.limit)
     downloads = download_records(read_jsonl(metadata), pdfs, timeout=args.timeout)
+    _warn_missing_pdfs(pdfs)
     classifications = classify_jobs(
         pdf_jobs(pdfs, args.limit),
         results,
@@ -124,7 +140,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
         reasoning_effort=args.reasoning_effort,
         client=client,
     )
-    write_report(results, library=library, model=args.model, reasoning_effort=args.reasoning_effort)
+    write_report(results, library=library, pdfs=pdfs, model=args.model, reasoning_effort=args.reasoning_effort)
     return {
         **classifications,
         "downloaded": downloads["downloaded"],

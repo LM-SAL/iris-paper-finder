@@ -181,13 +181,37 @@ def test_report_lists_new_candidates_and_failures() -> None:
             append_jsonl(output, record)
         library = Path(directory) / "library.txt"
         library.write_text("2025ApJ...1A\n")
-        write_report(output, library=library)
+        pdfs = Path(directory) / "pdfs"
+        pdfs.mkdir()
+        (pdfs / "2025ApJ...5E.pdf").write_bytes(b"%PDF-")  # saved by hand since the queue was written
+        queue = [
+            {
+                "bibcode": "2025A&A...4D",
+                "target": str(pdfs / "2025A&A...4D.pdf"),
+                "category": "blocked",
+                "errors": ["HTTP 403 (bot protection: DataDome)", "HTTP 403 (bot protection: DataDome)"],
+            },
+            {
+                "bibcode": "2025ApJ...5E",
+                "target": str(pdfs / "2025ApJ...5E.pdf"),
+                "category": "permanent",
+                "errors": [],
+            },
+        ]
+        (pdfs / "manual_downloads.jsonl").write_text("".join(json.dumps(entry) + "\n" for entry in queue))
+        write_report(output, library=library, pdfs=pdfs)
         report = output.with_suffix(".md").read_text()
         review = (Path(directory) / "results_to_review.txt").read_text().splitlines()
     assert review == ["https://ui.adsabs.harvard.edu/abs/2025A%26A...2B/abstract  # YES (OBSERVATIONAL_DATA)"]
     assert "not in `library.txt` (1)" in report
     assert "[2025ApJ...1A](" not in report
     assert "| `2025ApJ...3C` | offline API failure |" in report
+    assert "## No PDF, not classified (1)" in report
+    assert (
+        "| [2025A&A...4D](https://ui.adsabs.harvard.edu/abs/2025A%26A...4D/abstract) "
+        f"| blocked: HTTP 403 (bot protection: DataDome) | `{pdfs / '2025A&A...4D.pdf'}` |"
+    ) in report
+    assert "2025ApJ...5E" not in report
 
 
 def test_library_fetch_paginates() -> None:

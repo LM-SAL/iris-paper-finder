@@ -16,7 +16,7 @@ from iris_paper_llm.classify import (
     pdf_sha256,
     summarize,
 )
-from iris_paper_llm.download import download_records
+from iris_paper_llm.download import download_records, missing_pdfs
 from iris_paper_llm.jsonl import read_jsonl
 from iris_paper_llm.models import ResultStatus
 
@@ -135,18 +135,40 @@ def _review_lines(records: list[dict], output: Path, library: Path) -> list[str]
     return lines
 
 
+def _missing_pdf_lines(missing: list[dict]) -> list[str]:
+    """List the papers that were never classified because their PDF could not be downloaded."""
+    if not missing:
+        return []
+    lines = [
+        "",
+        f"## No PDF, not classified ({len(missing)})",
+        "",
+        "Get these by hand (README, step 3), then rerun `download` and `classify`.",
+        "",
+        "| Paper | Why | Save the PDF as |",
+        "|---|---|---|",
+    ]
+    for entry in missing:
+        bibcode = entry["bibcode"]
+        errors = "; ".join(dict.fromkeys(entry["errors"])).replace("|", "/")
+        lines.append(f"| [{bibcode}]({_ads_link(bibcode)}) | {entry['category']}: {errors} | `{entry['target']}` |")
+    return lines
+
+
 def write_report(
     output: Path,
     *,
     cases: Path | None = None,
     library: Path | None = None,
+    pdfs: Path | None = None,
     model: str = DEFAULT_MODEL,
     reasoning_effort: str = DEFAULT_REASONING_EFFORT,
 ) -> dict[str, int]:
     """Write a compact Markdown report.
 
     Reviewed labels come from the current `cases` file, if given. With a `library` bibcode file, the report starts
-    with the YES and UNCERTAIN papers missing from it, also written as ADS links to `<output>_to_review.txt`.
+    with the YES and UNCERTAIN papers missing from it, also written as ADS links to `<output>_to_review.txt`. With a
+    `pdfs` directory, it also lists the papers in its manual download queue that still have no PDF.
     """
     output.parent.mkdir(parents=True, exist_ok=True)
     records = latest_results(output, model=model, reasoning_effort=reasoning_effort)
@@ -157,6 +179,7 @@ def write_report(
             if record["id"] in labels:
                 record["expected"] = labels[record["id"]]
     summary = summarize(records)
+    missing = missing_pdfs(pdfs) if pdfs is not None else []
     lines = [
         "# IRIS paper classification report",
         "",
@@ -165,11 +188,13 @@ def write_report(
         f"- Negative: {summary['negative']}",
         f"- Uncertain: {summary['uncertain']}",
         f"- Failed: {summary['failed']}",
+        *([f"- No PDF, not classified: {len(missing)}"] if pdfs is not None else []),
         f"- Model: `{model}`, reasoning effort `{reasoning_effort}`",
         f"- Prompt: `{IRIS_PROMPT_VERSION}`, SHA-256 `{IRIS_PROMPT_SHA256}`",
     ]
     if library is not None:
         lines.extend(_review_lines(records, output, library))
+    lines.extend(_missing_pdf_lines(missing))
     failed = [record for record in records if record["result"]["classification"] is None]
     if failed:
         lines.extend(["", f"## Could not be classified ({len(failed)})", "", "| Paper | Error |", "|---|---|"])

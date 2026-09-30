@@ -9,6 +9,7 @@ import unicodedata
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import partial
+from pathlib import Path
 from time import sleep
 from typing import TYPE_CHECKING, Any
 from urllib.parse import quote, unquote, urlparse
@@ -20,7 +21,6 @@ from iris_paper_llm.jsonl import append_jsonl, atomic_write, read_jsonl, write_j
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Mapping
-    from pathlib import Path
 
 DEFAULT_TIMEOUT_SECONDS = 60.0
 REQUEST_DELAY_SECONDS = 3.0
@@ -376,6 +376,14 @@ def _manual_entry(job: dict) -> dict:
         "errors": errors,
         "updated_at": _now(),
     }
+
+
+def missing_pdfs(pdf_dir: Path) -> list[dict]:
+    """The papers in `pdf_dir`'s manual download queue whose PDF is not yet at its target path."""
+    queue = pdf_dir / "manual_downloads.jsonl"
+    if not queue.is_file():
+        return []
+    return [entry for entry in read_jsonl(queue) if not Path(entry["target"]).is_file()]
 
 
 def download_records(
