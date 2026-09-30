@@ -9,6 +9,7 @@ from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from unittest.mock import patch
 
+import openai
 import pytest
 
 from iris_paper_llm.ads import fetch_library, iris_query, search_papers
@@ -19,6 +20,7 @@ from iris_paper_llm.classify import (
     classify_jobs,
     pdf_jobs,
 )
+from iris_paper_llm.cli import build_parser
 from iris_paper_llm.evaluate import write_report
 from iris_paper_llm.jsonl import append_jsonl, read_jsonl
 from iris_paper_llm.models import (
@@ -209,6 +211,19 @@ def test_library_fetch_paginates() -> None:
         assert fetch_library(output) == 3
         assert output.read_text().split() == bibcodes
     assert starts == [0, 2]
+
+
+def test_run_checks_the_openai_key_before_searching() -> None:
+    args = build_parser().parse_args(["run", "--year", "2025"])
+    with (
+        patch.dict("os.environ", {"ADS_TOKEN": "token"}, clear=True),
+        patch("iris_paper_llm.cli.fetch_library") as fetch,
+        patch("iris_paper_llm.cli.search_papers") as search,
+        pytest.raises(openai.OpenAIError),
+    ):
+        args.handler(args)
+    fetch.assert_not_called()
+    search.assert_not_called()
 
 
 def test_standard_query_is_scoped_to_year() -> None:

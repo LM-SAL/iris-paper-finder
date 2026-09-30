@@ -14,7 +14,14 @@ import requests
 from dotenv import load_dotenv
 
 from iris_paper_llm.ads import fetch_library, iris_query, search_papers
-from iris_paper_llm.classify import DEFAULT_MODEL, DEFAULT_REASONING_EFFORT, classify_jobs, pdf_jobs
+from iris_paper_llm.classify import (
+    DEFAULT_MODEL,
+    DEFAULT_REASONING_EFFORT,
+    OPENAI_MAX_RETRIES,
+    OPENAI_TIMEOUT_SECONDS,
+    classify_jobs,
+    pdf_jobs,
+)
 from iris_paper_llm.download import DEFAULT_TIMEOUT_SECONDS, download_records
 from iris_paper_llm.evaluate import (
     DEFAULT_CASES,
@@ -29,6 +36,13 @@ from iris_paper_llm.jsonl import read_jsonl
 def _add_classification_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--model", default=DEFAULT_MODEL)
     parser.add_argument("--reasoning-effort", default=DEFAULT_REASONING_EFFORT)
+
+
+def _openai_client(model: str) -> openai.OpenAI:
+    """Check the OpenAI key and model with a free request, so a bad setup fails before any search or download."""
+    client = openai.OpenAI(timeout=OPENAI_TIMEOUT_SECONDS, max_retries=OPENAI_MAX_RETRIES)
+    client.models.retrieve(model)
+    return client
 
 
 def _search(args: argparse.Namespace) -> dict[str, int]:
@@ -59,6 +73,7 @@ def _download(args: argparse.Namespace) -> dict[str, int]:
 
 def _classify(args: argparse.Namespace) -> dict[str, int]:
     output = args.output or Path("data/results") / f"{args.input.name}.jsonl"
+    client = _openai_client(args.model)
     library = _library(args)
     summary = classify_jobs(
         pdf_jobs(args.input, args.limit),
@@ -66,12 +81,14 @@ def _classify(args: argparse.Namespace) -> dict[str, int]:
         force=args.force,
         model=args.model,
         reasoning_effort=args.reasoning_effort,
+        client=client,
     )
     write_report(output, library=library, model=args.model, reasoning_effort=args.reasoning_effort)
     return summary
 
 
 def _evaluate(args: argparse.Namespace) -> dict[str, int]:
+    client = _openai_client(args.model)
     preparation = {"downloaded": 0, "manual_queue": 0}
     if args.prepare_pdfs:
         preparation = prepare_case_pdfs(args.cases, timeout=args.timeout)
@@ -81,6 +98,7 @@ def _evaluate(args: argparse.Namespace) -> dict[str, int]:
         force=args.force,
         model=args.model,
         reasoning_effort=args.reasoning_effort,
+        client=client,
     )
     write_report(args.output, cases=args.cases, model=args.model, reasoning_effort=args.reasoning_effort)
     return {
@@ -94,6 +112,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
     metadata = Path("data/metadata") / f"{args.year}.jsonl"
     pdfs = Path("data/pdfs") / str(args.year)
     results = Path("data/results") / f"{args.year}.jsonl"
+    client = _openai_client(args.model)
     library = _library(args)
     search = search_papers(args.query or iris_query(args.year), metadata, limit=args.limit)
     downloads = download_records(read_jsonl(metadata), pdfs, timeout=args.timeout)
@@ -103,6 +122,7 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
         force=args.force,
         model=args.model,
         reasoning_effort=args.reasoning_effort,
+        client=client,
     )
     write_report(results, library=library, model=args.model, reasoning_effort=args.reasoning_effort)
     return {
