@@ -1,7 +1,7 @@
 # IRIS Paper LLM
 
-Finds refereed papers that belong in the ADS IRIS bibliography. For one
-publication year it searches ADS, downloads the open-access PDFs, asks an
+Finds refereed papers that belong in the [ADS IRIS bibliography](https://ui.adsabs.harvard.edu/public-libraries/30bDOCvOTJiAgacWhJxkmA).
+For one publication year it searches ADS, downloads the open-access PDFs, asks an
 OpenAI model whether each whole paper qualifies, and lists the qualifying
 papers that are not in the library yet. Everything runs through the
 `iris-papers` command.
