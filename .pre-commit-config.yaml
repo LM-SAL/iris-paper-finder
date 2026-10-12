@@ -1,3 +1,6 @@
+ci:
+  skip: [ty]  # Needs network access; GitHub Actions runs this hook.
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0

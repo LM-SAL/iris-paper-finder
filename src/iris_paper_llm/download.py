@@ -59,14 +59,16 @@ def candidate_pdf_urls(record: Mapping[str, Any]) -> list[str]:
             continue
         url = str(link.get("url", ""))
         link_type = link.get("type")
-        if "//articles.adsabs.harvard.edu/" in url:
+        parsed = urlparse(url)
+        host = parsed.hostname or ""
+        if host == "articles.adsabs.harvard.edu":
             scans.append(f"https://articles.adsabs.harvard.edu/pdf/{record['bibcode']}")
-        elif link_type == "preprint" and "arxiv.org/" in url:
-            arxiv.append(url.replace("http://", "https://").replace("/abs/", "/pdf/"))
+        elif link_type == "preprint" and (host == "arxiv.org" or host.endswith(".arxiv.org")):
+            arxiv.append(parsed._replace(scheme="https", path=parsed.path.replace("/abs/", "/pdf/", 1)).geturl())
         elif link_type == "pdf":
             publisher.append(url)
-        elif link_type == "electr":
-            doi = unquote(url).split("doi.org/", 1)[-1]
+        elif link_type == "electr" and host in {"doi.org", "dx.doi.org"}:
+            doi = unquote(parsed.path).lstrip("/")
             from_doi.extend(
                 template.format(doi=doi, suffix=doi.split("/", 1)[-1])
                 for prefix, template in DOI_PDF_URLS.items()
@@ -85,9 +87,11 @@ def _doi(record: Mapping[str, Any]) -> str | None:
     if dois := record.get("doi"):
         return str(dois[0])
     for link in record.get("links_data", []) or []:
-        url = unquote(str(link.get("url", ""))) if isinstance(link, dict) and link.get("type") == "electr" else ""
-        if "doi.org/" in url:
-            return url.split("doi.org/", 1)[1]
+        if not isinstance(link, dict) or link.get("type") != "electr":
+            continue
+        parsed = urlparse(str(link.get("url", "")))
+        if parsed.hostname in {"doi.org", "dx.doi.org"}:
+            return unquote(parsed.path).lstrip("/")
     return None
 
 

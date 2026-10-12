@@ -10,7 +10,7 @@ import pymupdf
 import pytest
 import requests
 
-from iris_paper_llm.download import REQUEST_DELAY_SECONDS, candidate_pdf_urls, download_records, validate_pdf
+from iris_paper_llm.download import REQUEST_DELAY_SECONDS, _doi, candidate_pdf_urls, download_records, validate_pdf
 from iris_paper_llm.evaluate import prepare_case_pdfs
 from iris_paper_llm.jsonl import read_jsonl
 
@@ -98,6 +98,67 @@ def test_candidate_url_order_and_doi_rules() -> None:
         "https://www.nature.com/articles/s41550-024-02321-9.pdf",
         "https://articles.adsabs.harvard.edu/pdf/2024JAHH...27....3E",
     ]
+
+
+@pytest.mark.parametrize(
+    ("link_type", "host"),
+    [("gif", "articles.adsabs.harvard.edu"), ("preprint", "arxiv.org"), ("electr", "doi.org")],
+)
+@pytest.mark.parametrize(
+    "template",
+    [
+        "https://evil.test/https://{host}/{path}",
+        "https://evil.test/?next=https://{host}/{path}",
+        "https://evil.test/#https://{host}/{path}",
+        "https://not-{host}/{path}",
+        "https://{host}.evil.test/{path}",
+        "https://{host}@evil.test/{path}",
+        "https://evil.test/?next=https%3A%2F%2F{host}%2F{path}",
+    ],
+)
+def test_link_domains_must_be_actual_hosts(link_type: str, host: str, template: str) -> None:
+    url = template.format(host=host, path="10.1007/paper")
+    record = {"bibcode": "paper", "links_data": [{"access": "open", "type": link_type, "url": url}]}
+    assert candidate_pdf_urls(record) == []
+    assert _doi(record) is None
+
+
+@pytest.mark.parametrize(
+    ("link_type", "url", "expected", "doi"),
+    [
+        (
+            "gif",
+            "https://ARTICLES.ADSABS.HARVARD.EDU:443/full/paper",
+            "https://articles.adsabs.harvard.edu/pdf/paper",
+            None,
+        ),
+        ("preprint", "http://ARXIV.ORG/abs/2501.01234", "https://ARXIV.ORG/pdf/2501.01234", None),
+        ("preprint", "http://export.arxiv.org/abs/2501.01234", "https://export.arxiv.org/pdf/2501.01234", None),
+        ("preprint", "http://www.arxiv.org/abs/2501.01234", "https://www.arxiv.org/pdf/2501.01234", None),
+        (
+            "preprint",
+            "http://arxiv.org/abs/2501.01234?next=http://example.test/abs/other#abstract",
+            "https://arxiv.org/pdf/2501.01234?next=http://example.test/abs/other#abstract",
+            None,
+        ),
+        (
+            "electr",
+            "https://DOI.ORG:443/10.1007%2Fpaper?source=ads#abstract",
+            "https://link.springer.com/content/pdf/10.1007/paper.pdf",
+            "10.1007/paper",
+        ),
+        (
+            "electr",
+            "http://dx.doi.org/10.1007/paper",
+            "https://link.springer.com/content/pdf/10.1007/paper.pdf",
+            "10.1007/paper",
+        ),
+    ],
+)
+def test_valid_link_hosts_and_paths(link_type: str, url: str, expected: str, doi: str | None) -> None:
+    record = {"bibcode": "paper", "links_data": [{"access": "open", "type": link_type, "url": url}]}
+    assert candidate_pdf_urls(record) == [expected]
+    assert _doi(record) == doi
 
 
 def test_requests_are_spaced() -> None:
