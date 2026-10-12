@@ -28,8 +28,6 @@ iris-papers = "iris_paper_llm.cli:main"
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",
-    "ruff",
-    "ty>=0.0.84",
 ]
 
 [tool.pytest.ini_options]
