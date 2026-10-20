@@ -21,9 +21,6 @@ updates:
     groups:
       github-actions:
         patterns: ["*"]
-      github-actions-security:
-        applies-to: security-updates
-        patterns: ["*"]
   - package-ecosystem: pre-commit
     directory: /
     schedule:
