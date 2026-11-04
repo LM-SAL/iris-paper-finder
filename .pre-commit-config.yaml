@@ -1,4 +1,6 @@
 ci:
+  # Dependabot updates the hooks (weekly, with a 7-day cooldown); pre-commit.ci cannot turn its autoupdate off.
+  autoupdate_schedule: quarterly
   skip: [ty]  # Needs network access; GitHub Actions runs this hook.
 
 repos:
