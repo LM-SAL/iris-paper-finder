@@ -65,7 +65,7 @@ This writes the candidate papers (about 140 a year) with their open-access links
 uv run iris-papers download data/metadata/2025.jsonl
 ```
 
-This saves each paper as `data/pdfs/2025/<bibcode>.pdf` and takes about 20 minutes, because requests are spaced 3 seconds apart.
+This saves each paper as `data/pdfs/2025/<bibcode>.pdf` and takes about half an hour, because requests are spaced 3 seconds apart, and requests to arXiv 15 seconds (the limit arXiv sets for scripts).
 Besides the ADS links it tries PDF addresses derived from Springer, Nature and Frontiers DOIs, the ADS scan, and the open copies (HAL and other repositories, arXiv, PubMed Central) that [OpenAlex](https://openalex.org) lists for the DOI.
 It rejects a PDF whose first pages have no text or do not match the ADS abstract (ADS sometimes links a different paper with the same title).
 
@@ -126,7 +126,7 @@ If a step stops, rerun the same command and it continues where it stopped.
 uv run iris-papers run --year 2025
 ```
 
-`run` does steps 1, 2 and 4 in one go, in about an hour, and classifies whatever it could download.
+`run` does steps 1, 2 and 4 in one go, in about an hour and a half, and classifies whatever it could download.
 For papers that failed to download, do step 3 and then rerun `run` or step 4; only the new papers are sent to OpenAI.
 
 ### Output files
@@ -145,6 +145,9 @@ For papers that failed to download, do step 3 and then rerun `run` or step 4; on
 Every step is safe to rerun.
 `search` refreshes the candidate list, `download` skips PDFs it already has, and `classify` skips papers already classified from the same PDF with the same prompt, model and reasoning effort; failed papers are retried.
 Add `--force` to `classify` or `run` to reclassify everything.
+
+ADS sometimes replaces a paper's bibcode, for example a provisional one for a paper in press.
+The next `download` then saves the paper again under its new bibcode, and the report leaves out the old one with a warning naming it; you can delete the old PDF.
 
 `data/` is not in git.
 Copy `data/results/<year>.*` somewhere safe when you finish.
@@ -195,7 +198,7 @@ That line does not mean the command was mistyped; read the `error:` line after i
 | `insufficient_quota` | Add credits to the OpenAI account |
 | The model `does not exist` | The default model was retired; see Maintenance |
 | `No such file or directory: 'data/...'` | Run the command from the project folder, and `search` before `download` |
-| You need more detail | Add `LOG_LEVEL=DEBUG` before the command and save the output, e.g. `... 2> debug.log`; it includes the full paper text |
+| You need more detail | Add `LOG_LEVEL=DEBUG` before the command and save the output, e.g. `... 2> debug.log`; it adds every HTTP request with its status and the OpenAI request ID, but no paper text or keys |
 
 A missing or wrong key, or an unknown model, stops a command as soon as it starts.
 Running out of OpenAI credit shows up only when the first paper is sent; it stops the run instead of recording a failure for each paper.

@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 IRIS_PROMPT_VERSION = "iris-v4.2"
+# Bump when extract_pages, remove_reference_section or models.IRISClassification changes: the cache key cannot see them.
 PIPELINE_VERSION = "whole-paper-v1"
 # Chosen by the 2026-09-28 model comparison (data/eval/README.md). OpenAI publishes it only as an alias,
 # with no dated snapshot, so rerun `iris-papers evaluate` when OpenAI announces an update.
@@ -344,7 +345,7 @@ def classify_paper(
 
 
 def classification_key(pdf_hash: str, *, model: str, reasoning_effort: str) -> str:
-    """Identify every input that can change a classification result."""
+    """Identify a result by its PDF, prompt, model and effort; PIPELINE_VERSION stands in for the code and schema."""
     values = {
         "pdf_sha256": pdf_hash,
         "prompt_sha256": IRIS_PROMPT_SHA256,
@@ -355,12 +356,18 @@ def classification_key(pdf_hash: str, *, model: str, reasoning_effort: str) -> s
     return hashlib.sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()
 
 
-def load_successful_keys(path: Path) -> set[str]:
-    """Read resumable successes from an existing result JSONL file."""
+def load_successful_keys(path: Path) -> set[tuple[str, str]]:
+    """Read resumable successes, as (id, evaluation key) pairs, from an existing result JSONL file.
+
+    The id is part of the pair so that a paper whose PDF bytes match another paper's (such as one ADS gave a new
+    bibcode) still gets a result of its own.
+    """
     if not path.is_file():
         return set()
     return {
-        record["evaluation_key"] for record in read_jsonl(path) if record["result"]["status"] == ResultStatus.CLASSIFIED
+        (record["id"], record["evaluation_key"])
+        for record in read_jsonl(path)
+        if record["result"]["status"] == ResultStatus.CLASSIFIED
     }
 
 
@@ -437,7 +444,8 @@ def classify_jobs(
     records = []
     skipped = 0
     for job in jobs:
-        if classification_key(job["pdf_hash"], model=model, reasoning_effort=reasoning_effort) in successful:
+        key = classification_key(job["pdf_hash"], model=model, reasoning_effort=reasoning_effort)
+        if (job.get("record_id") or job["path"].stem, key) in successful:  # the id classify_pdf records
             skipped += 1
             continue
         client = client or openai.OpenAI(timeout=OPENAI_TIMEOUT_SECONDS, max_retries=OPENAI_MAX_RETRIES)

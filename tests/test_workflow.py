@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import shutil
+from contextlib import chdir
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -22,7 +23,7 @@ from iris_paper_llm.classify import (
 )
 from iris_paper_llm.cli import build_parser
 from iris_paper_llm.evaluate import write_report
-from iris_paper_llm.jsonl import append_jsonl, read_jsonl
+from iris_paper_llm.jsonl import append_jsonl, read_jsonl, write_jsonl
 from iris_paper_llm.models import (
     Basis,
     Decision,
@@ -108,6 +109,55 @@ def test_offline_pipeline_checkpoint_and_resume() -> None:
         assert output.with_suffix(".md").is_file()
 
 
+def test_july_rerun_after_ads_replaced_a_bibcode() -> None:
+    """In January a provisional bibcode was classified; in July ADS returns its final one, which the library has."""
+    client = SimpleNamespace(responses=FakeResponses())
+    pdf = Path(__file__).resolve().parent / "data/pdfs/observational_filament_flows.pdf"
+    old, new = "2025MNRAS.tmp..123X", "2025MNRAS.540..123X"
+    with TemporaryDirectory() as directory:
+        root = Path(directory)
+        pdfs = root / "pdfs"
+        pdfs.mkdir()
+        output = root / "results.jsonl"
+        shutil.copyfile(pdf, pdfs / f"{old}.pdf")
+        classify_jobs(pdf_jobs(pdfs), output, client=client)
+        shutil.copyfile(pdf, pdfs / f"{new}.pdf")  # the same bytes, downloaded again under the final bibcode
+        july = classify_jobs(pdf_jobs(pdfs), output, client=client)
+        library = root / "library.txt"
+        library.write_text(f"{new}\n")
+        write_report(output, library=library, pdfs=pdfs, papers={new})
+        report = output.with_suffix(".md").read_text()
+        review = (root / "results_to_review.txt").read_text()
+    assert july == {"positive": 1, "negative": 0, "uncertain": 0, "failed": 0, "skipped": 1}
+    assert "- Results: 1 papers" in report
+    assert old not in report
+    assert review == ""
+
+
+def test_classify_reports_the_current_search_only_for_its_own_directory() -> None:
+    client = SimpleNamespace(responses=FakeResponses())
+    pdf = Path(__file__).resolve().parent / "data/pdfs/observational_filament_flows.pdf"
+    old, new = "2025MNRAS.tmp..123X", "2025MNRAS.540..123X"
+    reports = {}
+    with (
+        TemporaryDirectory() as directory,
+        chdir(directory),
+        patch("iris_paper_llm.cli._openai_client", return_value=client),
+    ):
+        write_jsonl(Path("data/metadata/2025.jsonl"), [{"bibcode": new}])
+        Path("library.txt").write_text("")
+        for pdfs in (Path("data/pdfs/2025"), Path("elsewhere/2025")):  # the second is not the search's directory
+            pdfs.mkdir(parents=True)
+            for bibcode in (old, new):
+                shutil.copyfile(pdf, pdfs / f"{bibcode}.pdf")
+            args = build_parser().parse_args(["classify", str(pdfs), "--library", "library.txt", "--output", "r.jsonl"])
+            args.handler(args)
+            reports[pdfs.parts[0]] = Path("r.md").read_text()
+    assert new in reports["data"]
+    assert old not in reports["data"]
+    assert old in reports["elsewhere"]
+
+
 def result_record(paper: str, status: ResultStatus, *, model: str = DEFAULT_MODEL, pdf: str = "") -> dict:
     pdf_hash = hashlib.sha256((pdf or paper).encode()).hexdigest()
     classified = status == ResultStatus.CLASSIFIED
@@ -173,10 +223,12 @@ def test_report_prefers_latest_success_without_double_counting() -> None:
 def test_report_lists_new_candidates_and_failures() -> None:
     with TemporaryDirectory() as directory:
         output = Path(directory) / "results.jsonl"
+        failed = result_record("2025ApJ...3C", ResultStatus.PROCESSING_FAILED)
+        failed["result"]["errors"] = ["1 validation error for IRISClassification\n  Value error | basis"]
         for record in (
             result_record("2025ApJ...1A", ResultStatus.CLASSIFIED),
             result_record("2025A&A...2B", ResultStatus.CLASSIFIED),
-            result_record("2025ApJ...3C", ResultStatus.PROCESSING_FAILED),
+            failed,
         ):
             append_jsonl(output, record)
         library = Path(directory) / "library.txt"
@@ -205,7 +257,7 @@ def test_report_lists_new_candidates_and_failures() -> None:
     assert review == ["https://ui.adsabs.harvard.edu/abs/2025A%26A...2B/abstract  # YES (OBSERVATIONAL_DATA)"]
     assert "not in `library.txt` (1)" in report
     assert "[2025ApJ...1A](" not in report
-    assert "| `2025ApJ...3C` | offline API failure |" in report
+    assert "| `2025ApJ...3C` | 1 validation error for IRISClassification Value error / basis |" in report
     assert "## No PDF, not classified (1)" in report
     assert (
         "| [2025A&A...4D](https://ui.adsabs.harvard.edu/abs/2025A%26A...4D/abstract) "
@@ -214,7 +266,9 @@ def test_report_lists_new_candidates_and_failures() -> None:
     assert "2025ApJ...5E" not in report
 
 
-def test_library_fetch_paginates() -> None:
+@pytest.mark.parametrize(("lost", "expected_starts"), [(0, [0, 2]), (1, [0, 2, 3])])
+def test_library_fetch_paginates(lost: int, expected_starts: list[int]) -> None:
+    """ADS counts `lost` more stored bibcodes than its index still finds and returns."""
     bibcodes = ["2014A", "2015B", "2016C"]
     starts = []
 
@@ -223,7 +277,7 @@ def test_library_fetch_paginates() -> None:
         page = bibcodes[params["start"] : params["start"] + 2]  # the server caps a page at 2 rows
         return SimpleNamespace(
             raise_for_status=lambda: None,
-            json=lambda: {"documents": page, "metadata": {"num_documents": len(bibcodes)}},
+            json=lambda: {"documents": page, "metadata": {"num_documents": len(bibcodes) + lost}},
         )
 
     with (
@@ -234,7 +288,7 @@ def test_library_fetch_paginates() -> None:
         output = Path(directory) / "library.txt"
         assert fetch_library(output) == 3
         assert output.read_text().split() == bibcodes
-    assert starts == [0, 2]
+    assert starts == expected_starts
 
 
 def test_run_checks_the_openai_key_before_searching() -> None:
@@ -306,5 +360,9 @@ def test_jsonl_tolerates_truncated_last_line() -> None:
         assert read_jsonl(path) == [{"id": 1}, {"id": 2}]
 
         path.write_text('{"id":1}\n{"id":\n{"id":3}\n', encoding="utf-8")
+        with pytest.raises(ValueError, match=re.escape(f"{path}:2:")):
+            read_jsonl(path)
+
+        path.write_text('{"id":1}\n{"id":\n', encoding="utf-8")  # a complete last line: edited by hand, not truncated
         with pytest.raises(ValueError, match=re.escape(f"{path}:2:")):
             read_jsonl(path)

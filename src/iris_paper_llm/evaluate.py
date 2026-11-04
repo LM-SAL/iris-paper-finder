@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections import defaultdict
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -27,6 +28,7 @@ if TYPE_CHECKING:
 
 DEFAULT_CASES = Path("data/eval/reviewed_cases.jsonl")
 DEFAULT_OUTPUT = Path("data/eval/classification_results.jsonl")
+logger = logging.getLogger(__name__)
 
 
 def _expected(case: dict) -> dict:
@@ -102,6 +104,11 @@ def _decision(include: str, basis: list[str]) -> str:
     return f"{include} ({', '.join(basis)})" if basis else include
 
 
+def _cell(text: str) -> str:
+    """Fit text, such as a multi-line pydantic error, into one Markdown table cell."""
+    return " ".join(text.split()).replace("|", "/")
+
+
 def _ads_link(bibcode: str) -> str:
     return f"https://ui.adsabs.harvard.edu/abs/{quote(bibcode, safe='')}/abstract"
 
@@ -127,9 +134,7 @@ def _review_lines(records: list[dict], output: Path, library: Path) -> list[str]
         classification = record["result"]["classification"]
         decision = _decision(classification["include"], classification["basis"])
         evidence = "; ".join(f"p{item['page']}: {item['reason']}" for item in classification["evidence"])
-        lines.append(
-            f"| [{record['bibcode']}]({_ads_link(record['bibcode'])}) | {decision} | {evidence.replace('|', '/')} |"
-        )
+        lines.append(f"| [{record['bibcode']}]({_ads_link(record['bibcode'])}) | {decision} | {_cell(evidence)} |")
         links.append(f"{_ads_link(record['bibcode'])}  # {decision}\n")
     output.with_name(f"{output.stem}_to_review.txt").write_text("".join(links), encoding="utf-8")
     return lines
@@ -150,7 +155,7 @@ def _missing_pdf_lines(missing: list[dict]) -> list[str]:
     ]
     for entry in missing:
         bibcode = entry["bibcode"]
-        errors = "; ".join(dict.fromkeys(entry["errors"])).replace("|", "/")
+        errors = _cell("; ".join(dict.fromkeys(entry["errors"])))
         lines.append(f"| [{bibcode}]({_ads_link(bibcode)}) | {entry['category']}: {errors} | `{entry['target']}` |")
     return lines
 
@@ -161,6 +166,7 @@ def write_report(
     cases: Path | None = None,
     library: Path | None = None,
     pdfs: Path | None = None,
+    papers: set[str] | None = None,
     model: str = DEFAULT_MODEL,
     reasoning_effort: str = DEFAULT_REASONING_EFFORT,
 ) -> dict[str, int]:
@@ -168,10 +174,20 @@ def write_report(
 
     Reviewed labels come from the current `cases` file, if given. With a `library` bibcode file, the report starts
     with the YES and UNCERTAIN papers missing from it, also written as ADS links to `<output>_to_review.txt`. With a
-    `pdfs` directory, it also lists the papers in its manual download queue that still have no PDF.
+    `pdfs` directory, it also lists the papers in its manual download queue that still have no PDF. With `papers`,
+    the ids of the current ADS search, it leaves out older results for papers ADS no longer returns.
     """
     output.parent.mkdir(parents=True, exist_ok=True)
     records = latest_results(output, model=model, reasoning_effort=reasoning_effort)
+    if papers is not None:
+        if stale := sorted({record["id"] for record in records} - papers):
+            logger.warning(
+                "Leaving %d papers out of the report that ADS no longer returns (e.g. under a bibcode it has since "
+                "replaced): %s",
+                len(stale),
+                ", ".join(stale),
+            )
+        records = [record for record in records if record["id"] in papers]
     if cases is not None:
         labels = {case["id"]: _expected(case) for case in read_jsonl(cases)}
         for record in records:
@@ -198,7 +214,7 @@ def write_report(
     failed = [record for record in records if record["result"]["classification"] is None]
     if failed:
         lines.extend(["", f"## Could not be classified ({len(failed)})", "", "| Paper | Error |", "|---|---|"])
-        lines.extend(f"| `{record['id']}` | {record['result']['errors'][-1].replace('|', '/')} |" for record in failed)
+        lines.extend(f"| `{record['id']}` | {_cell(record['result']['errors'][-1])} |" for record in failed)
 
     reviewed = [record for record in records if "expected" in record]
     if reviewed:

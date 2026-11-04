@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
-from time import sleep
+from time import monotonic, sleep
 from typing import TYPE_CHECKING, Any
 from urllib.parse import quote, unquote, urlparse
 
@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 
 DEFAULT_TIMEOUT_SECONDS = 60.0
 REQUEST_DELAY_SECONDS = 3.0
+ARXIV_DELAY_SECONDS = 15.0  # the Crawl-delay in https://arxiv.org/robots.txt
 DEFAULT_HEADERS = {
     "User-Agent": "iris-papers/0.2 (+https://github.com/LM-SAL/iris-paper-finder)",
     "Accept": "application/pdf,application/octet-stream;q=0.9,*/*;q=0.1",
@@ -48,6 +49,11 @@ DOI_PDF_URLS = {
 }
 
 
+def _arxiv(url: str) -> bool:
+    host = urlparse(url).hostname or ""
+    return host == "arxiv.org" or host.endswith(".arxiv.org")
+
+
 def candidate_pdf_urls(record: Mapping[str, Any]) -> list[str]:
     """Return open arXiv links, publisher PDF links, DOI-derived PDF URLs, then the ADS scan, once each (https kept)."""
     arxiv = []
@@ -63,7 +69,7 @@ def candidate_pdf_urls(record: Mapping[str, Any]) -> list[str]:
         host = parsed.hostname or ""
         if host == "articles.adsabs.harvard.edu":
             scans.append(f"https://articles.adsabs.harvard.edu/pdf/{record['bibcode']}")
-        elif link_type == "preprint" and (host == "arxiv.org" or host.endswith(".arxiv.org")):
+        elif link_type == "preprint" and _arxiv(url):
             arxiv.append(parsed._replace(scheme="https", path=parsed.path.replace("/abs/", "/pdf/", 1)).geturl())
         elif link_type == "pdf":
             publisher.append(url)
@@ -112,8 +118,8 @@ def validate_pdf(content: bytes, expected_sha256: str | None = None, abstract: s
 
     With an abstract, also reject first pages that have no text or text that does not match it.
     """
-    if not content.startswith(b"%PDF-"):
-        msg = "content does not start with a PDF signature"
+    if b"%PDF-" not in content[:1024]:  # PDF readers, PyMuPDF included, allow a few bytes before the header
+        msg = "content has no PDF signature"
         raise ValueError(msg)
     if expected_sha256 and hashlib.sha256(content).hexdigest() != expected_sha256:
         msg = "PDF checksum does not match the expected SHA-256"
@@ -167,18 +173,26 @@ def _attempt(
 
 @dataclass
 class _Fetcher:
-    """One run's HTTP state; consecutive requests are REQUEST_DELAY_SECONDS apart."""
+    """One run's HTTP state; consecutive requests are REQUEST_DELAY_SECONDS apart, arXiv ones ARXIV_DELAY_SECONDS."""
 
     session: requests.Session
     timeout: float
     requested: bool = False
+    arxiv_done: float = float("-inf")  # monotonic() when the last arXiv request ended
     blocked_hosts: set[str] = field(default_factory=set)
 
     def get(self, url: str) -> requests.Response:
         if self.requested:
             sleep(REQUEST_DELAY_SECONDS)
         self.requested = True
-        return self.session.get(url, headers=DEFAULT_HEADERS, timeout=self.timeout)
+        arxiv = _arxiv(url)
+        if arxiv and (wait := self.arxiv_done + ARXIV_DELAY_SECONDS - monotonic()) > 0:
+            sleep(wait)
+        try:
+            return self.session.get(url, headers=DEFAULT_HEADERS, timeout=self.timeout)
+        finally:
+            if arxiv:
+                self.arxiv_done = monotonic()
 
 
 def _bot_protection(response: requests.Response) -> str | None:
@@ -191,9 +205,13 @@ def _bot_protection(response: requests.Response) -> str | None:
     challenge = "cf-mitigated" in headers or b"<title>Just a moment" in body
     if challenge or (server == "cloudflare" and response.status_code == 403):
         return "Cloudflare"
-    # The Akamai "Access Denied" page links errors.edgesuite.net; S3 also answers "Access Denied".
-    if server.startswith("akamaighost") or b"edgesuite" in body:
+    # The Akamai "Access Denied" page is a 403 that links errors.edgesuite.net (S3 also answers "Access Denied").
+    # Akamai edges serve outages and missing files too, so like Cloudflare it counts only on a 403.
+    if response.status_code == 403 and (server.startswith("akamaighost") or b"edgesuite" in body):
         return "Akamai"
+    # arXiv refuses scripts with a plain 403 and treats further requests as an attack (info.arxiv.org/help/robots.html).
+    if response.status_code == 403 and _arxiv(response.url):
+        return "arXiv"
     return None
 
 
@@ -203,7 +221,7 @@ def _response_failure(response: requests.Response) -> tuple[str, str] | None:
     content_type = response.headers.get("content-type", "").lower()
     pdf_type = not content_type or "pdf" in content_type or "octet-stream" in content_type
     if 200 <= status < 300:
-        if pdf_type or response.content.startswith(b"%PDF-"):
+        if pdf_type or b"%PDF-" in response.content[:1024]:
             return None
         error = f"unexpected content type: {content_type}"
     else:
@@ -236,7 +254,7 @@ def _download_url(fetcher: _Fetcher, job: dict, url: str, method: str) -> tuple[
     if failure is not None:
         category, error = failure
         if category == "blocked":
-            fetcher.blocked_hosts.add(host)
+            fetcher.blocked_hosts.add(urlparse(response.url).netloc)  # the host that answered, after any redirects
         return None, attempt(final_url=response.url, status="failed", category=category, error=error)
     return response.content, attempt(final_url=response.url, status="downloaded")
 
@@ -401,8 +419,11 @@ def download_records(
     output_dir.mkdir(parents=True, exist_ok=True)
     attempts_path = output_dir / "download_attempts.jsonl"
     manual_path = output_dir / "manual_downloads.jsonl"
-    manual = {record["bibcode"]: record for record in read_jsonl(manual_path)} if manual_path.is_file() else {}
     records = list(records)
+    current = {str(record["bibcode"]) for record in records}
+    # The queue keeps only these papers, so one ADS no longer returns (e.g. under a bibcode it replaced) drops out.
+    queue = read_jsonl(manual_path) if manual_path.is_file() else []
+    manual = {entry["bibcode"]: entry for entry in queue if entry["bibcode"] in current}
     jobs: list[dict] = []
     skipped = conflicts = 0
     for index, record in enumerate(records, start=1):

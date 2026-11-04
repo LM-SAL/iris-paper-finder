@@ -10,7 +10,16 @@ import pymupdf
 import pytest
 import requests
 
-from iris_paper_llm.download import REQUEST_DELAY_SECONDS, _doi, candidate_pdf_urls, download_records, validate_pdf
+from iris_paper_llm.download import (
+    ARXIV_DELAY_SECONDS,
+    REQUEST_DELAY_SECONDS,
+    _doi,
+    _Fetcher,
+    _response_failure,
+    candidate_pdf_urls,
+    download_records,
+    validate_pdf,
+)
 from iris_paper_llm.evaluate import prepare_case_pdfs
 from iris_paper_llm.jsonl import read_jsonl
 
@@ -28,11 +37,17 @@ def one_page_pdf(text: str = "") -> bytes:
 
 
 class FakeResponse:
-    def __init__(self, content: bytes = b"", status_code: int = 200, headers: dict | None = None) -> None:
+    def __init__(
+        self,
+        content: bytes = b"",
+        status_code: int = 200,
+        headers: dict | None = None,
+        url: str = "https://example.test/paper.pdf",
+    ) -> None:
         self.content = content
         self.status_code = status_code
         self.headers = headers or {"content-type": "application/pdf"}
-        self.url = "https://example.test/paper.pdf"
+        self.url = url
 
     def raise_for_status(self) -> None:
         if self.status_code >= 400:
@@ -54,7 +69,9 @@ class FakeSession:
     def get(self, url: str, **_kwargs: object) -> FakeResponse:
         self.calls += 1
         self.urls.append(url)
-        return self.responses.get(url) or FakeResponse(self.content)
+        response = self.responses.get(url) or FakeResponse(self.content)
+        response.url = url  # no redirects
+        return response
 
 
 def test_download_is_atomic_validated_and_resumable() -> None:
@@ -65,6 +82,7 @@ def test_download_is_atomic_validated_and_resumable() -> None:
         output = Path(directory)
         first = download_records([record], output, session=session)
         validate_pdf((output / "test-paper.pdf").read_bytes())
+        validate_pdf(b"\r\n" + content)  # PDF readers allow bytes before the %PDF- header
         assert first == {"downloaded": 1, "skipped": 0, "failed": 0, "manual_queue": 0}
         assert read_jsonl(output / "download_attempts.jsonl")[0]["status"] == "downloaded"
 
@@ -175,7 +193,7 @@ def test_requests_are_spaced() -> None:
     assert [call.args for call in sleep.call_args_list] == [(REQUEST_DELAY_SECONDS,)] * 2
 
 
-def test_manual_queue_is_deduplicated() -> None:
+def test_manual_queue_is_deduplicated_and_pruned() -> None:
     session = FakeSession(one_page_pdf())
     with TemporaryDirectory() as directory:
         output = Path(directory)
@@ -188,6 +206,41 @@ def test_manual_queue_is_deduplicated() -> None:
         assert queue[0]["category"] == "permanent"
         assert queue[0]["errors"] == ["no open-access PDF URL was found in ADS (no DOI for OpenAlex)"]
         assert session.calls == 0
+
+        # ADS no longer returns the paper, e.g. because it replaced the bibcode: its old entry leaves the queue.
+        download_records([{"bibcode": "renamed-paper"}], output, session=session)
+        assert [entry["bibcode"] for entry in read_jsonl(output / "manual_downloads.jsonl")] == ["renamed-paper"]
+
+
+EDGE_ERROR = b"<html>Reference #18.1 https://errors.edgesuite.net/18.1</html>"
+
+
+@pytest.mark.parametrize(
+    ("url", "status", "body", "expected"),
+    [
+        ("https://pub.test/a.pdf", 403, EDGE_ERROR, ("blocked", "HTTP 403 (bot protection: Akamai)")),
+        ("https://pub.test/a.pdf", 503, EDGE_ERROR, ("transient", "HTTP 503")),  # an outage, not a refusal
+        ("https://pub.test/a.pdf", 403, b"Forbidden", ("permanent", "HTTP 403")),
+        ("https://arxiv.org/pdf/2501.01234", 403, b"Forbidden", ("blocked", "HTTP 403 (bot protection: arXiv)")),
+    ],
+)
+def test_only_refusals_count_as_bot_protection(url: str, status: int, body: bytes, expected: tuple) -> None:
+    assert _response_failure(FakeResponse(body, status, {"content-type": "text/html"}, url)) == expected
+
+
+def test_arxiv_requests_keep_its_crawl_delay() -> None:
+    clock = [0.0]
+
+    def advance(seconds: float) -> None:
+        clock[0] += seconds
+
+    fetcher = _Fetcher(FakeSession(b""), timeout=1)
+    started = []
+    with patch("iris_paper_llm.download.sleep", advance), patch("iris_paper_llm.download.monotonic", lambda: clock[0]):
+        for url in ("https://arxiv.org/pdf/1", "https://example.test/a.pdf", "https://export.arxiv.org/pdf/2"):
+            fetcher.get(url)
+            started.append(clock[0])
+    assert started == [0.0, REQUEST_DELAY_SECONDS, ARXIV_DELAY_SECONDS]
 
 
 @pytest.mark.parametrize(
