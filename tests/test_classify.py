@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
@@ -8,6 +9,7 @@ import httpx2
 import openai
 import pymupdf
 import pytest
+from openai.resources.responses import Responses
 
 from iris_paper_llm.classify import (
     IRIS_PROMPT_SHA256,
@@ -62,6 +64,7 @@ def classify(*results: object) -> tuple:
 
 def test_prompt_and_api_contract() -> None:
     result, calls = classify(response(classification()))
+    inspect.signature(Responses.parse).bind(None, **calls[0])  # the installed SDK still takes every keyword sent
     assert result.status == ResultStatus.CLASSIFIED
     assert result.provenance.prompt_sha256 == IRIS_PROMPT_SHA256
     assert result.provenance.reasoning_effort == "medium"

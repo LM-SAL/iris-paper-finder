@@ -1,4 +1,4 @@
-# Monthly check that the ADS (SciX) API still works, and the OpenAI API too when its secret is set
+# Monthly check that the ADS (SciX) search and library APIs still work, and the OpenAI API too when its secret is set
 # (two classifications, about a cent).
 name: Live check
 
@@ -23,6 +23,12 @@ jobs:
       - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e  # v10.3.2
       - run: uv sync --locked
       - run: uv run iris-papers search --year "$(( $(date -u +%Y) - 1 ))" --limit 2 --output live/metadata.jsonl
+        env:
+          ADS_TOKEN: ${{ secrets.ADS_TOKEN }}
+      # classify and run compare their results with the ADS IRIS library (756 papers in January 2026).
+      - run: >-
+          uv run python -c 'from pathlib import Path; from iris_paper_llm.ads import fetch_library;
+          assert fetch_library(Path("live/library.txt")) > 500, "the ADS IRIS library looks too small"'
         env:
           ADS_TOKEN: ${{ secrets.ADS_TOKEN }}
       # The first two reviewed cases are tracked PDFs in tests/data/pdfs, so nothing is downloaded.
