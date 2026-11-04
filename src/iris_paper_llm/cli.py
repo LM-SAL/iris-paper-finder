@@ -10,7 +10,6 @@ from datetime import datetime
 from pathlib import Path
 
 import openai
-import requests
 from dotenv import load_dotenv
 
 from iris_paper_llm.ads import fetch_library, iris_query, search_papers
@@ -71,7 +70,18 @@ def _library(args: argparse.Namespace) -> Path:
     if args.library is None:
         args.library = Path("data") / f"ads_iris_library_{datetime.now().astimezone().date()}.txt"
         fetch_library(args.library)
+    elif not args.library.is_file():  # fail now, not after classifying every paper
+        msg = f"--library file not found: {args.library}"
+        raise FileNotFoundError(msg)
     return args.library
+
+
+def _search_bibcodes(pdfs: Path) -> set[str] | None:
+    """The bibcodes in data/metadata/<name>.jsonl if `pdfs` is data/pdfs/<name>, the directory `download` saves to."""
+    metadata = Path("data/metadata") / f"{pdfs.name}.jsonl"
+    if pdfs.resolve() != (Path("data/pdfs") / pdfs.name).resolve() or not metadata.is_file():
+        return None
+    return {str(record["bibcode"]) for record in read_jsonl(metadata)}
 
 
 def _download(args: argparse.Namespace) -> dict[str, int]:
@@ -98,7 +108,14 @@ def _classify(args: argparse.Namespace) -> dict[str, int]:
         client=client,
     )
     pdfs = args.input if args.input.is_dir() else None
-    write_report(output, library=library, pdfs=pdfs, model=args.model, reasoning_effort=args.reasoning_effort)
+    write_report(
+        output,
+        library=library,
+        pdfs=pdfs,
+        papers=_search_bibcodes(pdfs) if pdfs is not None else None,
+        model=args.model,
+        reasoning_effort=args.reasoning_effort,
+    )
     return summary
 
 
@@ -140,7 +157,14 @@ def _run(args: argparse.Namespace) -> dict[str, int]:
         reasoning_effort=args.reasoning_effort,
         client=client,
     )
-    write_report(results, library=library, pdfs=pdfs, model=args.model, reasoning_effort=args.reasoning_effort)
+    write_report(
+        results,
+        library=library,
+        pdfs=pdfs,
+        papers=_search_bibcodes(pdfs),
+        model=args.model,
+        reasoning_effort=args.reasoning_effort,
+    )
     return {
         **classifications,
         "downloaded": downloads["downloaded"],
@@ -212,6 +236,6 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
     try:
         summary = args.handler(args)
-    except (FileNotFoundError, ValueError, requests.RequestException, openai.OpenAIError) as error:
+    except (OSError, ValueError, openai.OpenAIError) as error:  # OSError includes requests.RequestException
         parser.error(str(error))
     print(json.dumps(summary, sort_keys=True))

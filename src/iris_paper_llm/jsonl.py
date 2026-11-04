@@ -16,16 +16,16 @@ logger = logging.getLogger(__name__)
 
 
 def read_jsonl(path: Path) -> list[dict]:
-    """Read records, skipping a last line left unparsable by an interrupted append."""
-    lines = [
-        (number, line) for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1) if line.strip()
-    ]
+    """Read records, skipping an unterminated last line left unparsable by an interrupted append."""
+    text = path.read_text(encoding="utf-8")
+    lines = [(number, line) for number, line in enumerate(text.splitlines(), 1) if line.strip()]
     records = []
     for number, line in lines:
         try:
             records.append(json.loads(line))
         except json.JSONDecodeError as error:
-            if number == lines[-1][0]:
+            # append_jsonl writes a record and its newline together, so a bad line that ends in one was edited by hand.
+            if number == lines[-1][0] and not text.endswith("\n"):
                 logger.warning("Skipping unparsable last line %d of %s", number, path)
                 break
             msg = f"{path}:{number}: invalid JSON: {error}"

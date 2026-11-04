@@ -119,8 +119,9 @@ def fetch_library(output: Path) -> int:
         if len(bibcodes) >= total:
             break
         if not body["documents"]:
-            msg = f"ADS returned no library records at offset {len(bibcodes)} of {total}"
-            raise RuntimeError(msg)
+            # num_documents also counts stored bibcodes the ADS index no longer finds; they cannot match a search.
+            logger.warning("The ADS library lists %d papers, but ADS returned only %d", total, len(bibcodes))
+            break
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text("".join(f"{bibcode}\n" for bibcode in bibcodes), encoding="utf-8")
     return len(bibcodes)
