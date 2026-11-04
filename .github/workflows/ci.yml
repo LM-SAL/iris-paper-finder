@@ -23,7 +23,7 @@ jobs:
 
   test:
     strategy:
-      fail-fast: false  # a failure on one OS should not cancel, and hide, the other's result
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
