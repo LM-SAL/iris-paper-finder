@@ -178,7 +178,7 @@ class _Fetcher:
     session: requests.Session
     timeout: float
     requested: bool = False
-    arxiv_done: float = float("-inf")  # monotonic() when the last arXiv request ended
+    arxiv_done: float = float("-inf")
     blocked_hosts: set[str] = field(default_factory=set)
 
     def get(self, url: str) -> requests.Response:
@@ -205,8 +205,7 @@ def _bot_protection(response: requests.Response) -> str | None:
     challenge = "cf-mitigated" in headers or b"<title>Just a moment" in body
     if challenge or (server == "cloudflare" and response.status_code == 403):
         return "Cloudflare"
-    # The Akamai "Access Denied" page is a 403 that links errors.edgesuite.net (S3 also answers "Access Denied").
-    # Akamai edges serve outages and missing files too, so like Cloudflare it counts only on a 403.
+    # Akamai's "Access Denied" 403 links errors.edgesuite.net; its edges also serve outages, so only a 403 counts.
     if response.status_code == 403 and (server.startswith("akamaighost") or b"edgesuite" in body):
         return "Akamai"
     # arXiv refuses scripts with a plain 403 and treats further requests as an attack (info.arxiv.org/help/robots.html).
@@ -421,7 +420,7 @@ def download_records(
     manual_path = output_dir / "manual_downloads.jsonl"
     records = list(records)
     current = {str(record["bibcode"]) for record in records}
-    # The queue keeps only these papers, so one ADS no longer returns (e.g. under a bibcode it replaced) drops out.
+    # Drop queued papers ADS no longer returns, e.g. under a bibcode it replaced.
     queue = read_jsonl(manual_path) if manual_path.is_file() else []
     manual = {entry["bibcode"]: entry for entry in queue if entry["bibcode"] in current}
     jobs: list[dict] = []

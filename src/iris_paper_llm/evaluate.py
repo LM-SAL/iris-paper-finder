@@ -181,12 +181,7 @@ def write_report(
     records = latest_results(output, model=model, reasoning_effort=reasoning_effort)
     if papers is not None:
         if stale := sorted({record["id"] for record in records} - papers):
-            logger.warning(
-                "Leaving %d papers out of the report that ADS no longer returns (e.g. under a bibcode it has since "
-                "replaced): %s",
-                len(stale),
-                ", ".join(stale),
-            )
+            logger.warning("Leaving out %d papers ADS no longer returns: %s", len(stale), ", ".join(stale))
         records = [record for record in records if record["id"] in papers]
     if cases is not None:
         labels = {case["id"]: _expected(case) for case in read_jsonl(cases)}

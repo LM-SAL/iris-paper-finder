@@ -21,7 +21,7 @@ from iris_paper_llm.classify import (
     classify_jobs,
     pdf_jobs,
 )
-from iris_paper_llm.cli import build_parser
+from iris_paper_llm.cli import _search_bibcodes, build_parser
 from iris_paper_llm.evaluate import write_report
 from iris_paper_llm.jsonl import append_jsonl, read_jsonl, write_jsonl
 from iris_paper_llm.models import (
@@ -134,28 +134,11 @@ def test_july_rerun_after_ads_replaced_a_bibcode() -> None:
     assert review == ""
 
 
-def test_classify_reports_the_current_search_only_for_its_own_directory() -> None:
-    client = SimpleNamespace(responses=FakeResponses())
-    pdf = Path(__file__).resolve().parent / "data/pdfs/observational_filament_flows.pdf"
-    old, new = "2025MNRAS.tmp..123X", "2025MNRAS.540..123X"
-    reports = {}
-    with (
-        TemporaryDirectory() as directory,
-        chdir(directory),
-        patch("iris_paper_llm.cli._openai_client", return_value=client),
-    ):
-        write_jsonl(Path("data/metadata/2025.jsonl"), [{"bibcode": new}])
-        Path("library.txt").write_text("")
-        for pdfs in (Path("data/pdfs/2025"), Path("elsewhere/2025")):  # the second is not the search's directory
-            pdfs.mkdir(parents=True)
-            for bibcode in (old, new):
-                shutil.copyfile(pdf, pdfs / f"{bibcode}.pdf")
-            args = build_parser().parse_args(["classify", str(pdfs), "--library", "library.txt", "--output", "r.jsonl"])
-            args.handler(args)
-            reports[pdfs.parts[0]] = Path("r.md").read_text()
-    assert new in reports["data"]
-    assert old not in reports["data"]
-    assert old in reports["elsewhere"]
+def test_search_bibcodes_only_for_the_download_directory() -> None:
+    with TemporaryDirectory() as directory, chdir(directory):
+        write_jsonl(Path("data/metadata/2025.jsonl"), [{"bibcode": "2025MNRAS.540..123X"}])
+        assert _search_bibcodes(Path("data/pdfs/2025")) == {"2025MNRAS.540..123X"}
+        assert _search_bibcodes(Path("elsewhere/2025")) is None
 
 
 def result_record(paper: str, status: ResultStatus, *, model: str = DEFAULT_MODEL, pdf: str = "") -> dict:

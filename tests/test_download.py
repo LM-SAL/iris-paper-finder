@@ -82,7 +82,7 @@ def test_download_is_atomic_validated_and_resumable() -> None:
         output = Path(directory)
         first = download_records([record], output, session=session)
         validate_pdf((output / "test-paper.pdf").read_bytes())
-        validate_pdf(b"\r\n" + content)  # PDF readers allow bytes before the %PDF- header
+        validate_pdf(b"\r\n" + content)
         assert first == {"downloaded": 1, "skipped": 0, "failed": 0, "manual_queue": 0}
         assert read_jsonl(output / "download_attempts.jsonl")[0]["status"] == "downloaded"
 

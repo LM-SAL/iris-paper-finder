@@ -345,7 +345,7 @@ def classify_paper(
 
 
 def classification_key(pdf_hash: str, *, model: str, reasoning_effort: str) -> str:
-    """Identify a result by its PDF, prompt, model and effort; PIPELINE_VERSION stands in for the code and schema."""
+    """Identify every input that can change a classification result."""
     values = {
         "pdf_sha256": pdf_hash,
         "prompt_sha256": IRIS_PROMPT_SHA256,
@@ -357,11 +357,7 @@ def classification_key(pdf_hash: str, *, model: str, reasoning_effort: str) -> s
 
 
 def load_successful_keys(path: Path) -> set[tuple[str, str]]:
-    """Read resumable successes, as (id, evaluation key) pairs, from an existing result JSONL file.
-
-    The id is part of the pair so that a paper whose PDF bytes match another paper's (such as one ADS gave a new
-    bibcode) still gets a result of its own.
-    """
+    """Read (id, evaluation key) pairs of past successes; the id keeps papers with identical PDFs apart."""
     if not path.is_file():
         return set()
     return {
