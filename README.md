@@ -19,7 +19,7 @@ Created by Anthony R. Buonomo.
 ## Setup
 
 1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/).
-   It also installs Python 3.14 or newer if needed.
+   It also installs Python 3.14 if needed (`.python-version` pins it; PyMuPDF needs onnxruntime, which has no Python 3.15 build yet).
 2. Get the code, install it, and create your key file:
 
    ```bash
